@@ -436,6 +436,12 @@ STATIC_BUFFER(telbuf);
 /* 85 & 86 are not standard.  See http://www.randomly.org/projects/MCCP/ */
 #define TN_COMPRESS	((char)85)	/* MCCP v1 */
 #define TN_COMPRESS2	((char)86)	/* MCCP v2 */
+/* 200 is not standard. See http://www.ironrealms.com/rapture/manual/files/FeatATCP-txt.html */
+#define TN_ATCP		((char)200)	/* ATCP */
+/* 201 is not standard. See http://www.aardwolf.com/wiki/index.php/Clients/GMCP */
+#define TN_GMCP		((char)201)	/* GMCP */
+/* 102 is not standard. See http://www.aardwolf.com/blog/category/technical */
+#define TN_102	((char)102)	/* Option 102 */
 
 #define UCHAR		unsigned char
 
@@ -608,6 +614,9 @@ void init_sock(void)
     telnet_label[(UCHAR)TN_CHARSET]	= "CHARSET";
     telnet_label[(UCHAR)TN_COMPRESS]	= "COMPRESS";
     telnet_label[(UCHAR)TN_COMPRESS2]	= "COMPRESS2";
+    telnet_label[(UCHAR)TN_ATCP]	= "ATCP";
+    telnet_label[(UCHAR)TN_GMCP]	= "GMCP";
+    telnet_label[(UCHAR)TN_102]		= "102";
     telnet_label[(UCHAR)TN_EOR]		= "EOR";
     telnet_label[(UCHAR)TN_SE]		= "SE";
     telnet_label[(UCHAR)TN_NOP]		= "NOP";
@@ -2439,6 +2448,45 @@ int handle_send_function(conString *string, const char *world,
     return result;
 }
 
+#if ENABLE_ATCP
+int handle_atcp_function(conString *string, const char *world)
+{
+   Sock *old_xsock = xsock;
+
+   xsock = (!world || !*world) ? xsock : find_sock(world);
+	Sprintf(telbuf, "%c%c%c%s%c%c", TN_IAC, TN_SB, TN_ATCP, string->data, TN_IAC, TN_SE);
+	telnet_send(telbuf);
+   xsock = old_xsock;
+	return 1;
+}
+#endif
+
+#if ENABLE_GMCP
+int handle_gmcp_function(conString *string, const char *world)
+{
+   Sock *old_xsock = xsock;
+
+   xsock = (!world || !*world) ? xsock : find_sock(world);
+	Sprintf(telbuf, "%c%c%c%s%c%c", TN_IAC, TN_SB, TN_GMCP, string->data, TN_IAC, TN_SE);
+	telnet_send(telbuf);
+   xsock = old_xsock;
+	return 1;
+}
+#endif
+
+#if ENABLE_OPTION102
+int handle_option102_function(conString *string, const char *world)
+{
+   Sock *old_xsock = xsock;
+
+   xsock = (!world || !*world) ? xsock : find_sock(world);
+	Sprintf(telbuf, "%c%c%c%s%c%c", TN_IAC, TN_SB, TN_102, string->data, TN_IAC, TN_SE);
+	telnet_send(telbuf);
+   xsock = old_xsock;
+	return 1;
+}
+#endif
+
 int handle_fake_recv_function(conString *string, const char *world,
     const char *flags)
 {
@@ -2825,6 +2873,21 @@ static void telnet_subnegotiation(void)
 	}
 	xsock->flags |= SOCKCOMPRESS;
 	break;
+#if ENABLE_ATCP
+    case TN_ATCP:
+	    do_hook(H_ATCP, NULL, "%s", xsock->subbuffer->data + 3);
+	    break;
+#endif
+#if ENABLE_GMCP
+    case TN_GMCP:
+	    do_hook(H_GMCP, NULL, "%s", xsock->subbuffer->data + 3);
+	    break;
+#endif
+#if ENABLE_OPTION102
+    case TN_102:
+	    do_hook(H_OPTION102, NULL, "%s", xsock->subbuffer->data + 3);
+	    break;
+#endif
     default:
 	no_reply("unknown option");
         break;
@@ -2967,6 +3030,7 @@ static int handle_socket_input(const char *simbuffer, int simlen)
 		case Z_STREAM_END:
 		    /* handle stuff inflated before stream end */
 		    count = (char*)xsock->zstream->next_out - outbuffer;
+		    if(count > 0)
 		    received += handle_socket_input(outbuffer, count);
 		    /* prepare to handle noncompressed stuff after stream end */
 		    buffer = (char*)xsock->zstream->next_in;
@@ -3072,7 +3136,7 @@ static int handle_socket_input(const char *simbuffer, int simlen)
                 continue;  /* avoid non-telnet processing */
 
             } else if (xsock->fsastate == TN_SB) {
-		if (xsock->subbuffer->len > 255) {
+		if (xsock->subbuffer->len > 1023) {
 		    /* It shouldn't take this long; server is broken.  Abort. */
 		    SStringcat(xsock->buffer, CS(xsock->subbuffer));
 		    Stringtrunc(xsock->subbuffer, 0);
@@ -3127,6 +3191,15 @@ static int handle_socket_input(const char *simbuffer, int simlen)
 #if HAVE_MCCP
 		    (rawchar == TN_COMPRESS && mccp) ||
 		    (rawchar == TN_COMPRESS2 && mccp) ||
+#endif
+#if ENABLE_ATCP
+		    (rawchar == TN_ATCP && atcp) ||
+#endif
+#if ENABLE_GMCP
+		    (rawchar == TN_GMCP && gmcp) ||
+#endif
+#if ENABLE_OPTION102
+		    (rawchar == TN_102 && 102) ||
 #endif
                     rawchar == TN_ECHO ||
                     rawchar == TN_SEND_EOR ||

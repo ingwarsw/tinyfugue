@@ -1282,6 +1282,9 @@ Optional Features:
   --disable-mailcheck     disable mail checking
   --enable-mailcheck=DIR  enable checking for mail in directory DIR
                           (needed only if configure guesses incorrectly)
+  --enable-atcp           enable ATCP support
+  --enable-gmcp           enable GMCP support
+  --enable-option102      enable telnet option 102 support
   --disable-history       disable /recall and other history features
   --disable-process       disable /quote and /repeat
   --disable-float         disable floating point arithmetic and functions
@@ -1809,6 +1812,30 @@ else
   enable_mailcheck=yes
 fi
 
+
+# Check whether --enable-atcp or --disable-atcp was given.
+if test "${enable_atcp+set}" = set; then
+  enableval="$enable_atcp"
+
+else
+  enable_atcp=no
+fi;
+
+# Check whether --enable-gmcp or --disable-gmcp was given.
+if test "${enable_gmcp+set}" = set; then
+  enableval="$enable_gmcp"
+
+else
+  enable_gmcp=no
+fi;
+
+# Check whether --enable-option102 or --disable-option102 was given.
+if test "${enable_option102+set}" = set; then
+  enableval="$enable_option102"
+
+else
+  enable_option102=no
+fi;
 
 # User feature options
 # Check whether --enable-history was given.
@@ -8849,6 +8876,18 @@ fi
 
 if test "$enable_inet6"   = "yes"; then cat >>confdefs.h <<\_ACEOF
 #define ENABLE_INET6 1
+_ACEOF
+  fi
+if test "$enable_atcp"   = "yes"; then cat >>confdefs.h <<\_ACEOF
+#define ENABLE_ATCP 1
+_ACEOF
+  fi
+if test "$enable_gmcp"   = "yes"; then cat >>confdefs.h <<\_ACEOF
+#define ENABLE_GMCP 1
+_ACEOF
+  fi
+if test "$enable_option102"   = "yes"; then cat >>confdefs.h <<\_ACEOF
+#define ENABLE_OPTION102 1
 _ACEOF
   fi
 if test "$enable_history" = "no"; then cat >>confdefs.h <<\_ACEOF

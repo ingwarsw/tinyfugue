@@ -45,6 +45,15 @@ extern void    transmit_window_size(void);
 extern int     local_echo(int flag);
 extern int     handle_send_function(conString *string, const char *world,
                      const char *flags);
+#if ENABLE_ATCP
+extern int     handle_atcp_function(conString *string, const char *world);
+#endif
+#if ENABLE_GMCP
+extern int     handle_gmcp_function(conString *string, const char *world);
+#endif
+#if ENABLE_OPTION102
+extern int     handle_option102_function(conString *string, const char *world);
+#endif
 extern int     handle_fake_recv_function(conString *string, const char *world,
 		    const char *flags);
 extern int     is_connected(const char *worldname);

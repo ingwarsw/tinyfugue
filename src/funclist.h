@@ -17,6 +17,9 @@ funccode(addworld,	0,	2,  9),
 funccode(ascii,		1,	1,  1),
 funccode(asin,		1,	1,  1),
 funccode(atan,		1,	1,  1),
+#if ENABLE_ATCP
+funccode(atcp,		0,	1,  2),
+#endif
 funccode(char,		1,	1,  1),
 funccode(columns,	0,	0,  0),
 funccode(cos,		1,	1,  1),
@@ -36,6 +39,9 @@ funccode(fwrite,	0,	2,  2),
 funccode(gethostname,	0,	0,  0),
 funccode(getopts,	0,	1,  2),
 funccode(getpid,	1,	0,  0),
+#if ENABLE_GMCP
+funccode(gmcp,		0,	1,  2),
+#endif
 funccode(idle,		0,	0,  1),
 funccode(is_connected,	0,	0,  1),
 funccode(is_open,	0,	0,  1),
@@ -62,6 +68,9 @@ funccode(nactive,	0,	0,  1),
 funccode(nlog,		0,	0,  0),
 funccode(nmail,		0,	0,  0),
 funccode(nread,		0,	0,  0),
+#if ENABLE_OPTION102
+funccode(option102,	0,	1,  2),
+#endif
 funccode(pad,		1,	1,  (unsigned)-1),
 funccode(pow,		1,	2,  2),
 funccode(prompt,	0,	1,  1),

@@ -12,6 +12,9 @@
  */
 
 gencode(ACTIVITY,	HT_ALERT | HT_XSOCK),
+#if ENABLE_ATCP
+gencode(ATCP,		0),
+#endif
 gencode(BAMF,		HT_WORLD | HT_XSOCK),
 gencode(BGTEXT,		0),
 gencode(BGTRIG,		HT_ALERT | HT_XSOCK),
@@ -19,6 +22,9 @@ gencode(CONFAIL,	HT_WORLD | HT_XSOCK),
 gencode(CONFLICT,	0),
 gencode(CONNECT,	HT_WORLD | HT_XSOCK),
 gencode(DISCONNECT,	HT_WORLD | HT_XSOCK),
+#if ENABLE_GMCP
+gencode(GMCP,		0),
+#endif
 gencode(ICONFAIL,	HT_WORLD | HT_XSOCK),
 gencode(KILL,		0),
 gencode(LOAD,		0),
@@ -28,6 +34,9 @@ gencode(LOGIN,		0),
 gencode(MAIL,		HT_ALERT),
 gencode(MORE,		0),
 gencode(NOMACRO,	0),
+#if ENABLE_OPTION102
+gencode(OPTION102,	0),
+#endif
 gencode(PENDING,	HT_WORLD | HT_XSOCK),
 gencode(PREACTIVITY,	0),
 gencode(PROCESS,	0),

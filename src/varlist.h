@@ -43,6 +43,21 @@ varstr (VAR_TFPATH,	"TFPATH",	NULL,		NULL)
 varstrx(VAR_TZ,		"TZ",		NULL,		ch_timezone)
 varstr (VAR_alert_attr,	"alert_attr",	"Br",		ch_attr)
 vartime(VAR_alert_time,	"alert_time",	5,0,		NULL)
+#if ENABLE_ATCP
+varflag(VAR_atcp,	"atcp",		TRUE,		NULL)
+#else
+varenum(VAR_atcp,	"atcp",		FALSE,		NULL,	enum_off)
+#endif
+#if ENABLE_GMCP
+varflag(VAR_gmcp,	"gmcp",		TRUE,		NULL)
+#else
+varenum(VAR_gmcp,	"gmcp",		FALSE,		NULL,	enum_off)
+#endif
+#if ENABLE_OPTION102
+varflag(VAR_OPTION102,	"option102",	TRUE,		NULL)
+#else
+varenum(VAR_OPTION102,	"option102",	FALSE,		NULL,	enum_off)
+#endif
 #if 0
 varflag(VAR_auto_fg,	"auto_fg",	FALSE,		NULL)
 #endif

@@ -94,6 +94,9 @@
 #define NO_PROCESS 0
 #define NO_FLOAT 0
 #define NCOLORS 16
+#define ENABLE_ATCP 0
+#define ENABLE_GMCP 0
+#define ENABLE_OPTION102 0
 
 #define HAVE_MCCP (HAVE_ZLIB_H && HAVE_LIBZ)
 
