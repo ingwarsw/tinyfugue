@@ -1,3 +1,10 @@
+TinyFugue
+=====================
+
+[![Build Status](https://travis-ci.org/ingwarsw/tinyfugue.svg?branch=master)](https://travis-ci.org/ingwarsw/tinyfugue)
+
+
+# Oryginal README by Ken Keys
 
   TinyFugue is Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 Ken Keys.
 
