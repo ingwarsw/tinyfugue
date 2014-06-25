@@ -719,8 +719,8 @@ AC_SUBST(OTHER_OBJS)
 
 if test "$enable_lua" = "yes"; then
 	AC_MSG_NOTICE([LUA scripting enabled.])
-	LUA_DEFINES="-DLUA_ENABLED"
-	LUA_LIBS="-llua"
+	LUA_DEFINES="-DLUA_ENABLED -I/usr/include/lua5.1"
+	LUA_LIBS="-llua5.1"
 	LUA_SOURCES="lua.c"
 	LUA_OBJECTS="lua.$OBJEXT"
 else
