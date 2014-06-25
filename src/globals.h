@@ -158,6 +158,7 @@ enum Vars {
 #define TFMAILPATH	getstdvar(VAR_TFMAILPATH)
 #define alert_attr	getattrvar(VAR_alert_attr)
 #define alert_time	gettimevar(VAR_alert_time)
+#define	ansi_log	getintvar(VAR_ansi_log)
 #define auto_fg		getintvar(VAR_auto_fg)
 #define background	getintvar(VAR_background)
 #define backslash	getintvar(VAR_backslash)

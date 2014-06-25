@@ -2327,13 +2327,16 @@ list commands
   Wrapping will be done in the log file only if the [1m%{wraplog}[22;0m [1mvariable[22;0m is 
   "on".  
 
+  ANSI sequences will be recorded in the log file only if the [1m%{ansi_log}[22;0m [1mvariable[22;0m
+  is "on".
+
   Logging is disabled by default.  The default value of [1m${LOGFILE}[22;0m is 
   "tiny.log".  
 
   Note: the natural logarithm function was renamed from log() to ln() in 
   version 5.0, to avoid confusion with /log.  
 
-  See: [1m%wraplog[22;0m, [1mhistory[22;0m, [1mnlog()[22;0m [1mfwrite()[22;0m 
+  See: [1m%ansi_log[22;0m, [1m%wraplog[22;0m, [1mhistory[22;0m, [1mnlog()[22;0m [1mfwrite()[22;0m 
 
 &/logme
 
@@ -8932,6 +8935,12 @@ Special global variables
   [1malert_time[22m=5.0 
           (dtime) The number of seconds that [1malert[22;0m text is displayed on the 
           [1mstatus line[22;0m.  See [1mtfio[22;0m.  
+
+#ansi_log
+#%ansi_log
+  [1mansi_log[22m=off 
+          (flag) Enable ANSI sequences in log files.  See also: [1m/log[22;0m.  
+
 
 #background
 #%background

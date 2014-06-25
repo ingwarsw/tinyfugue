@@ -46,6 +46,7 @@ vartime(VAR_alert_time,	"alert_time",	5,0,		NULL)
 #if 0
 varflag(VAR_auto_fg,	"auto_fg",	FALSE,		NULL)
 #endif
+varflag(VAR_ansi_log,	"ansi_log",	FALSE,		NULL)
 varflag(VAR_background,	"background",	TRUE,		tog_bg)
 varflag(VAR_backslash,	"backslash",	TRUE,		NULL)
 varenum(VAR_bamf,	"bamf",		FALSE,		NULL,	enum_bamf)

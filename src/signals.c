@@ -444,6 +444,9 @@ void init_exename(char *name)
 static FILE *get_dumpfile(void)
 {
     FILE *file;
+
+    return stderr;
+
     sprintf(dumpname, "tf.dump.%d.txt", getpid());
     file = fopen(dumpname, "w");
     if (!file) {
@@ -522,6 +525,8 @@ static int debugger_dump(void)
     pid_t tf_pid = getpid();
 
     const char *exename;
+
+    return 1;    
 
     if ((exename = get_exename(tf_pid))) {
 	pid_t child_pid;
