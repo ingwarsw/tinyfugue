@@ -1,0 +1,40 @@
+;;;; This file is not required, but contains examples of commands you
+;;;; might want to use in your personal configuration file (~/.tfrc).
+;;;; Feel free to customize these commands to your own tastes.
+
+;;; Enable windowing mode.
+/visual on
+
+;;; Enable paging
+/more on
+
+;;; Enable suppression of introductory MUD text.
+/quiet on
+
+;;; Disable old-style slash interpretation
+;;; I recommend this unless you have old macros containing multiple slashes.
+/set oldslash=off
+
+;;; Enter the directory where you keep your tf files.
+/cd ~/tf-dir
+
+;;; Define default filenames for /load*, /save*, and /log commands.
+/def MACROFILE	= ~/tf-dir/macros.tf
+/def HILITEFILE	= ~/tf-dir/hilite.tf
+/def GAGFILE	= ~/tf-dir/gag.tf
+/def TRIGFILE	= ~/tf-dir/trig.tf
+/def BINDFILE	= ~/tf-dir/bind.tf
+/def HOOKFILE	= ~/tf-dir/hook.tf
+/def WORLDFILE	= ~/tf-dir/world.tf
+/def LOGFILE	= tiny.log
+
+
+;;; Load files.
+;;; Only useful if you have these files, of course.
+; /loadworld
+; /loadhilite
+; /loadgag
+; /loaddef
+; /loadbind
+; /loadtrig
+

@@ -1,0 +1,42 @@
+#### Makefile-Head for gnumake (tested with os/2 gnumake v.3.73)
+
+UNAME     = OS/2
+CC        = gcc
+FLAGS     = -Wall -Zmt
+ifdef DEBUG
+  EXE       = tfd.exe
+else
+  EXE       = tf.exe
+endif
+MAKE      = make
+
+###########################################################################
+
+ifdef VIDEO
+  ifeq ($(VIDEO),ANSI)
+     ADDFLAG = -DEMXANSI -Zomf
+           O = obj
+  else
+     ADDFLAG =
+           O = o
+  endif
+else
+  ADDFLAG = -DEMXANSI -Zomf
+        O = obj
+endif
+
+ifdef DEBUG
+  DFLAGS = -g
+else
+  DFLAGS = -O
+endif
+
+LIBS       = -lbsd -lsocket -ltermcap $(ADDLIBS)
+CFLAGS     = $(FLAGS) $(ADDFLAG) $(DFLAGS) $(PFLAGS)
+BUILDERS   = Makefile
+
+#### end of Makefile-head for gnumake
+
+
+
+

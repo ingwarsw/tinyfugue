@@ -1,4 +1,0 @@
-tinyfugue
-=========
-
-TinyFugue - MUD client

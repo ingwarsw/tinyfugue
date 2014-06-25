@@ -1,0 +1,18 @@
+This version of TinyFugue is written, maintained, and copyrighted
+by Ken Keys ("Hawkeye"), who can be reached by email at kkeys@ucsd.edu.
+See the file "COPYING" for the full copyright and license.
+
+Support for OS/2 was contributed by Andreas Sahlbach (asa@stardiv.de).
+
+TinyFugue versions 1.5.3 and earlier were written by Greg Hudson
+("Explorer_Bob"), without whom I would have never gotten into this mess.
+
+TinyFugue was intially derived from tinytalk, a unix client written by
+Anton Rang ("Tarrant") and modified by Leo Plotkin ("Grod").
+
+Additional thanks to Jeff Prothero ("Cynbe"), Bruce Sterling Woodcock
+("Bruce"), David Moore ("OliverJones"), Ben Jackson ("Ben"), the mudders of
+glia.biostr.washington.edu, and everyone else who tested, found bugs,
+or came up with suggestions, and to Jim Lick ("Jingoro") for providing
+tcp.com services.
+

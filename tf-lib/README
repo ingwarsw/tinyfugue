@@ -1,0 +1,8 @@
+                   Interesting and useful macros
+
+The *.tf files in this directory contain many interesting and useful
+macros.  Some are quite useful, others illustrate useful macro
+programming techinques.  Any of the *.tf files can be loaded directly
+with /load.  Read the comments at the top of each file for specific
+instructions.
+

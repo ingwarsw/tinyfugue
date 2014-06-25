@@ -1,0 +1,45 @@
+SPECIAL OS/2 KEYS
+-----------------
+
+     Up            = move cursor up
+Ctrl Up            = get previous history line	
+Alt  Up            = get first history line
+Esc- Up            = search history backwards
+
+     Down          = move cursor down
+Ctrl Down          = get next history line
+Alt  Down          = get last history line
+Esc- Down          = search history forward
+
+     Right         = move cursor right
+Ctrl Right         = move cursor word right
+Alt  Right         = kill to end of current word
+
+     Left          = move cursor left
+Ctrl Left          = move cursor word left
+Alt  Left          = kill to beginning of current word
+
+     Delete        = delete char
+
+Alt  P             = switch to previous socket
+Alt  N             = switch to next socket
+
+     Home          = move cursor to beginning of line
+Ctrl Home          = get first history line
+Alt  Home          = kill to beginning of line
+
+     End           = move cursor to end of line
+Ctrl End           = get last history line
+Alt  End           = kill to end of line
+
+     Insert        = toggle insert mode
+
+     Page Down     = scroll one page ("more")
+Ctrl Page Down     = discard queued lines without attributes
+Alt  Page Down     = discard all queued lines
+
+Alt  K             = kill current line but put it in history buffer
+Alt  L             = scroll one line
+
+
+

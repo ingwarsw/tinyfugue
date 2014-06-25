@@ -1,0 +1,131 @@
+; Sample of KEYBOARD.CNF for the IBM-PC/AT 101-key keyboard
+; with editor keypad corrected to agree with VT220 emulation.
+;
+[VT editor keypad]
+;Up arrow key
+Up=328
+;Down arrow key
+Down=336
+;Right arrow key
+Right=333
+;Left arrow key
+Left=331
+;End key
+Select=335
+;Insert key
+Insert=338
+;Delete key
+Remove=339
+;Home key
+Find=327
+;PageUp key
+Prev=329
+;PageDown key
+Next=337
+
+[VT numeric keypad]
+;Num pad 0 key
+Num0=82
+;Num pad 1 key
+Num1=79
+;Num pad 2 key
+Num2=80
+;Num pad 3 key
+Num3=81
+;Num pad 4 key
+Num4=75
+;Num pad 5 key
+Num5=76
+;Num pad 6 key
+Num6=77
+;Num pad 7 key
+Num7=71
+;Num pad 8 key
+Num8=72
+;Num pad 9 key
+Num9=73
+;Cntrl + Num pad '+' key
+NumMinus=1102
+;Num pad '+' key
+NumComma=78
+;Num pad '.' key
+NumPeriod=83
+;Num pad Enter key
+NumEnter=284
+;Num pad NumLock key
+;PF1=325
+;Num pad '/' key
+;PF2=309
+;Num pad '*' key
+;PF3=55
+;Num pad '-' key
+;PF4=74
+
+; DEFINITIONS FOR UNIX-SPIRS
+PF4=62
+PF3=61
+PF2=60
+PF1=59
+
+
+[VT function keys]
+;F6 key
+F6=64
+;F7 key
+F7=65
+;F8 key
+F8=66
+;F9 key
+F9=67
+;F10 key
+F10=68
+;F11 key
+F11=87
+;F12 key
+F12=88
+;Shift + F3 key
+F13=573
+;Shift + F4 key
+F14=574
+;Shift + F5 key
+Help=575
+;Shift + F6 key
+Do=576
+;Shift + F7 key
+F17=577
+;Shift + F8 key
+F18=578
+;Shift + F9 key
+F19=579
+;Shift + F10 key
+F20=580
+
+[Shortcut keys]
+EditCopy=off
+EditPaste=off
+EditPasteCR=off
+; Ctrl + up-arrow
+LineUp=1352
+; Ctrl + down-arrow
+LineDown=1360
+; Ctrl + PageUp
+PageUp=1353
+; Ctrl + PageDown
+PageDown=1361
+; Ctrl + Home
+BuffTop=1351
+; Ctrl + End
+BuffBottom=1359
+SendBreak=off
+
+[User keys]
+;Example of user key definitions.
+;
+;	F1 key: character string
+;User1=59,0,telnet myhost
+;
+;	F2 key: control characters
+;User2=60,0,$0D$0A
+;
+;	F3 key: CR character with new-line code conversion (CR -> CR/CR+LF)
+;User3=61,1,$0D

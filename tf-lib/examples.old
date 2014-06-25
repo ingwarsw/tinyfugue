@@ -1,0 +1,279 @@
+                   Interesting and useful macros
+
+
+This examples document assumes you have read the helpfile sections 
+on macros, triggers, substitution and reentrance.  They are 
+intended as illustrations of the ways in which Fugue macros can be 
+used, and as a tutorial in the use of these features.
+
+The examples given here are intended to be used with /load.  When a
+file is read with /load, lines beginning with ';' are ignored, and
+lines ending with '\' will have the following line appened to it after
+leading spaces are stripped.
+
+For reference, OUTPUTPREFIX and OUTPUTSUFFIX are MUD commands that set
+prefixes and suffixes for output that stems from a MUD command (such as
+look, WHO, etc.)  A "one-shot" trigger is a trigger that will remove
+the associated macro (and thus the trigger) upon being hit once, i.e.
+it only functions once.  (This is the "-1" switch.)
+
+A note: The OUTPUTPREFIX and OUTPUTSUFFIX commands are not supported on
+all MUDs.  There are other, somewhat less reliable methods for
+prefixing and sufixing commands that may be utilized by the reader.
+
+The priority numbers used in here have no special meaning; a 
+priority of 50 is used for triggers that continually exist (this is 
+to override /hilites and /gags of lower priority) and a priority of 
+100 or 101 is used for temporary triggers must work for the macros 
+to properly complete.
+
+WATCH
+-----
+
+/def pfxon = OUTPUTPREFIX <!pre>%;OUTPUTSUFFIX <!suf>
+/def pfxoff = OUTPUTPREFIX%;OUTPUTSUFFIX
+/def pcmd = /pfxon%;%*%;/pfxoff
+
+/def watch = \
+  /def watch_%1 = \
+    /pcmd WHO %%;\
+    /def -p100 -1 -ag -t"<!pre>" = \
+      /watch_make %1 %;\
+  /repeat -60 10000 /watch_%1
+
+/def watch_make = \
+  /def -p100 -ag -t"*" watch_tmp1_%1 %;\
+  /def -p101 -ag -t"%1 *" watch_tmp2_%1 = \
+    /echo <!> %1 is connected. %;\
+  /def -p101 -1 -ag -t"<!suf>" = /purgedef watch_tmp?_%1
+
+These two macros will simulate a /watch command, like KnightSkye's 
+client.  Every minute it will check the WHO list to see if a given
+user is connected to the current MUD or MUCK.  To step through it, 
+I'll use as an example "/watch chup"
+
+First, TF substitutes for newlines.  Every sequences "%;" is changed
+into a newline.  The %%; sequences are left alone.  Thus the two
+commands "/def watch_%1..." and "/repeat..."  are processed separately.
+
+Second, TF checks for reentrant commands.  Both lines contain commands,
+so these are all processed.  Before they are processed, two things
+occur: first, all multiple "/" sequences are compressed by one, and
+second, argument substitution is done.  The "%1"s are substituted with
+"chup".  Multiple "%"s are compressed by one in this process.  Thus
+the two commands to be executed are:
+
+    /def watch_chup = /pcmd WHO%;/def -1 -ag -t"<!pre>" = /watch_make chup
+    /repeat -60 10000 /watch_chup
+
+This sets up the watch macro and tells TF to execute it 10000 times, once
+every sixty seconds.
+
+Every sixty seconds, then, the following will occur:
+
+Newline substitutions occur.  The body of /watch_chup is broken up into
+two lines.
+
+Reentrance substitutions occur.  The command "/pcmd WHO" is executed,
+which in turn sends the following to the MUD:
+
+    OUTPUTPREFIX <!pre>
+    OUTPUTSUFFIX <!suf>
+    WHO
+    OUTPUTPREFIX
+    OUTPUTSUFFIX
+
+The actual process is more complex, but self-explanatory.
+
+The fourth line is executed as a /def command:
+
+     /def -p100 -1 -ag -t"<!pre>" = /watch_make chup
+
+The macro is now completed, and returns control to the main program,
+where things continue normally.  Shortly afterwards, the line "<!pre>"
+should be received from the MUD, marking the beginning of the WHO list.
+The line "/watch_make chup" is now executed.
+
+After all substitutions, TF comes up with the following commands:
+
+     /def -p100 -ag -t"*" watch_tmp1_chup
+     /def -p101 -ag -t"chup *" watch_tmp2_chup = /echo <!> chup is connected.
+     /def -p101 -1 -ag -t"<!suf>" = /purgedef watch_tmp?_chup
+
+Control is then returned to the main progam.  All following lines are
+gagged, so the user does not see the WHO list.  Any line beginning with
+"chup *" will set off the command /echo <!> chup is connected., informing
+you that he is online.   The line "<!suf>" marks the end of the WHO list,
+purging the other two gags.  Since that trigger is a one-shot trigger, it
+also deletes itself.
+
+The net result is that every sixty seconds a WHO list is received from
+the MUD with all lines gagged, except for a notification message when
+chup is on-line.  Temporary triggers are created and discarded as
+necessary; only the /watch_chup macro is permanent.
+
+The /mecho output for "/watch Xeglon" would look like so (blank lines
+signify control was passed to the main program and that the next block
+is as a result of a trigger going off).
+
+<m> /def watch_Xeglon = /pcmd WHO %;/def -p100 -1 -ag -t"<!pre>" =
+/watch_make Xeglon
+<m> /repeat -60 10000 /watch_Xeglon
+
+<m> /pcmd WHO 
+<m> /pfxon
+<m> OUTPUTPREFIX <!pre>
+<m> OUTPUTSUFFIX <!suf>
+<m> WHO
+<m> /pfxoff
+<m> OUTPUTPREFIX
+<m> OUTPUTSUFFIX
+<m> /def -p100 -1 -ag -t"<!pre>" = /watch_make Xeglon
+ 
+<m> /watch_make Xeglon
+<m> /def -p100 -ag -t"*" watch_tmp1_Xeglon 
+<m> /def -p101 -ag -t"Xeglon *" watch_tmp2_Xeglon = /echo <!> Xeglon is connected. 
+<m> /def -p101 -1 -ag -t"<!suf>" = /purgedef watch_tmp?_Xeglon
+
+<m> /echo <!> Xeglon is connected.
+
+<m> /purgedef watch_tmp?_Xeglon
+
+
+RWHO
+----
+
+Many muds send WHO information to a central mudwho server.  See the file
+rwho.tf for a macro that uses the mudwho server.
+
+As another example of macro usage (or for use with MUDs not cooperating with
+the RWHO server), here's a way to simulate RWHO.
+
+Define the /pfxon, /pfxoff and /pcmd macros as above.
+
+/def rwho2 = \
+  /def oworld = $world_name %;\
+  /world -%1 %;\
+  /pcmd WHO %;\
+  /def -p100 -ag -t"*" rwho2tmp%1 %;\
+  /echo WHO list for world %1: %;\
+  /def -p101 -1 -ag -t"<!pre>" = \
+    /undef rwho2tmp%1 %;\
+  /def -p101 -1 -ag -t"<!suf>" = \
+    /dc %%;\
+    /world $$oworld %%;\
+    /undef oworld
+
+This macro connects (or switches) to another world, issues the WHO 
+command, waits until the output is done, and returns to the current 
+world.  (It also disconnects from the remote world, which may be 
+undesirable.)  As an example, consider "/rwho2 brig" done while in a 
+world "peg".
+
+Newline substitutions occur, so every line is processed 
+separately.  All the lines are commands, so they are processed.  
+The first command, notably, contains a substitution symbol ('$')-- 
+the text "$world_name " is substituted with the name of the current 
+world ("peg").  Thus the first command is "/def oworld = peg".  The 
+second is "/world -brig", switching to the world "brig" without 
+logging in.  "/pcmd WHO" is then executed, telling the MUD to send 
+a prefixed and postfixed WHO list.  Then "/def -ag -t"*" 
+rwho2tmpbrig", suppressing all output from the MUD before the WHO 
+list.  A heading message is echoed, and then the triggers are set up:
+
+     /def -p101 -1 -ag -t"<!pre>" = /undef rwho2tmpbrig
+     /def -p101 -1 -ag -t"<!suf>" = /dc %;/world $oworld %;/undef oworld
+
+When the prefix is received, TF will stop gagging text, and the WHO 
+list will proceed as per normal.  When the suffix is received, TF 
+will disconnect.  The "$oworld " goes to the body of the macro 
+"oworld", which is "peg", so that command is "/world peg", 
+returning you to the previous world.  Finally, the macro "oworld" 
+is undefined, in order to clean up.  (The triggers themselves are 
+one-shot, so they do not need to be removed.)
+
+
+AUTORETURN AND SILENT MOVE
+--------------------------
+
+The /pfxon and /pfxoff macros are required.  Most of this macro is 
+simply recognizing when you are killed, not actually returning.
+
+/def -p50 -t"{*} killed you!" autoreturn =
+  /def -ag -p101 -t"Your insurance policy *" r1tmp1 =
+    /purgedef r1tmp* %%;
+    /def -ag -p101 -t"<Title of your home here>" r2tmp1 = 
+      /purgedef r2tmp* %%%;
+      /return %%;
+    /def -p100 -t"*" r2tmp2 =
+      /purgedef r2tmp* %;
+  /def -p100 -t"*" r1tmp2 = /purgedef r1tmp*
+
+/def pmcmd = /pfxon%;/%*%;/pfxoff
+/def ret = <path back to place to return to here>
+/def return = /pmcmd ret %;/echo <!> Returned.
+/def -ag -p50 -t"<!pre>" = /def -p49 -ag -t"*" gptmp
+/def -ag -p50 -t"<!suf>" = /undef gptmp
+
+This is one way to set up a "silent" autoreturn.  It can't be 
+spoofed by people who don't know what the room you live in is.  
+(Note that since the "<!pre>" and "<!suf>" triggers remain on all 
+the time, it may be best to change these to something secret in 
+odrer to keep people from being able to spoof you into gagging 
+everything.)  When killed, you see only the lines "<person> killed 
+you!" and "<!> Returned."
+
+This autoreturn, of course, only works on one MUD and for one place 
+in that MUD, unless you redefine /ret each time you go somewhere.  
+One way to make an autoreturn that is not MUD-specific is to 
+replace the /return macro with:
+
+/def return = /pmcmd ret$world_name$ %;/echo <!> Returned.
+
+Now, if you are connected to, say, the world "asylum", you can do 
+/def retasylum = e%;e to get to the town square (if you live in the 
+padded cell), for instance.
+
+The /pmcmd macro is needed to do multiple commands with /pfxon and 
+/pfxoff because TF does not send arguments through newline 
+substitution.  However, you can get around the order of argument 
+processing by defining a macro as the arguments and using the macro 
+rather than the arguments directly.  As an example of how this can 
+be utilized, we can create a "silent move" macro utilizing the 
+macros and triggers in the autoreturn above:
+
+/def move = /def mvtmp = %* %;/pmcmd mvtmp %;/undef mvtmp
+
+This macro, assuming you have the /pmcmd macro set up properly and 
+the triggers to gag command output (the last two lines from the 
+autoreturn example) will allow you to move around within a MUD 
+without seeing the resulting output.  This is useful for 
+commonly-travelled paths.  While the macro looks very simple, it 
+actually nests several levels.
+
+
+OTHER IDEAS
+-----------
+The /pcmd macro (/def pcmd = /pfxon%;%*%;/pfxoff) doesn't allow you to
+execute multiple commands or use tf commands, because argument substitutions
+don't undergo newline substitutions.  However, you can use a more general
+version of /pcmd to get around this:
+
+  /def pcmd = /def pcmdtmp = /pfxon%%;%*%%;/pfxoff%;/pcmdtmp%;/undef pcmdtmp
+
+Now you can use /pcmd to, say, get to a certain room and then execute a macro
+called foo:
+
+  /pcmd home%;step1%;step2%;/foo
+ 
+Simple triggers, such as the ones in the autoreturn example, can be 
+used to gag any output between the prefix and suffixes, producing 
+silent movement.
+
+Some useful tools:
+
+     /def get = /grab /edit %1 = $%1
+     /def qline = /quote :quotes, "#"%{1}-%1""
+     /def qback = /quote :quotes, "#"-%1""
+     /def getline = /quote /grab #%{1}-%1
+

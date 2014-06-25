@@ -1,0 +1,38 @@
+#### Makefile-Head for nmake (tested with os/2 nmake v.2.001.000)
+
+UNAME     = OS/2
+CC        = gcc
+FLAGS     = -Wall -Zmt
+!IFDEF DEBUG
+EXE       = tfd.exe
+!ELSE
+EXE       = tf.exe
+!ENDIF
+MAKE      = nmake
+
+###########################################################################
+
+!IFDEF VIDEO
+! IF "$(VIDEO)"=="ANSI"
+ADDFLAG = -DEMXANSI -Zomf
+O = obj
+! ELSE
+ADDFLAG =
+O = o
+! ENDIF
+!ELSE
+ADDFLAG = -DEMXANSI -Zomf
+O = obj
+!ENDIF
+
+!IFDEF DEBUG
+DFLAGS = -g
+!ELSE
+DFLAGS = -O
+!ENDIF
+
+LIBS      = -lbsd -lsocket -ltermcap $(ADDLIBS)
+CFLAGS     = $(FLAGS) $(ADDFLAG) $(DFLAGS) $(PFLAGS)
+BUILDERS   = Makefile
+
+#### end of Makefile-head for nmake

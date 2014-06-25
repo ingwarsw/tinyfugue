@@ -1,0 +1,39 @@
+If you're considering porting tf to a non-UNIX-like operating system,
+here are some assumptions in the code you should be aware of that are
+true on UNIX-like systems but not necessarily others.
+
+  BSD-style sockets, and a select() that works on both sockets and keyboard
+  input.  If your system doesn't have these, you should probably forget
+  about porting tf.
+
+  gethostbyname().
+
+  The value returned by time() increases by 1 each second (I think ANSI
+  guarantees only that it increases monotonically).  Used to time
+  /quote, /repeat, mail checks, etc.
+
+  variable.c:  environment variables are accessible through char **environ,
+  and stored in the form "name=value".
+
+  signals.c:  a superset of ANSI signals.
+
+  several UNIX errno constants (EINVAL, ENOENT, etc.).
+
+  tty.c:  one of termios, termio, or sgtty terminal driver.
+
+  output.c:  termcap library and/or vt100/vt220/ansi compatible display.
+
+  system() executes its argument in a subshell; its return value can be
+  interpreted like that of POSIX or UNIX wait().
+
+  tfio.c:  popen() and shell syntax.  Used by "/quote !" and file decompression.
+
+  ASCII character set.
+
+  bsearch(); or, all pointers are compatible with each other.
+
+  Optional: select() on a pipe (for nonblocking hostname resolution)
+
+  Useful, but not essential:  getwd() or getcwd();  strftime().
+
+  Probably a few other things I can't think of at the moment.

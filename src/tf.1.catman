@@ -1,0 +1,246 @@
+TF(1)                                                                    TF(1)
+
+
+
+[1mNAME[0m
+       tf - TinyFugue, a MUD client
+
+[1mSYNOPSIS[0m
+       [1mtf [-f[4m[22mfile[24m[1m] [-lnq] [[4m[22mworld[24m[1m][0m
+       [1mtf [-f[4m[22mfile[24m[1m] [4m[22mhost[24m [4mport[0m
+
+[1mDESCRIPTION[0m
+       [4mTinyFugue[24m  (also  known  as  "Fugue"  or  "TF")  is a line-based client
+       designed for connecting to MUD  servers  (note:  LP,  DIKU,  and  other
+       servers which use prompts require "/lp on"; see /help prompts).
+
+       Most  of  the  [4mTF[24m  documentation is in the help file, which may be read
+       online with the "/help" command.  This manual page may be  obsolete  in
+       certain areas; however, the helpfile will always be up to date.
+
+       [4mTinyFugue[24m  is  larger than most MUD clients, but has many more features
+       and is much more flexible.  The goal is to provide the most functional-
+       ity in a client that still maintains the user-friendliness of [4mTinytalk[24m.
+       Clients with extension languages such as [4mTcltt[24m or [4mVaporTalk[24m  can  do  a
+       little  more  in  certain areas, but are considerably harder to use and
+       learn.  [4mTF[24m provides most of these  abilities  in  such  a  manner  that
+       learning to use any one function is relatively easy.
+
+       Because  I am continually adding new features and changing the code, [4mTF[0m
+       sometimes becomes less  stable  in  a  new  release.   Versions  labled
+       "alpha"  are  generally  not as well tested as "beta" versions, so they
+       have the potential for more bugs.  For this reason, I leave some  older
+       versions  at  the site where I distribute [4mTF[24m, which do not have all the
+       current features but may have fewer bugs than the most recent  release.
+
+
+[1mCOMMAND LINE ARGUMENTS[0m
+       With no arguments, [4mTF[24m will try to connect to the first world defined in
+       the configuration file(s).
+
+       With a [1mworld [22margument, [4mTF[24m will try to connect to [1mworld[22m, as  defined  in
+       the configuration file.  If [1mworld [22mis omitted, it will try to connect to
+       the first world defined in your configuration files.
+
+       With [1mhost [22mand [1mport [22marguments, [4mTF[24m will define a temporary world and  try
+       to connect to it.  The [1mhost [22mmay be an IP number or regular name format.
+
+       OPTIONS
+
+       -f[4mfile[24m Load [4mfile[24m instead of $HOME/.tfrc at startup.
+
+       -f     Do not load any personal configuration file.  The  library  will
+              still be loaded.
+
+       -l     Disable automatic login.
+
+       -n     Do not connect to any world at startup.
+
+       -q     Quiet login (overrides %{quiet} flag).
+
+
+[1mFEATURES[0m
+       Among other things, [4mTF[24m allows you to:
+
+       Divide  the  screen into two parts, for input and output, with flexible
+       handling of input (/visual mode).
+
+       Connect to multiple worlds and switch between them.
+
+       Wrap MUD output at the edge of the screen.
+
+       Edit text in the input buffer.
+
+       Recall previous commands.
+
+       Modify key sequences used to perform editing functions.
+
+       Bind commands to key sequences.
+
+       Define complex macros to perform MUD tasks easily.
+
+       Create triggers which automatically perform certain tasks when  certain
+       output is received from the MUD.
+
+       Modify  existing  macros  using  either a command format or interactive
+       editing.
+
+       Support "portals" that automatically switch from world to world.
+
+       Hilite or color all or part of a line that matches a certain pattern.
+
+       Gag lines that match certain patterns.
+
+       Suppress frequently repeated text ("spamming").
+
+       Automatically log into a character on a world.
+
+       Send a text file to the MUD in flexible ways, or echo it locally.
+
+       Send the output of a system command to the MUD, or echo it locally.
+
+       Send text previously received from the MUD  to  the  MUD,  or  echo  it
+       locally.
+
+       Repeat a MUD or [4mTF[24m command a number of times.
+
+       Do the above four things at varying intervals, or at a rapid-fire rate.
+
+       Log a session to a file.
+
+       Separate LP and Diku style prompts from normal output.
+
+       Page output using a --More-- prompt.
+
+       Recall previously received text.
+
+
+[1mCONFIGURATION FILES[0m
+       [4mTF[24m will attempt to read two files when starting.  The first is a public
+       configuration  file  "stdlib.tf",  located  in  TFLIBDIR.   TFLIBDIR is
+       defined when [4mTF[24m is installed, and is  often  /usr/local/lib/tf.lib,  or
+       under  the home directory of the installer.  This library contains many
+       macros and definitions essential to the correct operation of [4mTF.[0m
+
+       Next, [4mTF[24m  will  attempt  to  read  your  personal  configuration  file,
+       $HOME/.tfrc,  in  which  you  can put any [4mTF[24m commands you want executed
+       automatically at startup.  Two of the most useful commands to use in  a
+       [4mTF[24m configuration file are /addworld and /load.
+
+       For  backward compatability, [4mTF[24m will also try to read the [4mTinyTalk[24m con-
+       figuration file.  Its name  defautls  to  $HOME/.tinytalk,  or  can  be
+       defined by the TINYTALK environment variable.  This file may start with
+       a list of worlds that will be defined as if with /addworld.
+
+
+[1mHISTORY[0m
+       Anton Rang (Tarrant) in February of 1990 released [4mTinytalk[24m,  the  first
+       Tinyclient  with  any  great number of features, including hiliting and
+       suppression of text, simple triggers, and separating input  and  output
+       on  the screen.  Leo Plotkin (Grod) made rather extensive modifications
+       to [4mTinytalk[24m to produce [4mTinywar,[24m which was  plagued  with  some  serious
+       bugs  and  was  never  officially released (the phrase "Tinywar doesn't
+       exist" is often quoted), and is now an unsupported  client.   [4mTF[24m  began
+       when  Greg  Hudson  (Explorer_Bob)  merged  many of the new features of
+       [4mTinywar[24m back into [4mTinyTalk,[24m and added many new  features  of  his  own,
+       most notably the split screen.  Some of the code in Greg's releases was
+       contributed by Leo Plotkin.  After Greg moved on to [4mVaporTalk,[24m Ken Keys
+       (Hawkeye) took over design and maintenance of [4mTF[24m in July 1991, and con-
+       tinues to make improvements in features and performance.
+
+       The code size of [4mTF[24m has surpassed 300K (unstripped),  and  is  signifi-
+       gantly larger than [4mTinytalk.[24m  It is, in fact, more than three times the
+       size of a number of existing servers.  As of version  3.0,  it  has  66
+       builtin  commands and 57 library commands, each documented in the help-
+       file.
+
+       It has been stated that [4mTF[24m is the most-used client  in  MUDdom  at  the
+       current time.  I haven't taken a poll, but I wouldn't be surprised.
+
+
+[1mREVIEWS[0m
+       [4mTF[24m  has significantly changed the tinyclient world.  It has a number of
+       merits and a number  of  flaws,  and  has  frequently  been  criticized
+       (mostly  out  of  boredom; nobody takes this business too seriously) as
+       having too many features and being too damn big.
+
+            "Tinywar doesn't exist; TinyFugue merely shouldn't."  -- Coined by
+       Woodlock, I believe.
+
+            "TinyFugue  is  a work of art."  -- Binder, obviously after having
+       too much to drink.
+
+            "TinyFugue is the biggest hack since the  platform  it  was  built
+       on."  -- Explorer_Bob, in one of his lucid moments.
+
+       The  New  York  Times, the Christian Science Monitor and the Washington
+       Post all refused to comment.
+
+
+[1mCOPYRIGHT[0m
+       Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2002, 2006-2007
+       Ken Keys
+
+       [4mTinyFugue[24m  (aka  "[4mtf[24m")  is protected under the terms of the GNU General
+       Public License.  See the file "COPYING" for details.
+
+       [4mTF[24m is currently supported by Ken Keys, who may be contacted  by  e-mail
+       at kenkeys@users.sourceforge.net or kkeys@ucsd.edu.
+
+
+[1mBACKWARD INCOMPATIBILTIES[0m
+       VERSION 3.2
+
+       /rand has been replaced with rand().  Color names can no longer be user
+       defined (but color codes still can).  The "=" operator does comparison,
+       not assignment.
+
+       VERSION 3.1
+
+       Added type argument to WORLD and LOGIN hooks.
+
+       VERSION 3.0
+
+       Backslashes in macros are interpreted slightly differently than in pre-
+       vious versions.  Turning on the "backslash" flag will  enable  the  old
+       behavior.
+
+       VERSION 2.1
+
+       The  CONNECT hook is now called before the LOGIN hook.  In 2.0, CONNECT
+       was called after autologin.
+
+       VERSION 2.0
+
+       In versions prior to 2.0, <space> was used to  scroll  the  pager;  2.0
+       uses <tab> as the default, to allow the pager to be nonblocking.
+
+       [4mTinytalk[24m style name gags and hilites are no longer supported.  You must
+       use the '*' wildcard explicitly, as in '/hilite hawkeye*'.
+
+       [4mTinytalk[24m style page and whisper hilites are no longer supported.   How-
+       ever,  /hilite_page  and  /hilite_whisper  macros  are  provided in the
+       default macro library.
+
+       The .tinytalk file may not  be  supported  in  the  future;  use  .tfrc
+       instead.
+
+       The  '-' command line option in versions prior to 2.0 is no longer sup-
+       ported, and has been replaced with '-l'.
+
+
+[1mBUGS[0m
+       When unterbamfing, the old connection should not be  closed  until  the
+       new connection succeeds.
+
+       If  a  shell  quote  (/quote !) reads a partial line from the pipe, the
+       read will block until the rest of the line is read.
+
+
+[1mWARNINGS[0m
+       The Surgeon General has determined that MUDding can be  detrimental  to
+       your GPA.
+
+
+
+                                     LOCAL                               TF(1)

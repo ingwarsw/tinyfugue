@@ -1,0 +1,109 @@
+                                 OS/2 - README
+                                 -------------
+
+REQUIREMENTS TO RUN
+-------------------
+1...OS/2 3.0 with installed Internet Access Kit or OS/2 2.x with installed
+    TCP/IP Basis Kit
+2...a compiled tinyfugue-version
+3...enough space on your hard-disk
+4...an installed emx-runtime-package version 0.9a + emxfix6 or higher
+
+REQUIREMENTS TO COMPILE
+-----------------------
+1...OS/2 3.0 with installed Internet Access Kit or OS/2 2.x with installed
+    TCP/IP Basis Kit
+2...the tinyfugue-sources
+3...more space on your harddisk-partition
+4...an installed emx-gcc-system
+
+INSTALL
+-------
+1...install the emx-runtime-package (follow the instructions in emxrt.doc)
+    you can get emxrt.zip from anonymous ftp.uni-stuttgart.de: 
+    /pub/systems/os2/emx-0.9a
+    You should set these environment-variables:
+     TERMCAP...fullpath of your termcap file (e.g. "F:\EMX\ETC\TERMCAP.DAT")
+     TERM......name of your terminal defined in termcap.dat(e.g."ansi-color-3")
+    (In case you don't know: Try "help set" from an os/2-shell. Environment- 
+     variables are set in your config.sys or by the OS/2-Command 'SET')
+2...unzip the tinyfugue-package with "unzip -a...". You can delete src/*,
+    if you don't want to compile tinyfugue 
+3...set the followig environment-variables:
+        HOME......your home directory. (.tfrc or tfrc will be searched there)
+        TFLIBDIR..the full pathname of your tf-lib directory
+4...setup your .tfrc-file (you can use "tfrc" for FAT-systems). Here is mine 
+        as an example:
+
+        ;; turn on visual mode
+        /visual on
+        ;; turn on more-prompt
+        /more on
+        ;; wait for key after processing /sh
+        /shpause on
+        ;; change working directory to my log-dir
+        /lcd e:\tfdata
+        ;; load worlds from $(HOME)/tiny.world
+        /loadworld
+        ;; macros can be redefined
+        /redef on
+        ;; german-redefining for easier acces of /-key
+        ;;; #-key is now /
+        /def -ib'#' = /input /
+        ;;; alt-# is now #
+        /def -ib'^@+' =/input #
+        ;; load library map.tf from tf-lib
+        /load map.tf
+
+OS/2-KEYS 
+--------- 
+Some unix-keys have special meanings within os/2 (e.g. ctrl-P == PrintScreen
+within an os/2-fullscreen-session), the os/2-version of tinyfugue comes with a
+different key-binding. The used keys are listed in os2/keys.doc.
+
+FILE tf-keys.cmd
+----------------
+Utility which let you press some keys and shows you the correct tinyfugue 
+key-macro-string for redefining these keys.
+
+PROBLEMS
+--------
+Triple-check that you are using the correct emx-runtime-dll. Emx always uses
+the first emx.dll that can be found in your LIBPATH, so if you have an
+outdated emx.dll in a forgotten directory mentioned in LIBPATH...
+
+To check it, do this:
+1) start an os/2-shell
+2) enter "emxrev". You should get something like this:
+   EMX : revision = 36
+                     ^--- this means: emxfix06
+
+   If you'll get a lower number, you are using an outdated emx.dll.
+
+BUGS
+----
+please report bugs of the os/2-version to 
+
+A.Sahlbach internet:asa@stardiv.de or 
+           fidonet: Andreas Sahlbach 2:241/540.11
+
+COMPILE 
+------- 
+1...Install the emx-gcc-system.
+2...You need a make-program for compiling. Currently 
+       dmake (gnu-version v.3.8, can be found on hobbes) and
+       nmake (IBM-Toolkit 2.x)
+       make  (GnuMake v.3.73)
+    are supported.
+3...From the tinyfugue-directory start os2make.cmd from an os/2-cmd-shell. The
+    script will try to find one of the above make-programs and will produce a
+    proper makefile and config.h-file in the src-directory and start the
+    recompiling-process. You can give os2make some additional parameters:
+       "VIDEO=ANSI"    will produce the ansi-scrolling-version (default)
+       "VIDEO=TERMCAP" will produce the termcap-version without scrolling.
+       "DEBUG=ON"      will produce one of the above with debug-info. The
+                       scrolling-version needs an IPMD-style debugger. The
+                       termcap-version can be debugged with gdb.  
+       "USAGE"         for makefile-help 
+       "CLEAN"         to remove object-files after linking.
+

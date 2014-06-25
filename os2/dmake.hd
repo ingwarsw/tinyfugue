@@ -1,0 +1,26 @@
+#### Makefile-Head for dmake (tested with os/2 dmake v.3.8 PL 0)
+.NOTABS   := yes
+
+UNAME     = OS/2
+EXE       = $(null,$(DEBUG) tf.exe tfd.exe)
+MAKE      = dmake
+CC        = gcc
+FLAGS     = -Wall -Zmt
+
+########################################################################
+
+VIDEO *= ANSI
+.IF "$(VIDEO)"=="ANSI"
+ ADDFLAG = -DEMXANSI -Zomf
+ O = obj
+.ELSE
+ ADDFLAG =
+ O = o
+.END
+
+DFLAGS     = $(null,$(DEBUG) -O -g)
+LIBS       = -lbsd -lsocket -ltermcap $(ADDLIBS)
+CFLAGS     := $(FLAGS) $(ADDFLAG) $(DFLAGS) 
+BUILDERS   = Makefile
+
+#### end of Makefile-head for dmake

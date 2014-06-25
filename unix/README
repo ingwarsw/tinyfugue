@@ -1,0 +1,227 @@
+                      TinyFugue for UNIX-like systems
+		            (including MacOS X)
+
+
+Installing TinyFugue
+--------------------
+
+TinyFugue should work on any Unix-like system that has an ANSI compiler
+and BSD-style select().  This includes almost everything except some old
+SVr3-like systems which either do not have select(), or have a select()
+that works only on STREAMS devices but not terminals.
+
+Installing TinyFugue is quite easy on most Unix-like systems.
+In the top directory, execute these commands:
+  ./configure
+  make install
+The configure script will attempt to figure out everything it needs to
+know about your system and install all files in their proper location.
+If you have any problems, or want to change a default installation
+option, be sure to read the rest of this file.
+
+
+In addition to the usual GNU configure options, TinyFugue's configure script
+has these options:
+
+  --enable-version        insert version number into name of tf executable
+                          and library directory (implies --enable-symlink)
+  --enable-symlink[=NAME] make a symlink NAME to the executable [PREFIX/bin/tf]
+  --disable-ssl           disable SSL support
+  --enable-inet6          enable IPv6 support (may be broken)
+  --disable-netdb         disable hostname resolution
+  --disable-termcap       use hardcoded vt100 codes instead of termcap
+  --enable-termcap=LIB    enable termcap with library LIB (e.g., ncurses)
+                          (needed only if configure guesses incorrectly)
+  --disable-mailcheck     disable mail checking
+  --enable-mailcheck=DIR  enable checking for mail in directory DIR
+                          (needed only if configure guesses incorrectly)
+  --enable-strip          strip debugging symbols from executable
+  --enable-core           enable core files, enable debugging symbols in the
+                          executable (-g), and disable optimization (-O)
+  --disable-history       disable /recall and other history features
+  --disable-process       disable /quote and /repeat
+  --disable-float         disable floating point arithmetic and functions
+  --with-incdirs=DIRS     search for include files in DIRS
+  --with-libdirs=DIRS     search for libraries in DIRS
+  --with-inclibdirs=DIRS  same as --with-incdirs=DIRS --with-libdirs=DIRS
+  --with-inclibpfx=DIRS   same, but appends '/include' and '/lib'
+
+For a complete list of options, run "./configure --help".
+
+The following environment variables are meaningful to configure.  Their
+default values are listed in brackets after the description.  They can
+be set on the command line like this:
+  env CPPFLAGS=-I/my/include ./configure
+
+  CC		C compiler ["gcc" or "cc"]
+  CFLAGS	Options for C compiler ["-g -O2" or "-O2" for gcc,
+		"-g" for others]
+  CPPFLAGS	Options for C preprocessor (e.g. -I) [""]
+  LIBS		"-l" and "-L" options for the linker (in addition to the ones
+		determined automatically by configure).
+
+Example:
+If your system has SSL libraries and headers installed in
+/usr/local/SSL/{lib,include}, use the "--with-inclibpfx=/usr/local/SSL"
+option with configure.
+
+
+File Locations
+--------------
+
+If you do not define the file prefix with ./configure --prefix=PREFIX,
+configure will choose a prefix:
+
+   "/usr/local" if you can write to /usr/local/bin and /usr/local/share;
+   otherwise, $HOME.
+
+The executable is installed in ${bindir}; the macro libraries are installed
+in ${datadir}.  These can be modified with the standard configure options
+--bindir, --datadir, and --prefix.
+
+If --enable-version is given, the tf executable and library directory will
+have a version number embedded in their names (e.g., PREFIX/bin/tf-50a1 and
+PREFIX/lib/tf-50a1-lib).  This is useful if you want to keep old versions
+around.  To create a symlink from "tf" to the actual executable, use
+--enable-symlink (this is not implied by --enable-version, as in earlier
+releases).
+
+There is no man page for tf.  For basic usage options, run "tf -?".  For
+more information, use "/help" within tf.
+
+If you move or rename any files after installing (this includes copying
+TF to another machine where the file paths are different), you must let
+TF know.  To do this without reinstalling, you can set the environment variable
+TFLIBDIR to the new path before running tf, or run tf with the -L option.
+This can be done with a shell script like this:
+
+    #! /bin/sh
+    exec /new/location/bin/tf -L"/new/location/lib/tf-lib" "$@"
+
+The variables TFHELP and TFLIBRARY can also be set in the environment,
+but this should not normally be necessary, since their default values are
+based on TFLIBDIR.
+
+If you want build tf for installation in one directory ("{FINAL}"), but you
+want to be able to test it by installing it in another directory ("{TEMP}")
+first, do:
+    ./configure --prefix={FINAL}
+    make
+    env prefix={TEMP} make -e install
+Then, you can test tf by running
+    {TEMP}/bin/tf -L{TEMP}/lib
+When you are satisfied it works, do
+    make install
+to install tf in {FINAL}.
+
+
+Public Installation
+-------------------
+
+If you have write permission in /usr/local/bin and /usr/local/lib, TinyFugue
+will be installed there by default.  Or you can change the locations by using
+the options described above.  The Makefile will then put all files in their
+proper location with the proper permissions.
+
+Some features of TF can be disabled for secure public installation, by using
+the /restrict commands in %{TFLIBDIR}/local.tf.  See ../README.
+
+
+Terminal Handling
+-----------------
+
+On a UNIX-like system, ./configure will try to find a termcap-compatible library
+in this order: the one specified in --enable-termcap=LIB, if any; termcap;
+ncurses; curses.  If none of those work, tf will use hardcoded vt100 codes.
+On CYGWIN, tf will use hardcoded ANSI codes.
+
+
+Installation Problems
+---------------------
+
+The ./configure script can usually figure out everything it needs to
+know to configure TinyFugue for your unix-like system.  But if it fails
+because your system is brain damaged, you may need to change some environment
+variables or disable some features.
+
+
+Problem: On MacOS X, configure fails with the message "configure: error:
+  C compiler cannot create executables".  Also, config.log contains the
+  message "ld: can't locate file for: -lcrt1.o".
+Solution:  The file /usr/lib/crt1.o is missing from your system.  Restore it
+  by reinstalling the DevTools ("Xcode Tools 1.1").  Copying the file
+  from another OSX box also appears to work, but do this at your own risk.
+  See also http://thread.gmane.org/gmane.os.apple.fink.beginners/9914
+
+Problem: On AIX 4.1, a bug in gcc 2.8.0 causes /addworld and some operators to
+  fail with an error like "% internal error: reduce: bad op 037777777703"
+Solution: use a different compiler (cc or xlc) by setting the CC environment
+  variable before running ./configure, or use a different version of gcc
+  (2.7.2 is known to work).
+
+Problem: On OSF/1 with gcc, compile errors involving 'sigval_t',
+  'union sigval', or 'clock_id'.
+Solution: use a different compiler (cc) by setting the CC environment
+  variable before running ./configure.
+
+Problem: With gcc, compile errors involving va_list or __builtin_va_alist.
+Solution: use a different compiler (cc) by setting the CC environment
+  variable before running ./configure.
+
+Problem: Your system is Apollo Domain/OS.
+Solution: in Config: FLAGS='-U__STDC__' (XXX this is wrong XXX)
+
+Problem: On debian linux, undefined references to tgetent, tgetstr, tgetnum,
+  tgoto, tputs.
+Solution: Get an ELF termcap library, or add /usr/i486-linuxaout/bin to your
+  PATH.
+
+Problem: On DYNIX/ptx 4 or later, runtime error saying that -linet is not
+  needed.  (Why do they have it if it's not needed!?)
+Solution: Run ./configure, edit src/Makefile to remove "-linet"
+  from the LIBS line, and run "make".
+
+Problem: when you try to run tf, you get a message like this:
+  ld.so.1: ./tf: fatal: libncurses.so.5: open failed: No such file or directory
+Solution 1: set the environment variable LD_LIBRARY_PATH to "/usr/local/lib"
+  when running tf.
+Solution 2: on SunOS, set environment variable LDFLAGS to "-R/usr/local/lib"
+  when running ./configure.  On other operating systems, different options
+  may be available; see "man ld" (try "-rpath /usr/local/lib").
+
+
+SOCKS Proxy XXX
+-----------
+
+TF supports the SOCKS proxy server.  If your site uses SOCKS to connect
+to outside hosts through a firewall (this is probably true if you use
+"rtelnet" instead of "telnet"), then set SOCKS='yes' in the unix/Config file.
+
+TF can also be made to connect through a generic proxy server by setting
+the %proxy_host variable at runtime.  See "/help proxy".
+
+
+Last Resort XXX
+-----------
+
+If you think TF won't compile because of a bug or incompatibility with
+your system (you followed all the instructions, and it still won't work),
+visit http://tinyfugue.sourceforge.net or email the author at
+kenkeys@users.sourceforge.net.  Please include the version
+number of TF, and describe the type of system on which you are trying
+to compile, or at the very least, the address of the system.  Use
+"uname -a", if available, to get the system type; if not, look at the
+message you see when you log in.  Also include the output of configure
+and make.  If TF does compile, but has other problems, read "/help bugs"
+before mailing a report.
+
+For bug reports, questions, suggestions, etc., use the contacts above,
+and please provide the following information:
+
+    The version of TF and the operating system (type "/version" in tf).
+    If tf won't compile, send the output of "./configure" and "make".
+    If you have a bug or core, give me all error messages from tf.
+    If you have a bug or core, tell me what you did or what happened
+        before the problem, and if the problem is repeatable.
+    If you have a core, do _not_ send the core file.
+
