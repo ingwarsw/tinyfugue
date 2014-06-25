@@ -9,6 +9,19 @@
 #define myerror(str) eputs(str)
 #define myinfo(str) oputs(str)
 
+static int getvar_for_lua(lua_State *state)
+{
+	const char *arg;
+    const char *value;
+
+    arg = luaL_checkstring(state, 1);
+    if (arg == NULL || *arg == '\0')
+        return luaL_argerror(state, 1, "name must not be empty");
+    value = getvar(arg);
+    lua_pushstring(state, value);
+	return 1;
+}
+
 // it's the function that Lua scripts will see as "tfexec"
 static int tfeval_for_lua(lua_State *state)
 {
@@ -37,7 +50,7 @@ struct Value *handle_calllua_command(String *args, int offset)
 
 	if(lua_state == NULL)
 	{
-		myerror("no script loaded");
+		myerror("No script loaded");
 		free(cstr_args);
 		return newint(1);
 	}
@@ -53,7 +66,7 @@ struct Value *handle_calllua_command(String *args, int offset)
 	lua_getfield(lua_state, LUA_GLOBALSINDEX, func);
 	if(lua_isfunction(lua_state, -1) != 1)
 	{
-		myerror("no such function");
+		myerror("No such function");
 		lua_pop(lua_state, 1);
 		free(cstr_args);
 		return newint(1);
@@ -108,29 +121,32 @@ struct Value *handle_loadlua_command(String *args, int offset)
 		luaL_openlibs(lua_state);
 
 		// add our tf_eval() function for Lua scripts to call
-		lua_pushcfunction(lua_state, tfeval_for_lua);
-		lua_setglobal(lua_state, "tf_eval");
+		lua_register(lua_state, "tf_eval", tfeval_for_lua);
+		// add tf_getvar() function
+        lua_register(lua_state, "tf_getvar", getvar_for_lua);
 	}
 
 	// now read and execute the scripts that user asked for
 	if(luaL_dofile(lua_state, args->data + offset) != 0)
 	{
-		myerror("cannot load script:");
+		myerror("Cannot load script: ");
 		myerror(lua_tostring(lua_state, -1));
 		lua_pop(lua_state, 1);
+		return newint(1);
 	}
-	else
-		myinfo("loaded");
 
 	return newint(0);
 }
 
 struct Value *handle_purgelua_command(String *args, int offset)
 {
-	lua_close(lua_state);
-	lua_state = NULL;
-
-	myinfo("all scripts forgotten");
-
+	if(lua_state != NULL)
+    {
+    	lua_close(lua_state);
+	    lua_state = NULL;
+	    myinfo("All LUA scripts forgotten");
+		return newint(1);
+    }
+	myinfo("No LUA scripts loaded");
 	return newint(0);
 }

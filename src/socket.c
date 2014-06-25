@@ -3244,7 +3244,7 @@ non_telnet:
                 Stringadd(xsock->buffer, localchar);
                 end = ++place;
                 /* Quickly skip characters that can't possibly be special. */
-                while (is_print(*end) && *end != TN_IAC && end - buffer < count)
+                while (end - buffer < count && is_print(*end) && *end != TN_IAC)
                     end++;
                 Stringfncat(xsock->buffer, (char*)place, end - place);
                 place = end - 1;

@@ -49,9 +49,9 @@ const char version[] =
 #if DEVELOPMENT
     "DEVELOPMENT VERSION: "
 #endif
-    "TinyFugue version 5.0 beta 8 - Ingwar 1.0";
+    "TinyFugue version 5.0 beta 8 - Ingwar 1.3";
 
-const char mods[] = "Ingwar Swenson patch +ansi_log +log_timestamp -crazy_dump";
+const char mods[] = "Ingwar Swenson patch +ansi_log +log_timestamp +lua -crazy_dump";
 
 const char copyright[] =
     "Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 Ken Keys (kenkeys@users.sourceforge.net)";

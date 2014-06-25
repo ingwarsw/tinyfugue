@@ -146,12 +146,15 @@ static void save_to_log(History *hist, const conString *str)
            SStringoncat(log_buffer, log_prefix, i_s-1, 2);
        }
      }
-     SStringcat(log_buffer, str);
 
-
+    if (ansi_log)
+        SStringcat(log_buffer, encode_ansi(str, 0));
+    else
+        SStringcat(log_buffer, str);
+        
     if (wraplog) {
         /* ugly, but some people want it */
-	const char *p = log_buffer->data;
+        const char *p = log_buffer->data;
         int i = 0, first = TRUE, len, remaining = log_buffer->len;
         do { /* must loop at least once, to handle empty string case */
             if (!first && wrapflag)
