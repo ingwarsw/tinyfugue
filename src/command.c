@@ -30,6 +30,7 @@ static const char RCSid[] = "$Id: command.c,v 35004.141 2007/01/13 23:12:39 kkey
 #include "expand.h"     /* macro_run() */
 #include "signals.h"    /* suspend(), shell() */
 #include "variable.h"
+#include "lua.h" /* lua scripting handling */
 
 int exiting = 0;
 

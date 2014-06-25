@@ -85,6 +85,9 @@ AC_ARG_ENABLE(process,
 AC_ARG_ENABLE(float,
 [  --disable-float         disable floating point arithmetic and functions],
     , enable_float=yes)
+AC_ARG_ENABLE(lua,
+[  --enable-lua            enable LUA scripting],
+    enable_lua=yes, enable_lua=no)
 
 AC_ARG_WITH(incdirs,
 [  --with-incdirs=DIRS     search for include files in DIRS])
@@ -713,6 +716,21 @@ AC_SUBST(CFLAGS)
 AC_SUBST(CPPFLAGS)
 AC_SUBST(LIBS)
 AC_SUBST(OTHER_OBJS)
+
+if test "$enable_lua" = "yes"; then
+	AC_MSG_NOTICE([LUA scripting enabled.])
+	LUA_DEFINES="-DLUA_ENABLED"
+	LUA_LIBS="-llua"
+	LUA_SOURCES="lua.c"
+	LUA_OBJECTS="lua.$OBJEXT"
+else
+	AC_MSG_NOTICE([LUA scripting disabled.])
+fi
+
+AC_SUBST(LUA_DEFINES)
+AC_SUBST(LUA_LIBS)
+AC_SUBST(LUA_SOURCES)
+AC_SUBST(LUA_OBJECTS)
 
 AC_OUTPUT(Makefile unix/vars.mak src/tfdefs.h, [
 

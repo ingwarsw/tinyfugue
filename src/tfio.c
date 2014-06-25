@@ -518,11 +518,14 @@ void vSprintf(String *buf, int flags, const char *fmt, va_list ap)
         *++specptr = '\0';
 
         switch (*fmt) {
+			va_list ap_copy;
         case 'd': case 'i':
         case 'x': case 'X': case 'u': case 'o':
         case 'f': case 'e': case 'E': case 'g': case 'G':
         case 'p':
-            vsprintf(tempbuf, spec, ap);
+			va_copy(ap_copy, ap);
+            vsprintf(tempbuf, spec, ap_copy);
+			va_end(ap_copy);
             Stringcat(buf, tempbuf);
             /* eat the arguments used by vsprintf() */
             while (stars--) (void)va_arg(ap, int);

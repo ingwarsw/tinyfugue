@@ -10794,4 +10794,62 @@ worlds
 
   See also: [1msockets[22;0m 
 
+&/loadlua
+
+/loadlua <filename>
+
+  Loads and interprets a Lua script given in <filename>. All global
+  functions defined in the script can be called with /calllua.
+
+&/calllua
+
+/calllua <function> <argument>
+
+  Calls a Lua function. It needs to be already defined in one of the previously
+  loaded Lua scripts (using /loadlua).
+
+  Everything entered after a function name and a space is treated as a single
+  string argument.
+
+  Information on writing Lua scripts can be found in /help lua.
+
+&/purgelua
+
+/purgelua
+
+  Forgets all Lua scripts loaded. You won't be able to use /calllua afterwards
+  until you load some scripts.
+
+&lua
+
+1. Lua functions
+   The function called by /calllua can take up to 3 arguments and shouldn't
+   return any values. The arguments are as follows:
+
+    1st: the string passed after /calllua <function> (the plain argument)
+	2nd: a table of integers, where index corresponds to the characters
+	     in 1st argument. The integers define attributes (such as colour)
+		 of characters in the 1st argument. Useful to get the colours when
+		 defining triggers. Can be an empty array, e.g. if the string was
+		 entered by the user.
+	3rd: an integer describing attributes for the whole line. I mostly found
+	     it to be 0, I don't know if it can be something different.
+
+2. Passing input to Lua functions
+   The way to inform a Lua script about what the MUD has sent to you is simple:
+
+     /def -t'*' call_lua_parser = /calllua <parser_func> %{*}
+
+   You should write an appropriate <parser_func> in your scripts that will
+   take the input line and do what it likes to do with it.
+
+3. Calling tf commands from Lua functions
+   A symbol will be defined in your Lua functions named tf_eval. Just call
+   tf_eval with a single string attribute. This will have the exact same effect
+   as typing /eval <string> in the tf's prompt. Example:
+
+   function foo(str, attrs, line_attr)
+     tf_eval("/echo Hello world")
+   end
+
 &

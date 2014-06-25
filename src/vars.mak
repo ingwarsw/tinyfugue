@@ -20,10 +20,11 @@ TFVER=50b8
 
 SOURCE = attr.c command.c dstring.c expand.c expr.c help.c history.c \
   keyboard.c macro.c main.c malloc.c output.c process.c search.c \
-  signals.c socket.c tfio.c tty.c util.c variable.c world.c
+  signals.c socket.c tfio.c tty.c util.c variable.c world.c \
+  $(LUA_SOURCES)
 
 OBJS = attr.$O command.$O dstring.$O expand.$O expr.$O help.$O history.$O \
   keyboard.$O macro.$O main.$O malloc.$O output.$O pattern.$O process.$O \
   search.$O signals.$O socket.$O tfio.$O tty.$O util.$O variable.$O world.$O \
-  $(OTHER_OBJS)
+  $(LUA_OBJECTS) $(OTHER_OBJS)
 

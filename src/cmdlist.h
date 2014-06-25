@@ -31,6 +31,9 @@
 /*     name            function                     reserved? */
 defcmd("BEEP"        , handle_beep_command        , 0)
 defcmd("BIND"        , handle_bind_command        , 0)
+#if LUA_ENABLED
+defcmd("CALLLUA"     , handle_calllua_command    , 0)
+#endif
 defcmd("CONNECT"     , handle_connect_command     , 0)
 defcmd("CORE"        , handle_core_command        , 0)
 defcmd("DC"          , handle_dc_command          , 0)
@@ -58,10 +61,16 @@ defcmd("LISTSTREAMS" , handle_liststreams_command , 0)
 defcmd("LISTVAR"     , handle_listvar_command     , 0)
 defcmd("LISTWORLDS"  , handle_listworlds_command  , 0)
 defcmd("LOAD"        , handle_load_command        , 0)
+#if LUA_ENABLED
+defcmd("LOADLUA"     , handle_loadlua_command    , 0)
+#endif
 defcmd("LOCALECHO"   , handle_localecho_command   , 0)
 defcmd("LOG"         , handle_log_command         , 0)
 defcmd("PS"          , handle_ps_command          , 0)
 defcmd("PURGE"       , handle_purge_command       , 0)
+#if LUA_ENABLED
+defcmd("PURGELUA"    , handle_purgelua_command    , 0)
+#endif
 defcmd("QUIT"        , handle_quit_command        , 0)
 defcmd("QUOTE"       , handle_quote_command       , 0)
 defcmd("RECALL"      , handle_recall_command      , 0)
