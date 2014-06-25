@@ -1,6 +1,7 @@
 language: c
+compiler: gcc
 
-compiler:
-  - clang
-  - gcc
+env:
+    - OPTS=
 
+script: ./configure ${OPTS} && make
