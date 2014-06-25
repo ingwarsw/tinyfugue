@@ -3,5 +3,7 @@ compiler: gcc
 
 env:
     - OPTS=
+    - OPTS=--enable-lua
+    
 
-script: ./configure ${OPTS} && make
+script: ./configure --enable-version --enable-symlink --enable-getaddrinfo ${OPTS} && make
