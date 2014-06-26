@@ -29,4 +29,4 @@ Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 
 
 http://tinyfugue.sourceforge.net/
 
-Oryginal README in @README.orig 
+[Oryginal README](README.orig)
