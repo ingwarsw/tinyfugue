@@ -73,13 +73,7 @@ _failmsg:
 #	    echo '## variable CC to "cc", and run ./configure again.'; \
 #	fi
 
-pcre:
-# ranlib is required by MacOS X, maybe others
-	cd pcre-2.08 && \
-	    $(MAKE) CC='$(CC)' CFLAGS='-O' O=o libpcre.a && \
-	    $(RANLIB) libpcre.a
-
-TF tf$(X):     $(OBJS) $(BUILDERS) $(PCRE)
+TF tf$(X):     $(OBJS) $(BUILDERS)
 	$(CC) $(LDFLAGS) -o tf$(X) $(OBJS) $(LIBS) -lpcre
 #	@# Some stupid linkers return ok status even if they fail.
 	@test -f "tf$(X)"
