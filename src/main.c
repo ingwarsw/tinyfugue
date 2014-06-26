@@ -49,9 +49,9 @@ const char version[] =
 #if DEVELOPMENT
     "DEVELOPMENT VERSION: "
 #endif
-    "TinyFugue version 5.0 beta 8 - Ingwar 1.3";
+    "TinyFugue version 5.0 beta 8 - Ingwar 1.4";
 
-const char mods[] = "Ingwar Swenson patch +ansi_log +log_timestamp +lua -crazy_dump";
+const char mods[] = "Ingwar Swenson (ingwar@ingwar.eu.org) +ansi_log +log_timestamp +lua +gmcp +ATCP +GMCP +option102";
 
 const char copyright[] =
     "Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 Ken Keys (kenkeys@users.sourceforge.net)";
@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
 
     puts("");
     puts(version);
+    puts(mods);
     puts(copyright);
 
     while (--argc > 0 && (*++argv)[0] == '-') {
