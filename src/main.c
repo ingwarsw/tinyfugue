@@ -49,7 +49,7 @@ const char version[] =
 #if DEVELOPMENT
     "DEVELOPMENT VERSION: "
 #endif
-    "TinyFugue version 5.0 beta 8 - Ingwar 1.4";
+    "TinyFugue version 5.0 beta 9";
 
 const char mods[] = "Ingwar Swenson (ingwar@ingwar.eu.org) +ansi_log +log_timestamp +lua +gmcp +ATCP +GMCP +option102";
 
