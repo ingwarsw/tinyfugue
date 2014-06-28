@@ -18,6 +18,14 @@ Because Kan Keys is not activelly developing it from 6 years and i gathered a lo
 	- GMCP
 	- option 102
 
+
+```
+To enable compile with:
+	--enable-atcp		enable ATCP support	
+	--enable-gmcp		enable GMCP support	
+	--enable-option102	enable telnet option 102 support	
+```
+
 ### New logging options
 
 	- Timestamp logging
