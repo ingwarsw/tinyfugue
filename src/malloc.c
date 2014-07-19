@@ -12,7 +12,7 @@ static const char RCSid[] = "$Id: malloc.c,v 35004.22 2007/01/13 23:12:39 kkeys 
 #include "signals.h"
 #include "malloc.h"
 
-caddr_t mmalloc_base = NULL;
+void *mmalloc_base = NULL;
 int low_memory_warning = 0;
 static char *reserve = NULL;
 
