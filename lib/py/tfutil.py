@@ -3,8 +3,7 @@
 # in python than in C (so aren't in the base tf module)
 #
 # Copyright 2008 Ron Dippold
-
-import tf
+from lib.py import tf
 
 # ---------------------------------------------------------------------------
 # Misc helper functions

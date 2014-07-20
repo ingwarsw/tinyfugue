@@ -22,12 +22,17 @@
 # v1.00 - Jan 13 08 - First version
 
 # You might want to configure these two
+from lib.py import tf
+
 LASTDIR='/tmp/diffedit'
 TABSIZE=4
 LINES_PER_SECOND=50
 
 # real stuff starts here
-import tf, difflib, os, shutil
+import difflib
+import os
+import shutil
+
 
 def help( dummy=None ):
 	for line in """

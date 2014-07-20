@@ -23,8 +23,7 @@
 # Copyright 2008 Ron Dippold
 #
 # v1.00 - Jan 25 '08 - Initial version
-
-import tf, tfutil
+from lib.py import tf, tfutil
 
 #----------------------------------------------------------
 # A glorious real world - which we're hiding

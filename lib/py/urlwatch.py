@@ -28,6 +28,7 @@
 
 # You can use '/python_call urlwatch.config <key>=<value>' to change any of
 # these is well - but it won't do any error checking.
+from lib.py import tf
 
 CONFIG = {
 
@@ -63,7 +64,9 @@ td { padding: 0.5em 1em; }
 # ---------------------------------------------------------------------------
 
 # regexp for matching
-import re, cgi, tf
+import re
+import cgi
+
 PATTERN = r'(http|ftp|https)://\S+[0-9A-Za-z/]'
 CPATTERN = re.compile( PATTERN )
 

@@ -21,8 +21,15 @@
 # v1.01 - Jan 23 '08 - Convert to using tfutil
 # v1.00 - Jan 20 '08 - First version
 #
-import curses, os
-import tf, tfutil
+import curses
+import os
+
+from lib.py import tf
+import tfutil
+
+
+
+
 
 # ------------------------------------------------------
 # Where's the worldsfile?
