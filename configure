@@ -1272,6 +1272,7 @@ Optional Features:
                           NAME=BINDIR/tf
   --enable-core           enable debugging core files
   --disable-ssl           disable SSL support
+  --enable-python         enable python scripting support
   --enable-getaddrinfo    enable getaddrinfo() (if configure complains)
   --disable-getaddrinfo   disable getaddrinfo() (implies --disable-inet6)
   --disable-inet6         disable IPv6 support
@@ -1776,6 +1777,13 @@ if test "${enable_ssl+set}" = set; then
 else
   enable_ssl=yes
 fi
+
+# Check whether --enable-python or --disable-python was given.
+if test "${enable_python+set}" = set; then
+  enableval="$enable_python"
+else
+  enable_python=no
+fi;
 
 # Check whether --enable-getaddrinfo was given.
 if test "${enable_getaddrinfo+set}" = set; then
@@ -5850,6 +5858,14 @@ echo "${ECHO_T}ssl support will not be enabled." >&6; }
 	CFLAGS="$old_CFLAGS"
 	CPPFLAGS="$old_CPPFLAGS"
     fi
+fi
+
+if test "$enable_python" = "yes"; then
+   CFLAGS="$CFLAGS -DTFPYTHON"
+   pyinc=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_inc()"`
+   pyver=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
+   CPPFLAGS="$CPPFLAGS -I$pyinc"
+   LIBS="$LIBS -lpython${pyver}"
 fi
 
 

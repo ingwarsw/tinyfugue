@@ -71,6 +71,12 @@ defcmd("PURGE"       , handle_purge_command       , 0)
 #if LUA_ENABLED
 defcmd("PURGELUA"    , handle_purgelua_command    , 0)
 #endif
+#ifdef TFPYTHON
+defcmd("PYTHON"      , handle_python_command      , 0)
+defcmd("PYTHON_CALL" , handle_python_call_command , 0)
+defcmd("PYTHON_KILL" , handle_python_kill_command , 0)
+defcmd("PYTHON_LOAD" , handle_python_load_command , 0)
+#endif
 defcmd("QUIT"        , handle_quit_command        , 0)
 defcmd("QUOTE"       , handle_quote_command       , 0)
 defcmd("RECALL"      , handle_recall_command      , 0)

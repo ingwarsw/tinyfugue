@@ -74,6 +74,9 @@ funccode(option102,	0,	1,  2),
 funccode(pad,		1,	1,  (unsigned)-1),
 funccode(pow,		1,	2,  2),
 funccode(prompt,	0,	1,  1),
+#ifdef TFPYTHON
+funccode(python,	0,	1,  1),
+#endif
 funccode(rand,		0,	0,  2),
 funccode(read,		0,	0,  0),
 funccode(regmatch,	0,	2,  2), /* !pure: sets Pn */
