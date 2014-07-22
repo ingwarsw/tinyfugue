@@ -8928,8 +8928,8 @@ CPPFLAGS="${CPPFLAGS} -DDATADIR=\${datadir}"
 if test "$enable_lua" = "yes"; then
 	{ echo "$as_me:$LINENO: LUA scripting enabled." >&5
 echo "$as_me: LUA scripting enabled." >&6;}
-	LUA_DEFINES="-DLUA_ENABLED -I/usr/include/lua5.1"
-	LUA_LIBS="-llua5.1"
+	LUA_DEFINES="-DLUA_ENABLED"
+	LUA_LIBS="-llua"
 	LUA_SOURCES="lua.c"
 	LUA_OBJECTS="lua.$OBJEXT"
 else
