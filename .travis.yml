@@ -10,4 +10,4 @@ before_install:
   - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then travis_retry sudo apt-get update -qq; travis_retry sudo apt-get install liblua5.1-0-dev -y; fi
   - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then travis_retry brew update; travis_retry brew install lua pcre; fi
 
-script: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --enable-lua && make
+script: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --enable-lua --enable-python && make
