@@ -51,7 +51,7 @@ all files:  _all
 	@echo '##    library:   $(TF_LIBDIR)'
 #	@echo '##    manpage:   $(MANPAGE)'
 
-_all:  tf$(X) ../tf-lib/tf-help.idx
+_all:  tf$(X) ../lib/tf/tf-help.idx
 
 _failmsg:
 #	@echo '#####################################################'
@@ -92,7 +92,7 @@ install_TF $(TF): tf$(X) $(BUILDERS)
 SYMLINK $(SYMLINK): $(TF)
 	test -z "$(SYMLINK)" || { rm -f $(SYMLINK) && ln -s $(TF) $(SYMLINK); }
 
-LIBRARY $(TF_LIBDIR): ../tf-lib/tf-help ../tf-lib/tf-help.idx
+LIBRARY $(TF_LIBDIR): ../lib/tf/tf-help ../lib/tf/tf-help.idx
 	@echo '## Creating library directory...'
 #	@# Overly simplified shell commands, to avoid problems on ultrix
 	-@test -n "$(TF_LIBDIR)" || echo "TF_LIBDIR is undefined."
@@ -104,12 +104,17 @@ LIBRARY $(TF_LIBDIR): ../tf-lib/tf-help ../tf-lib/tf-help.idx
 #
 #	@#rm -f $(TF_LIBDIR)/*;  # wrong: this would remove local.tf, etc.
 	@echo '## Copying library files...'
-	cd ../tf-lib; \
+	cd ../lib/tf; \
 	for f in *; do test -f $$f && files="$$files $$f"; done; \
 	( cd $(TF_LIBDIR); rm -f $$files tf.help tf.help.index; ); \
 	cp $$files $(TF_LIBDIR); \
+	cd ../../lib/py; \
+	for f in *; do test -f $$f && pyfiles="$$pyfiles $$f"; done; \
+	( cd $(TF_LIBDIR); rm -f $$pyfiles tf.help tf.help.index; ); \
+	cp $$pyfiles $(TF_LIBDIR); \
 	cd $(TF_LIBDIR); \
-	chmod $(MODE) $$files; chmod ugo-wx $$files
+	chmod $(MODE) $$files; chmod ugo-wx $$files ;\
+	chmod $(MODE) $$pyfiles; chmod ugo-wx $$pyfiles
 	-rm -f $(TF_LIBDIR)/CHANGES 
 	cp ../CHANGES $(TF_LIBDIR)
 	chmod $(MODE) $(TF_LIBDIR)/CHANGES; chmod ugo-wx $(TF_LIBDIR)/CHANGES
@@ -138,13 +143,13 @@ makehelp: makehelp.c
 
 __always__:
 
-../tf-lib/tf-help: __always__
+../lib/tf/tf-help: __always__
 	if test -d ../help; then cd ../help; $(MAKE) tf-help; fi
-	if test -d ../help; then cp ../help/tf-help ../tf-lib; fi
+	if test -d ../help; then cp ../help/tf-help ../lib/tf; fi
 
-../tf-lib/tf-help.idx: ../tf-lib/tf-help makehelp
+../lib/tf/tf-help.idx: ../lib/tf/tf-help makehelp
 	$(MAKE) -f ../unix/unix.mak CC='$(CC)' CFLAGS='$(CFLAGS)' makehelp
-	./makehelp < ../tf-lib/tf-help > ../tf-lib/tf-help.idx
+	./makehelp < ../lib/tf/tf-help > ../lib/tf/tf-help.idx
 
 MANPAGE $(MANPAGE): $(BUILDERS) tf.1.$(MANTYPE)man
 	cp tf.1.$(MANTYPE)man $(MANPAGE)
