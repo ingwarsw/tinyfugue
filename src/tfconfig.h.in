@@ -53,7 +53,6 @@
 #define HAVE_HSTRERROR 0
 #define HAVE_INDEX 0
 #define HAVE_INET_ATON 0
-#define HAVE_INET_PTON 0
 #define HAVE_KILL 0
 #define HAVE_MEMCPY 0
 #define HAVE_MEMSET 0
