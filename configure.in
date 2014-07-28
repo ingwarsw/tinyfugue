@@ -20,7 +20,7 @@ OTHER_OBJS=""
 TFVER=`sed -ne 's/^TFVER=\(.*\)/\1/p' src/vars.mak`
 TFVERSION=`sed -n -e '/Fugue version/s/^.*"\(.*\)".*$/\1/p' src/main.c`
 
-AC_INIT([src/tf.h], [$TFVER])
+AC_INIT([src/tf.h])
 
 AC_CONFIG_HEADER([src/tfconfig.h])
 
@@ -239,7 +239,7 @@ dnl # SysV needs: -lsocket -lnsl
 
 
 dnl TF_DIRS(src, dst[, prefix[, suffix]])
-AC_DEFUN(TF_DIRS, [
+AC_DEFUN([TF_DIRS], [
     if test "${$1}" != "no" && test "${$1}" != ""; then
         for dir in ${$1}; do
             $2="${$2} $3${dir}$4"
@@ -425,7 +425,7 @@ AC_CHECK_HEADERS(zlib.h)
 dnl TF_SEARCH_HEADERS(SYMBOL, HEADERS... [, DO-IF-FOUND [, DO-IF-NOT-FOUND]])
 dnl Searches for each header in HEADERS, and defines SYMBOL to the first one
 dnl found.
-AC_DEFUN(TF_SEARCH_HEADERS, [
+AC_DEFUN([TF_SEARCH_HEADERS], [
     found=0;
     for f in $2; do
 	AC_CHECK_HEADERS($f,
@@ -482,7 +482,7 @@ dnl ########### typedefs ############
 
 dnl TF_CHECK_TYPE(TYPE, DEFAULT [, OTHER_HEADERS])
 dnl ...because AC_CHECK_TYPE doesn't have OTHER_HEADERS
-AC_DEFUN(TF_CHECK_TYPE,
+AC_DEFUN([TF_CHECK_TYPE],
 [AC_REQUIRE([AC_HEADER_STDC])dnl
 AC_MSG_CHECKING(for $1)
 AC_CACHE_VAL(ac_cv_type_$1,
