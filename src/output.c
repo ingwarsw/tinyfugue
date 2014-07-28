@@ -476,12 +476,12 @@ static void init_term(void)
 	if ((str = getvar("TERMCAP")) && (len = strlen(str)) > 0) {
 	    is_csh = ((shell = getenv("SHELL")) && smatch("*csh", shell) == 0);
 	    if (str[len-1] != ':') {
-		wprintf("unsetting invalid TERMCAP variable%s.",
+		tf_wprintf("unsetting invalid TERMCAP variable%s.",
 		    is_csh ?  ", which appears to have been corrupted by your "
 		    "broken *csh shell" : "");
 		unsetvar(ffindglobalvar("TERMCAP"));
 	    } else if (len == 1023 && (!getenv("TF_FORCE_TERMCAP")) && is_csh) {
-		wprintf("unsetting the TERMCAP environment variable because "
+		tf_wprintf("unsetting the TERMCAP environment variable because "
 		    "it looks like it has been truncated by your broken *csh "
 		    "shell.  To force TF to use TERMCAP, restart TF with the "
 		    "TF_FORCE_TERMCAP environment variable set.");
@@ -491,9 +491,9 @@ static void init_term(void)
     }
 
     if (!TERM || !*TERM) {
-        wprintf("TERM undefined.");
+        tf_wprintf("TERM undefined.");
     } else if (tgetent(termcap_entry, TERM) <= 0) {
-        wprintf("\"%s\" terminal unsupported.", TERM);
+        tf_wprintf("\"%s\" terminal unsupported.", TERM);
     } else {
         if (columns <= 0) columns = tgetnum("co");
         if (lines   <= 0) lines   = tgetnum("li");
@@ -1468,7 +1468,7 @@ static ListEntry *find_statusfield_by_name(int row, const char *spec)
 int ch_status_int(Var *var)
 {
     if (warn_status)
-	wprintf("the default value of %s has "
+	tf_wprintf("the default value of %s has "
 	    "changed between tf version 4 and 5.", var->val.name);
     return 1;
 }
@@ -1540,7 +1540,7 @@ static int status_add(int reset, int nodup, int row, ListEntry *where,
     }
 
     if (totwidth > columns) {
-        wprintf("total status width (%d) is wider than screen (%d)",
+        tf_wprintf("total status width (%d) is wider than screen (%d)",
 	    totwidth, columns);
     }
 
@@ -1625,7 +1625,7 @@ struct Value *handle_status_add_command(String *args, int offset)
 int ch_status_fields(Var *var)
 {
     if (warn_status) {
-	wprintf("setting status_fields directly is deprecated, "
+	tf_wprintf("setting status_fields directly is deprecated, "
 	    "and may clobber useful new features introduced in version 5.  "
 	    "The recommended way to change "
 	    "status fields is with /status_add, /status_rm, or /status_edit. "

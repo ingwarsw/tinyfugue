@@ -351,7 +351,7 @@ int stringliteral(String *dest, const char **str)
 		/* XXX handle backslash-newline */
 #endif
             } else if ((*str)[1] && pedantic) {
-                wprintf("the only legal escapes within this quoted "
+                tf_wprintf("the only legal escapes within this quoted "
 		    "string are \\\\ and \\%c.  \\\\%c is the correct way to "
 		    "write a literal \\%c inside a quoted string.",
 		    quote, (*str)[1], (*str)[1]);
@@ -673,7 +673,7 @@ void init_util2(void)
         Stringfree(path);
 #endif
     } else {
-        wprintf("Can't figure out name of mail file.");
+        tf_wprintf("Can't figure out name of mail file.");
     }
 }
 

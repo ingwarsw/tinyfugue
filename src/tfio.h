@@ -153,13 +153,7 @@ extern void   tfprintf(TFILE *file, const char *fmt, ...)
                      format_printf(2, 3);
 extern void   eprefix(String *buffer);
 extern void   eprintf(const char *fmt, ...) format_printf(1, 2);
-#ifndef __APPLE__
-#ifdef TFPYTHON
-// wprintf is already in /usr/include/wchar.h, which python includes
-#define wprintf tf_wprintf
-extern void   wprintf(const char *fmt, ...) format_printf(1, 2);
-#endif
-#endif
+extern void   tf_wprintf(const char *fmt, ...) format_printf(1, 2);
 extern char   igetchar(void);
 extern int    handle_tfopen_func(const char *name, const char *mode);
 extern TFILE *find_tfile(const char *handle);

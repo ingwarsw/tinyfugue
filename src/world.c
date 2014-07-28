@@ -166,7 +166,7 @@ World *new_world(const char *name, const char *type,
     if (pass && *pass && loadfile && (loadfile->mode & (S_IROTH | S_IRGRP)) &&
         !loadfile->warned)
     {
-        wprintf("file contains passwords and is readable by others.");
+        tf_wprintf("file contains passwords and is readable by others.");
         loadfile->warned++;
     }
 # endif /* __CYGWIN32__ */
