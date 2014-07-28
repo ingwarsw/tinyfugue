@@ -3241,6 +3241,9 @@ static int handle_socket_input(const char *simbuffer, int simlen)
                 } else if (
                     rawchar == TN_NAWS ||
                     rawchar == TN_TTYPE ||
+#if ENABLE_ATCP
+		    (rawchar == TN_ATCP && atcp) ||
+#endif
                     rawchar == TN_BINARY)
                 {
                     SET_TELOPT(xsock, us, rawchar);  /* set state */
