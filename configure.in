@@ -15,14 +15,16 @@ dnl Note: autoconf uses <<EOF, so we use <<END instead.
 
 dnl ### Initialization variables.
 
-AC_INIT(src/tf.h)
-
 SOCKS=''
 OTHER_OBJS=""
 TFVER=`sed -ne 's/^TFVER=\(.*\)/\1/p' src/vars.mak`
 TFVERSION=`sed -n -e '/Fugue version/s/^.*"\(.*\)".*$/\1/p' src/main.c`
 
-AC_CONFIG_HEADER(src/tfconfig.h)
+AC_INIT([src/tf.h], [$TFVER])
+
+AC_CONFIG_HEADER([src/tfconfig.h])
+
+AC_CONFIG_MACRO_DIR([m4])
 
 AC_PREFIX_DEFAULT(`
     if test -w /usr/local/bin && test -w /usr/local/share; then
@@ -748,16 +750,19 @@ AC_SUBST(OTHER_OBJS)
 
 if test "$enable_lua" = "yes"; then
 	AC_MSG_NOTICE([LUA scripting enabled.])
+    AX_PROG_LUA
+    AX_LUA_LIBS
+    AX_LUA_HEADERS
 	LUA_DEFINES="-DLUA_ENABLED"
-	LUA_LIBS="-llua"
 	LUA_SOURCES="lua.c"
 	LUA_OBJECTS="lua.$OBJEXT"
 else
 	AC_MSG_NOTICE([LUA scripting disabled.])
 fi
 
+AC_SUBST(LUA_INCLUDE)
+AC_SUBST(LUA_LIB)
 AC_SUBST(LUA_DEFINES)
-AC_SUBST(LUA_LIBS)
 AC_SUBST(LUA_SOURCES)
 AC_SUBST(LUA_OBJECTS)
 
