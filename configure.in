@@ -15,12 +15,12 @@ dnl Note: autoconf uses <<EOF, so we use <<END instead.
 
 dnl ### Initialization variables.
 
+AC_INIT([src/tf.h])
+
 SOCKS=''
 OTHER_OBJS=""
 TFVER=`sed -ne 's/^TFVER=\(.*\)/\1/p' src/vars.mak`
 TFVERSION=`sed -n -e '/Fugue version/s/^.*"\(.*\)".*$/\1/p' src/main.c`
-
-AC_INIT([src/tf.h])
 
 AC_CONFIG_HEADER([src/tfconfig.h])
 
