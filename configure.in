@@ -344,15 +344,12 @@ fi
 
 # python patch
 if test "$enable_python" = "yes"; then
-   AC_MSG_NOTICE([/python enabled])
-   AC_CHECK_HEADER( Python.h, , break )
-   CFLAGS="$CFLAGS -DTFPYTHON"
-   pyinc=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_inc()"`
-   pyver=`python -c "import distutils.sysconfig; print distutils.sysconfig.get_python_version()"`
-   CPPFLAGS="$CPPFLAGS -I$pyinc"
-   LIBS="$LIBS -lpython${pyver}"
-else
-   AC_MSG_NOTICE([/python disabled])
+    AX_PYTHON
+    CFLAGS="$CFLAGS -DTFPYTHON"
+    PYTHON_INCLUDE="-I$PYTHON_INCLUDE_DIR"
+    PYTHON_LIB="-l$PYTHON_LIB"
+    AC_SUBST(PYTHON_INCLUDE)
+    AC_SUBST(PYTHON_LIB)
 fi
 
 dnl ### test termcap.
