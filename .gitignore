@@ -10,3 +10,16 @@
 
 #
 config.log
+aclocal.m4
+autoscan.log
+config.status
+configure.scan
+lib/tf/tf-help.idx
+src/tf
+src/Makefile
+src/TF_LIBDIR.build
+src/makehelp
+src/makehelp.dSYM/
+src/tfconfig.h
+src/tfdefs.h
+unix/vars.mak
