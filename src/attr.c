@@ -19,6 +19,10 @@ static const char RCSid[] = "$Id: attr.c,v 35004.10 2007/01/13 23:12:39 kkeys Ex
 #include "variable.h"
 #include "parse.h"	/* valstd() */
 
+#if WIDECHAR
+#include <wchar.h>
+#endif
+
 
 const int feature_256colors = (NCOLORS == 256);
 
@@ -460,6 +464,15 @@ String *decode_ansi(const char *s, attr_t attrs, int emul, attr_t *final_attrs)
     String *dst;
     int i, colorstate = 0;
     attr_t starting_attrs = attrs;
+#if WIDECHAR
+    const char *start = s;
+    int in_len = strlen(s);
+    wchar_t wc;
+    mbstate_t mbs;
+    size_t ret;
+
+    memset(&mbs, 0, sizeof(mbs));
+#endif
 
     if (emul == EMUL_RAW || emul == EMUL_DEBUG) {
 	if (final_attrs) *final_attrs = attrs;
@@ -543,11 +556,24 @@ String *decode_ansi(const char *s, attr_t attrs, int emul, attr_t *final_attrs)
             if (*s == '(' || *s == ')' || *s == '#')
                 if (!*++s) break;
 
+#if WIDECHAR
+        } else if (((ret = mbrtowc(&wc, s, in_len - (s - start), &mbs)) > 0)
+		&& (iswprint(wc) || *s == '\t')) {
+#else
         } else if (is_print(*s) || *s == '\t') {
+#endif
 	    int orig_len = dst->len;
 	    if (*s == '\t' && expand_tabs) {
 		Stringnadd(dst, ' ', tabsize - dst->len % tabsize);
 	    } else {
+#if WIDECHAR
+		if (ret <= -2 && ret >= 0) {
+		    int j = 1;
+		    while (j++ < ret) {
+			Stringadd(dst, *s++);
+		    }
+		}
+#endif
 		Stringadd(dst, *s);
 	    }
 	    set_attr(dst, orig_len, &starting_attrs, attrs);

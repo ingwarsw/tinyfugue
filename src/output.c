@@ -37,6 +37,10 @@ static const char RCSid[] = "$Id: output.c,v 35004.242 2007/01/14 00:44:19 kkeys
 #include "keyboard.h"	/* keyboard_pos */
 #include "cmdlist.h"
 
+#if WIDECHAR
+#include <wchar.h>
+#endif
+
 #ifdef EMXANSI
 # define INCL_VIO
 # include <os2.h>
@@ -2807,6 +2811,13 @@ static void hwrite(conString *line, int start, int len, int indent)
     int i, ctrl;
     int col = 0;
     char c;
+#if WIDECHAR
+    size_t ret;
+    mbstate_t is, os;
+
+    memset(&is, 0, sizeof(is));
+    memset(&os, 0, sizeof(os));
+#endif
 
     if (line->attrs & F_BELL && start == 0) {
         dobell(1);
@@ -2837,7 +2848,22 @@ static void hwrite(conString *line, int start, int len, int indent)
             bufputnc(' ', tabsize - col % tabsize);
             col += tabsize - col % tabsize;
         } else {
+#if WIDECHAR
+	    ret = mbrtowc(NULL, (char *)line->data+i, len - i, &is);
+	    if (ret >= (size_t) -2) {
+		/* Invalid character. Punt. */
+		bufputc(ctrl ? CTRL(c) : c);
+	    } else {
+		int j = 1;
+		bufputc(c);
+		while (j++ < ret) {
+		  c = line->data[++i];
+		  bufputc(c);
+		}
+	    }
+#else
             bufputc(ctrl ? CTRL(c) : c);
+#endif
             col++;
         }
     }
@@ -3067,6 +3093,13 @@ static int next_physline(Screen *screen)
 int wraplen(const char *str, int len, int indent)
 {
     int total, max, visible;
+#if WIDECHAR
+    wchar_t wc;
+    size_t ret;
+    mbstate_t mbs;
+
+    memset(&mbs, 0, sizeof(mbs));
+#endif
 
     if (emulation == EMUL_RAW) return len;
 
@@ -3075,8 +3108,20 @@ int wraplen(const char *str, int len, int indent)
     for (visible = total = 0; total < len && visible < max; total++) {
 	if (str[total] == '\t')
 	    visible += tabsize - visible % tabsize;
-	else
+	else {
+#if WIDECHAR
+	    ret = mbrtowc(&wc, (char *)str + total, total - len, &mbs);
+	    if (ret >= (size_t) -2) {
+		/* Invalid char. Punt. */
+		visible++;
+	    } else {
+		total += ret - 1;
+		visible += wcwidth(wc);
+	    }
+#else
 	    visible++;
+#endif
+	}
     }
 
     if (total == len) return len;

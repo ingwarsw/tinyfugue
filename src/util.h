@@ -19,12 +19,19 @@ struct feature {
 /* convert to or from ctrl character */
 #define CTRL(c)  (ucase(c) ^ '@')
 
+#if WIDECHAR
+/* Make these no-op for now. */
+#define mapchar(c)    (c)
+#define unmapchar(c)  (c)
+#define localize(c)   (c)
+#else
 /* map char to or from "safe" character set */
 #define mapchar(c)    ((c) ? (c) & 0xFF : 0x80)
 #define unmapchar(c)  ((char)(((c) == (char)0x80) ? 0x0 : (c)))
 
 /* Map character into set allowed by locale */
 #define localize(c)  ((is_print(c) || is_cntrl(c)) ? (c) : (c) & 0x7F)
+#endif
 
 /* Note STRNDUP works only if src[len] == '\0', ie. len == strlen(src) */
 #define STRNDUP(src, len) \

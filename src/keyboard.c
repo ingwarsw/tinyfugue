@@ -140,6 +140,7 @@ int handle_keyboard_input(int read_flag)
 	goto end;
 
     for (i = 0; i < count; i++) {
+#if !WIDECHAR
         if (istrip) buf[i] &= 0x7F;
         if (buf[i] & 0x80) {
 	    if (!literal_next &&
@@ -151,6 +152,7 @@ int handle_keyboard_input(int read_flag)
 	    if (!is_print(buf[i]))
 		buf[i] &= 0x7F;
         }
+#endif
         Stringadd(current_input, mapchar(buf[i]));
     }
 
