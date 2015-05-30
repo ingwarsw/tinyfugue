@@ -6,7 +6,15 @@ os:
  - linux
 
 before_install:
-  - sudo apt-get update -qq || true
-  - sudo apt-get install -y liblua5.1-0-dev || true
+  - if [ -z "${TRAVIS_OS_NAME}" ]; then export TRAVIS_OS_NAME=linux; fi; # for our forks that do not have multi-os enabled.
+  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then travis_retry sudo apt-get update -qq; travis_retry sudo apt-get install lua5.2 liblua5.2-dev -y; fi
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then travis_retry brew update; travis_retry brew install lua pcre; fi
 
-script: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-lua --enable-atcp --enable-gmcp --enable-option102 && make
+env:
+  matrix:
+    - OPTS=""
+    - OPTS="--enable-lua"
+    - OPTS="--enable-python"
+    - OPTS="--enable-lua --enable-python"
+
+script: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 $OPTS && make

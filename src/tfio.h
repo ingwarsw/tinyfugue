@@ -153,7 +153,7 @@ extern void   tfprintf(TFILE *file, const char *fmt, ...)
                      format_printf(2, 3);
 extern void   eprefix(String *buffer);
 extern void   eprintf(const char *fmt, ...) format_printf(1, 2);
-extern void   wprintf(const char *fmt, ...) format_printf(1, 2);
+extern void   tf_wprintf(const char *fmt, ...) format_printf(1, 2);
 extern char   igetchar(void);
 extern int    handle_tfopen_func(const char *name, const char *mode);
 extern TFILE *find_tfile(const char *handle);

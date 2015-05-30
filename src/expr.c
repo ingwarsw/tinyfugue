@@ -39,7 +39,7 @@ static const char RCSid[] = "$Id: expr.c,v 35004.179 2007/01/13 23:12:39 kkeys E
 #include "tty.h"        /* no_tty */
 #include "history.h"    /* log_count */
 #include "world.h"      /* new_world() */
-
+#include "tfpython.h"
 
 #define STACKSIZE 512
 
@@ -291,7 +291,7 @@ static const Value *valnum(const Value *val)
         if (!parsenumber(val->sval->data, NULL, TYPE_NUM, parsed)) {
 #if 0
             if (pedantic)
-                wprintf("%s",
+                tf_wprintf("%s",
                     "non-numeric string value used in numeric context");
 #endif
             return NULL;
@@ -701,14 +701,14 @@ static int reduce_arithmetic(opcode_t op, const Value *val0, int n, Value *res)
         case '+':
         case '*':
         case '/':
-            wprintf("invalid operation %s on absolute time values.",
+            tf_wprintf("invalid operation %s on absolute time values.",
                 oplabel(op));
         default:   break;
         }
         if (op == '-') /* atime - atime => dtime */
             promoted_type = TYPE_DTIME;
     } else if (n == 1 && val[0]->type == TYPE_ATIME && op == '-') {
-        wprintf("invalid operation %s on absolute time value.", oplabel(op));
+        tf_wprintf("invalid operation %s on absolute time value.", oplabel(op));
         promoted_type = TYPE_ATIME;
     }
 
@@ -719,7 +719,7 @@ static int reduce_arithmetic(opcode_t op, const Value *val0, int n, Value *res)
             (val[1]->type & TYPE_REGMATCH && valint(val[0]) == 1) ||
             ((val[0]->type & TYPE_REGMATCH) && (val[1]->type & TYPE_REGMATCH)))
         {
-            wprintf("regmatch() may return >= 1 for success.");
+            tf_wprintf("regmatch() may return >= 1 for success.");
         }
     }
 
@@ -968,6 +968,18 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
             if (!macro_run(opdstr(n-0), 0, NULL, 0, i, "\bEVAL"))
                 return shareval(val_zero);
             return_user_result();
+
+#ifdef TFPYTHON
+        case FN_python:
+		{
+			struct Value *rv = handle_python_function( opdstr(n-0) );
+			if( !rv ) {
+				return shareval(val_zero);
+			} else {
+				return rv;
+			}
+		}
+#endif
 
         case FN_send:
             i = handle_send_function(opdstr(n), (n>1 ? opdstd(n-1) : NULL), 
@@ -1506,7 +1518,7 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
           }
 
         case FN_read:
-            wprintf("read() is deprecated.  Use tfread() instead.");
+            tf_wprintf("read() is deprecated.  Use tfread() instead.");
             oldblock = block;  /* condition and evalflag are already correct */
             block = 0;
             Sstr = Stringnew(NULL, -1, 0);
@@ -1915,13 +1927,13 @@ static int primary_expr(Program *prog, int could_be_div_or_macro)
             (keyword(val->name) || find_builtin_cmd(val->name) ||
             find_macro(val->name)))
         {
-            wprintf("possibly missing '%%;' or ')' before /%s", val->name);
+            tf_wprintf("possibly missing '%%;' or ')' before /%s", val->name);
         }
     } else if (*ip == '$') {
         static int warned = 0;
         ++ip;
         if ((!warned || pedantic) && *ip == '[') {
-            wprintf("$[...] substitution in expression is legal, but redundant.  Try using (...) instead.");
+            tf_wprintf("$[...] substitution in expression is legal, but redundant.  Try using (...) instead.");
             warned = 1;
         }
         dollarsub(prog, NULL);

@@ -123,7 +123,7 @@ char *expand_filename(const char *str)
         } else {
 
 #if !(HAVE_GETPWNAM && HAVE_PWD_H)
-            wprintf("\"~user\" filename expansion is not supported.");
+            tf_wprintf("\"~user\" filename expansion is not supported.");
 #else
             struct passwd *pw;
             Stringncpy(buffer, user, str - user);
@@ -719,7 +719,7 @@ void eprintf(const char *fmt, ...)
 }
 
 /* print a formatted warning message */
-void wprintf(const char *fmt, ...)
+void tf_wprintf(const char *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
@@ -824,7 +824,7 @@ String *tfgetS(String *str, TFILE *file)
             eprintf("keyboard can only be read from a command line command.");
             return NULL;
         }
-        if (read_depth) wprintf("nested keyboard read");
+        if (read_depth) tf_wprintf("nested keyboard read");
         oldtfout = tfout;
         oldtfin = tfin;
         tfout = tfscreen;

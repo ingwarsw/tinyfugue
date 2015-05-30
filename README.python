@@ -1,0 +1,82 @@
+= TF Python (TinyFugue 5 beta python scripting patch)
+-
+- Copright 2008 Ron Dippold - Modify at will, just add your changes here
+-
+- V1.10 Jun 25-09 Jimun Batty's patch to fix a missing Py_INCREF.
+-                 Jessica Blank's fix to make this compile under OSX.
+- v1.09 Jan-25-08 Add tf->python conversion for TYPE_ENUM, TYPE_POS
+-                 add tfutil.py, convert config.py to use it
+-                 add tf4.py as a really obscene example
+- v1.08 Jan-21-08 don't save virtual worlds at all
+- v1.07 Jan-21-08 config.py output more readable sorted /addworld format
+-                 fix validation of Src Host
+-                 Add special save for default/virtual worlds
+- v1.06 Jan-19-08 Add tf.tfrc() function
+-                 add tf-lib/config.py
+-                 split out /help tf module to its own file
+- v1.05 Jan-13-08 Add convenience tf.getvar().
+-                 Add tf.send() to avoid tf.eval() quoting hassles
+-                 Add tf-lib/diffedit.py utility/example
+- v1.04 Jan-10-08 Add tf.world() function - it's too useful
+-                 Doc retrieving any var using tf.eval
+-                 Fix bug returning string values from tf.eval
+- v1.03 Jan-10-08 Add dummy sys.argv - some libraries expect it
+-                 Be smarter about import/reload to prevent double init
+- v1.02 Jan-10-08 Document stdout/stderr switching in /help tf python
+- v1.01 Jan-10-08 Document that the .tgzs won't work, html2tf problem
+- v1.00 Jan-10-08 Initial release
+
+Installation:
+
+  - Install python2.4 or python2.5 (haven't tried 2.3) and the
+    developer headers (if you don't do this you will get errors about no
+    Python.h found). This is usually easiest as a package, for instance
+    'apt-get install python2.5-dev' for debian, but otherwise:
+         http://python.org
+    If you're building from source make sure you configure with
+         ./configure --enable-shared 
+
+  - NEW: you can skip the next two steps just by checking out the already
+    patched source code anonymously with:
+      svn co svn://sizer99.com/tf-50b8-py
+
+  - If you didn't do the svn checkout:
+    Get the TinyFugue 5.08b source from http://tinyfugue.sourceforge.net/
+
+    You need the zip version, which has everything in it. The .tar.gz versions
+    are missing some files necessary to build the help.
+       # unzip -a tf-50b8.zip
+       # rm tf-50b8/help/html2tf
+    (the .zip version comes with a prebuilt html2tf which will core dump on
+    many systems, so this will cause it to be rebuilt)
+
+  - If you didn't do the svn checkout:
+    Test the patch, then apply it:
+      # cd tf-508b
+      # patch -p 1 -u -N --dry-run < tf-python-patch
+      # patch -p 1 -u -N < tf-python-patch
+
+  - Run configure, which now has --enable-python by default. Add any extra
+    options you want, if any (usually not). IF YOU ALREADY RAN CONFIGURE
+    before you applied the patch, that's okay, but you must do it again.
+      # ./configure
+
+  - Compile
+      # make
+    Don't worry about warnings about HAVE_INET_PTON or _POSIX_C_SOURCE.
+
+  - Install
+      # make install
+
+
+Usage:
+ 
+   - run TinyFugue (tf) and then 
+       /help tf python
+
+   - Check out tf-lib/urlwatch.py for a simple scripting example. This uses
+     only a tiny fraction of what you can do, but I've been so busy making
+     this patch I haven't had time to write all the scripts I want!
+
+Ron
+sizer@san.rr.com

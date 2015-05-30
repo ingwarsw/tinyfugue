@@ -53,7 +53,6 @@
 #define HAVE_HSTRERROR 0
 #define HAVE_INDEX 0
 #define HAVE_INET_ATON 0
-#define HAVE_INET_PTON 0
 #define HAVE_KILL 0
 #define HAVE_MEMCPY 0
 #define HAVE_MEMSET 0
@@ -94,6 +93,7 @@
 #define NO_PROCESS 0
 #define NO_FLOAT 0
 #define NCOLORS 16
+#define WIDECHAR 0
 #define ENABLE_ATCP 0
 #define ENABLE_GMCP 0
 #define ENABLE_OPTION102 0

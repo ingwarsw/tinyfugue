@@ -63,7 +63,7 @@ struct Value *handle_calllua_command(String *args, int offset)
 		argpos = tmp - func + 1;
 	}
 
-	lua_getfield(lua_state, LUA_GLOBALSINDEX, func);
+	lua_getglobal(lua_state, func);
 	if(lua_isfunction(lua_state, -1) != 1)
 	{
 		myerror("No such function");
@@ -117,7 +117,7 @@ struct Value *handle_loadlua_command(String *args, int offset)
 	// check if lua has been initialised
 	if(lua_state == NULL)
 	{ // it hasn't: initialise now
-		lua_state = lua_open();
+		lua_state = luaL_newstate();
 		luaL_openlibs(lua_state);
 
 		// add our tf_eval() function for Lua scripts to call

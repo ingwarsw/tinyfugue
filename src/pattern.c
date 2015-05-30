@@ -132,7 +132,7 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     if (warn_curly_re && (s = estrchr(pattern, '{', '\\')) &&
 	(is_digit(s[1]) || s[1] == ','))
     {
-	wprintf("regexp contains '{', which has a new meaning in version 5.0.  "
+	tf_wprintf("regexp contains '{', which has a new meaning in version 5.0.  "
 	    "(This warning can be disabled with '/set warn_curly_re=off'.)");
     }
     for (s = pattern; *s; s++) {
@@ -249,7 +249,7 @@ int init_pattern_mflag(Pattern *pat, int mflag, int opt)
         char *s = pat->str;
         while (*s == '(' || *s == '^') s++;
         if (strncmp(s, ".*", 2) == 0)
-            wprintf("leading \".*\" in a regexp is inefficient.");
+            tf_wprintf("leading \".*\" in a regexp is inefficient.");
 #endif
 	if ((pat->ri = tf_reg_compile(pat->str, 1))) goto ok;
 	break;

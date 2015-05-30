@@ -773,7 +773,7 @@ Value *prog_interpret(const Program *prog, int in_expr)
 		    int i;
 		    for (i = 0; i < sizeof(upper) && val->name[i]; i++)
 			upper[i] = ucase(val->name[i]);
-		    wprintf("\"%%{%s}\" is a variable substitution, "
+		    tf_wprintf("\"%%{%s}\" is a variable substitution, "
 			"and is not the same as special substitution "
 			"\"%%{%.*s}\".", val->name, i, upper);
 		}
@@ -1363,14 +1363,14 @@ static int list(Program *prog, int subs)
 		++ip; /* skip ')' */
 		eat_space(prog);
 		if (is_end_of_statement(ip)) {
-		    wprintf("\"%2.2s\" following \"/%s (...)\" "
+		    tf_wprintf("\"%2.2s\" following \"/%s (...)\" "
 			"sends blank line to server, "
 			"which is probably not what was intended.",
 			ip, keyword_label(block));
 		}
                 block = (block == WHILE) ? DO : THEN;
             } else if (*ip) {
-                wprintf("statement starting with %s in /%s "
+                tf_wprintf("statement starting with %s in /%s "
                     "condition sends text to server, "
                     "which is probably not what was intended.",
                     error_text(prog), keyword_label(block));
@@ -1503,7 +1503,7 @@ static int list(Program *prog, int subs)
 		comefrom(prog, jump_point, prog->len);
 		eat_space(prog);
 		if (block == ELSE && is_end_of_statement(ip)) {
-		    wprintf("\"%2.2s\" following \"/%s\" "
+		    tf_wprintf("\"%2.2s\" following \"/%s\" "
 			"sends blank line to server, "
 			"which is probably not what was intended.",
 			ip, keyword_label(block));
@@ -2206,7 +2206,7 @@ int varsub(Program *prog, int sub_warn, int in_expr)
     result = 1;
     if (sub_warn & (!sub_warned || pedantic)) {
         sub_warned = 1;
-        wprintf("\"%%%.*s\" substitution in expression is legal, "
+        tf_wprintf("\"%%%.*s\" substitution in expression is legal, "
 	    "but can be confusing.  Try using \"{%.*s}\" instead.",
             ip-contents, contents,
             (ip-bracket)-(contents+bracket), contents+bracket);

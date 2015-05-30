@@ -23,7 +23,7 @@ extern int exiting;
 
 extern int      handle_command(const conString *cmd_line);
 extern BuiltinCmd *find_builtin_cmd(const char *cmd);
-extern int      do_file_load(const char *args, int tinytalk);
+extern int      do_file_load(const char *args, int tinytalk, char**foundname);
 extern int      handle_echo_func(conString *string, const char *attrstr,
                      int inline_flag, const char *dest);
 extern int      handle_substitute_func(conString *string,

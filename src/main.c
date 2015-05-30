@@ -69,6 +69,8 @@ int debug = 0;
 static void read_configuration(const char *fname);
 int main(int argc, char **argv);
 
+char *main_configfile=NULL;
+
 int main(int argc, char *argv[])
 {
     char *opt, *argv0 = argv[0];
@@ -251,25 +253,25 @@ int main(int argc, char *argv[])
 static void read_configuration(const char *fname)
 {
 #if 1 /* XXX */
-    if (do_file_load(getvar("TFLIBRARY"), FALSE) < 0)
+    if (do_file_load(getvar("TFLIBRARY"), FALSE, NULL) < 0)
         die("Can't read required library.", 0);
 #endif
 
     if (fname) {
-        if (*fname) do_file_load(fname, FALSE);
+        if (*fname) do_file_load(fname, FALSE, &main_configfile);
         return;
     }
-
+	
     (void)(   /* ignore value of expression */
 	/* Try the next file if a file can't be read, but not if there's
 	 * an error _within_ a file. */
-        do_file_load("~/.tfrc", TRUE) >= 0 ||
-        do_file_load("~/tfrc",  TRUE) >= 0 ||
-        do_file_load("./.tfrc", TRUE) >= 0 ||
-        do_file_load("./tfrc",  TRUE)
+        do_file_load("~/.tfrc", TRUE, &main_configfile) >= 0 ||
+        do_file_load("~/tfrc",  TRUE, &main_configfile) >= 0 ||
+        do_file_load("./.tfrc", TRUE, &main_configfile) >= 0 ||
+        do_file_load("./tfrc",  TRUE, &main_configfile)
     );
 
     /* support for old fashioned .tinytalk files */
-    do_file_load((fname = getvar("TINYTALK")) ? fname : "~/.tinytalk", TRUE);
+    do_file_load((fname = getvar("TINYTALK")) ? fname : "~/.tinytalk", TRUE, &main_configfile);
 }
 

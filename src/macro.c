@@ -275,7 +275,7 @@ static Macro *macro_spec(String *args, int offset, int *xmflag, ListOpts *listop
             break;
         case 'B':
 	    if (warn_def_B)
-		wprintf("/def -B is deprecated.  See /help keys.");
+		tf_wprintf("/def -B is deprecated.  See /help keys.");
             if (spec->keyname) FREE(spec->keyname);
             if (spec->bind) FREE(spec->bind);
             spec->keyname = STRDUP(ptr);
@@ -769,7 +769,7 @@ static int add_numbered_macro(Macro *macro, unsigned int hash, int num,
     if (!*macro->name && (macro->trig.str || macro->flags & MACRO_HOOK) &&
 	macro->shots == 0 && pedantic)
     {
-        wprintf("new macro (#%d) does not have a name.", macro->num);
+        tf_wprintf("new macro (#%d) does not have a name.", macro->num);
     }
     return macro->num;
 }
@@ -794,7 +794,7 @@ void rebind_key_macros(void)
             FREE(p->bind);
             p->bind = STRDUP(code);
             if (!*code) {
-                wprintf("no code for key \"%s\"", p->keyname);
+                tf_wprintf("no code for key \"%s\"", p->keyname);
             } else if (bind_key_macro(p)) {
 		/* bind_key_macro can't return -1 here */
                 do_hook(H_REDEF, "!Redefined %s %s", "%s %s",
@@ -917,7 +917,7 @@ static int complete_macro(Macro *spec, unsigned int hash, int num,
         }
         spec->bind = STRDUP(spec->bind);
         if (!*spec->bind)
-            wprintf("no code for key \"%s\".", spec->keyname);
+            tf_wprintf("no code for key \"%s\".", spec->keyname);
     }
 
     if (!spec->bind) spec->bind = STRNDUP("", 0);

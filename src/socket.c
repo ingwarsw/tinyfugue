@@ -79,6 +79,10 @@ struct sockaddr_in {
 #include "signals.h"
 #include "variable.h"	/* set_var_by_*() */
 
+#if WIDECHAR
+#include <wchar.h>
+#endif
+
 #ifdef _POSIX_VERSION
 # include <sys/wait.h>
 #endif
@@ -306,6 +310,7 @@ typedef struct Sock {		/* an open connection to a server */
     conString *prompt;		/* prompt from server */
     struct timeval prompt_timeout; /* when does unterm'd line become a prompt */
     int ttype;			/* index into enum_ttype[] */
+    int charset;		/* index into enum_charset[] */
     attr_t attrs;		/* current text attributes */
     attr_t prepromptattrs;	/* text attributes before implicit prompt */
     unsigned long alert_id;	/* id of last alert on this socket */
@@ -393,6 +398,13 @@ STATIC_BUFFER(telbuf);
 
 #define MAXQUIET        25	/* max # of lines to suppress during login */
 
+static const char *enum_charset[] = {
+    "UTF-8",
+    "ISO-8859-1", /* No real support; code passes all chars */
+    "US-ASCII",
+    "" /* Null-terminated list, so we can loop */
+};
+
 /* Note: many telnet servers send DO ECHO and DO SGA together to mean
  * character-at-a-time mode.
  */
@@ -432,7 +444,7 @@ STATIC_BUFFER(telbuf);
 #define TN_ENVIRON	((char)36)	/* 1408 - (not used) */
 #define TN_AUTH		((char)37)	/* 1416 - (not used) */
 #define TN_NEW_ENVIRON	((char)39)	/* 1572 - (not used) */
-#define TN_CHARSET	((char)42)	/* 2066 - (not used) */
+#define TN_CHARSET	((char)42)	/* 2066 - Charset negotiation */
 /* 85 & 86 are not standard.  See http://www.randomly.org/projects/MCCP/ */
 #define TN_COMPRESS	((char)85)	/* MCCP v1 */
 #define TN_COMPRESS2	((char)86)	/* MCCP v2 */
@@ -969,7 +981,7 @@ int tog_keepalive(Var *var)
 	if (setsockopt(sock->fd, SOL_SOCKET, SO_KEEPALIVE, (void*)&flags,
 	    sizeof(flags)) < 0)
 	{
-	    wprintf("setsockopt KEEPALIVE: %s", strerror(errno));
+	    tf_wprintf("setsockopt KEEPALIVE: %s", strerror(errno));
 	}
     }
     return 1;
@@ -1038,7 +1050,7 @@ static void wload(World *w)
     const char *mfile;
     if (restriction >= RESTRICT_FILE) return;
     if ((mfile = world_mfile(w)))
-        do_file_load(mfile, FALSE);
+        do_file_load(mfile, FALSE, NULL);
 }
 
 int world_hook(const char *fmt, const char *name)
@@ -1244,6 +1256,7 @@ static int opensock(World *world, int flags)
     xsock->host = NULL;
     xsock->port = NULL;
     xsock->ttype = -1;
+    xsock->charset = 2; /* Default to US-ASCII, not that we act on it */
     xsock->fd = -1;
     xsock->pid = -1;
     xsock->fsastate = '\0';
@@ -1554,7 +1567,7 @@ static int openconn(Sock *sock)
 	if (setsockopt(xsock->fd, SOL_SOCKET, SO_KEEPALIVE, (void*)&flags,
 	    sizeof(flags)) < 0)
 	{
-	    wprintf("setsockopt KEEPALIVE: %s", strerror(errno));
+	    tf_wprintf("setsockopt KEEPALIVE: %s", strerror(errno));
 	}
     }
 
@@ -2836,8 +2849,15 @@ static void test_prompt(void)
 
 static void telnet_subnegotiation(void)
 {
+    unsigned int i;
     char *p;
+    const char *end;
+    char temp_buff[255]; /* Same length as whole subnegotiation line. */
+    char *temp_ptr;
     int ttype;
+    char charset_sep = '\0';
+    int chosen_charset = -1;
+
     static conString enum_ttype[] = {
         STRING_LITERAL("TINYFUGUE"),
         STRING_LITERAL("ANSI-ATTR"),
@@ -2848,6 +2868,7 @@ static void telnet_subnegotiation(void)
     telnet_debug("recv", xsock->subbuffer->data, xsock->subbuffer->len);
     Stringtrunc(xsock->subbuffer, xsock->subbuffer->len - 2);
     p = xsock->subbuffer->data + 2;
+    end = p + xsock->subbuffer->len;
     switch (*p) {
     case TN_TTYPE:
 	if (!TELOPT(xsock, us, *p)) {
@@ -2872,6 +2893,41 @@ static void telnet_subnegotiation(void)
 	    break;
 	}
 	xsock->flags |= SOCKCOMPRESS;
+	break;
+    case TN_CHARSET:
+	if (!TELOPT(xsock, them, *p)) {
+	    no_reply("option was not agreed upon");
+	    break;
+	}
+	if (*++p == '\01') { /* REQUEST <sep> <character set>... */
+	   charset_sep = *++p;
+	   while (p != end) {
+	      temp_ptr = ++p;
+	      while (p != end && *p != charset_sep) {
+		  temp_buff[p - temp_ptr] = (*p & ~0x80);
+		  ++p;
+	      }
+	      temp_buff[p - temp_ptr] = '\0';
+	      for (i = 0; enum_charset[i][0]; ++i) {
+		  if (strcasecmp(enum_charset[i], temp_buff) == 0) {
+		     if (chosen_charset == -1 || i < chosen_charset ) {
+		         chosen_charset = i;
+		         break;
+		     }
+		  }
+	      }
+	   }
+	   if (chosen_charset > -1) {
+	      Sprintf(telbuf, "%c%c%c%c%s%c%c", TN_IAC, TN_SB, TN_CHARSET, '\02', enum_charset[chosen_charset], TN_IAC, TN_SE);
+	      xsock->charset = chosen_charset;
+	   } else {
+	      Sprintf(telbuf, "%c%c%c%c%c%c", TN_IAC, TN_SB, TN_CHARSET, '\03', TN_IAC, TN_SE);
+	   }
+	} else {
+	    no_reply("option not implemented");
+	    break;
+	}
+	telnet_send(telbuf);
 	break;
 #if ENABLE_ATCP
     case TN_ATCP:
@@ -2936,6 +2992,13 @@ static int handle_socket_input(const char *simbuffer, int simlen)
     fd_set readfds;
     int count, n, received = 0;
     struct timeval timeout;
+#if WIDECHAR
+    mbstate_t mbs;
+    wchar_t wc;
+    size_t ret;
+
+    memset(&mbs, 0, sizeof(mbs));
+#endif
 
     if (xsock->constate <= SS_CONNECTING || xsock->constate >= SS_ZOMBIE)
 	return 0;
@@ -3203,7 +3266,8 @@ static int handle_socket_input(const char *simbuffer, int simlen)
 #endif
                     rawchar == TN_ECHO ||
                     rawchar == TN_SEND_EOR ||
-                    rawchar == TN_BINARY)              /* accept any of these */
+                    rawchar == TN_BINARY ||
+                    rawchar == TN_CHARSET)              /* accept any of these */
                 {
                     SET_TELOPT(xsock, them, rawchar);  /* set state */
                     if (TELOPT(xsock, them_tog, rawchar)) {/* we requested it */
@@ -3241,6 +3305,9 @@ static int handle_socket_input(const char *simbuffer, int simlen)
                 } else if (
                     rawchar == TN_NAWS ||
                     rawchar == TN_TTYPE ||
+#if ENABLE_ATCP
+		    (rawchar == TN_ATCP && atcp) ||
+#endif
                     rawchar == TN_BINARY)
                 {
                     SET_TELOPT(xsock, us, rawchar);  /* set state */
@@ -3314,11 +3381,29 @@ non_telnet:
             } else {
                 /* Normal character. */
                 const char *end;
+#if WIDECHAR
+		end = place;
+		while (*end != TN_IAC && end - buffer < count &&
+			(ret = mbrtowc(&wc, (char *)end,
+					count - (end - buffer), &mbs)) > 0) {
+		    if (ret >= (size_t) -2 || !iswprint(wc)) {
+			/* Invalid character. Punt. */
+			break;
+		    }
+		    end += ret;
+		}
+
+		if (end == place) {
+		    Stringadd(xsock->buffer, localchar);
+		    end = ++place;
+		}
+#else
                 Stringadd(xsock->buffer, localchar);
                 end = ++place;
                 /* Quickly skip characters that can't possibly be special. */
                 while (end - buffer < count && is_print(*end) && *end != TN_IAC)
                     end++;
+#endif
                 Stringfncat(xsock->buffer, (char*)place, end - place);
                 place = end - 1;
                 xsock->fsastate = (*place == '*') ? '*' : '\0';
@@ -3462,6 +3547,21 @@ static void telnet_debug(const char *dir, const char *str, int len)
 			len++, str--;
 		    } else if (*str == (char)1) {
 			Stringcat(buffer, " SEND");
+		    }
+		    state = 0;
+		} else if (state == TN_CHARSET) {
+		    if (*str == (char)1) {
+			Stringcat(buffer, " REQUEST ");
+			while (len--, str++, is_print(*str) && !(*str & 0x80))
+			    Stringadd(buffer, *str);
+			len++, str--;
+		    } else if (*str == (char)2) {
+			Stringcat(buffer, " ACCEPTED ");
+			while (len--, str++, is_print(*str) && !(*str & 0x80))
+			    Stringadd(buffer, *str);
+			len++, str--;
+		    } else if (*str == (char)3) {
+			Stringcat(buffer, " REJECTED");
 		    }
 		    state = 0;
 		} else {

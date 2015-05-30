@@ -37,6 +37,10 @@ static const char RCSid[] = "$Id: output.c,v 35004.242 2007/01/14 00:44:19 kkeys
 #include "keyboard.h"	/* keyboard_pos */
 #include "cmdlist.h"
 
+#if WIDECHAR
+#include <wchar.h>
+#endif
+
 #ifdef EMXANSI
 # define INCL_VIO
 # include <os2.h>
@@ -476,12 +480,12 @@ static void init_term(void)
 	if ((str = getvar("TERMCAP")) && (len = strlen(str)) > 0) {
 	    is_csh = ((shell = getenv("SHELL")) && smatch("*csh", shell) == 0);
 	    if (str[len-1] != ':') {
-		wprintf("unsetting invalid TERMCAP variable%s.",
+		tf_wprintf("unsetting invalid TERMCAP variable%s.",
 		    is_csh ?  ", which appears to have been corrupted by your "
 		    "broken *csh shell" : "");
 		unsetvar(ffindglobalvar("TERMCAP"));
 	    } else if (len == 1023 && (!getenv("TF_FORCE_TERMCAP")) && is_csh) {
-		wprintf("unsetting the TERMCAP environment variable because "
+		tf_wprintf("unsetting the TERMCAP environment variable because "
 		    "it looks like it has been truncated by your broken *csh "
 		    "shell.  To force TF to use TERMCAP, restart TF with the "
 		    "TF_FORCE_TERMCAP environment variable set.");
@@ -491,9 +495,9 @@ static void init_term(void)
     }
 
     if (!TERM || !*TERM) {
-        wprintf("TERM undefined.");
+        tf_wprintf("TERM undefined.");
     } else if (tgetent(termcap_entry, TERM) <= 0) {
-        wprintf("\"%s\" terminal unsupported.", TERM);
+        tf_wprintf("\"%s\" terminal unsupported.", TERM);
     } else {
         if (columns <= 0) columns = tgetnum("co");
         if (lines   <= 0) lines   = tgetnum("li");
@@ -1468,7 +1472,7 @@ static ListEntry *find_statusfield_by_name(int row, const char *spec)
 int ch_status_int(Var *var)
 {
     if (warn_status)
-	wprintf("the default value of %s has "
+	tf_wprintf("the default value of %s has "
 	    "changed between tf version 4 and 5.", var->val.name);
     return 1;
 }
@@ -1540,7 +1544,7 @@ static int status_add(int reset, int nodup, int row, ListEntry *where,
     }
 
     if (totwidth > columns) {
-        wprintf("total status width (%d) is wider than screen (%d)",
+        tf_wprintf("total status width (%d) is wider than screen (%d)",
 	    totwidth, columns);
     }
 
@@ -1625,7 +1629,7 @@ struct Value *handle_status_add_command(String *args, int offset)
 int ch_status_fields(Var *var)
 {
     if (warn_status) {
-	wprintf("setting status_fields directly is deprecated, "
+	tf_wprintf("setting status_fields directly is deprecated, "
 	    "and may clobber useful new features introduced in version 5.  "
 	    "The recommended way to change "
 	    "status fields is with /status_add, /status_rm, or /status_edit. "
@@ -2807,6 +2811,13 @@ static void hwrite(conString *line, int start, int len, int indent)
     int i, ctrl;
     int col = 0;
     char c;
+#if WIDECHAR
+    size_t ret;
+    mbstate_t is, os;
+
+    memset(&is, 0, sizeof(is));
+    memset(&os, 0, sizeof(os));
+#endif
 
     if (line->attrs & F_BELL && start == 0) {
         dobell(1);
@@ -2837,7 +2848,22 @@ static void hwrite(conString *line, int start, int len, int indent)
             bufputnc(' ', tabsize - col % tabsize);
             col += tabsize - col % tabsize;
         } else {
+#if WIDECHAR
+	    ret = mbrtowc(NULL, (char *)line->data+i, len - i, &is);
+	    if (ret >= (size_t) -2) {
+		/* Invalid character. Punt. */
+		bufputc(ctrl ? CTRL(c) : c);
+	    } else {
+		int j = 1;
+		bufputc(c);
+		while (j++ < ret) {
+		  c = line->data[++i];
+		  bufputc(c);
+		}
+	    }
+#else
             bufputc(ctrl ? CTRL(c) : c);
+#endif
             col++;
         }
     }
@@ -3067,6 +3093,13 @@ static int next_physline(Screen *screen)
 int wraplen(const char *str, int len, int indent)
 {
     int total, max, visible;
+#if WIDECHAR
+    wchar_t wc;
+    size_t ret;
+    mbstate_t mbs;
+
+    memset(&mbs, 0, sizeof(mbs));
+#endif
 
     if (emulation == EMUL_RAW) return len;
 
@@ -3075,8 +3108,20 @@ int wraplen(const char *str, int len, int indent)
     for (visible = total = 0; total < len && visible < max; total++) {
 	if (str[total] == '\t')
 	    visible += tabsize - visible % tabsize;
-	else
+	else {
+#if WIDECHAR
+	    ret = mbrtowc(&wc, (char *)str + total, total - len, &mbs);
+	    if (ret >= (size_t) -2) {
+		/* Invalid char. Punt. */
+		visible++;
+	    } else {
+		total += ret - 1;
+		visible += wcwidth(wc);
+	    }
+#else
 	    visible++;
+#endif
+	}
     }
 
     if (total == len) return len;

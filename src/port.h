@@ -55,6 +55,10 @@
 #  define format_printf(fmt, var)     /* empty */
 #endif
 
+/* Wide character support */
+#if WIDECHAR
+#include <wctype.h>
+#endif
 
 /* standard stuff */
 
@@ -174,6 +178,19 @@ extern char *sys_errlist[];
  * not allow EOF, but do work on plain char values.  (The signedness becomes
  * important when using character sets other than 7-bit ASCII.)
  */
+#if WIDECHAR
+#define is_alnum(c)	iswalnum((wint_t)c)
+#define is_alpha(c)	iswalpha((wint_t)c)
+#define is_cntrl(c)	iswcntrl((wint_t)c)
+#define is_digit(c)	iswdigit((wint_t)c)
+#define is_graph(c)	iswgraph((wint_t)c)
+#define is_lower(c)	iswlower((wint_t)c)
+#define is_print(c)	iswprint((wint_t)c)
+#define is_punct(c)	iswpunct((wint_t)c)
+#define is_space(c)	iswspace((wint_t)c)
+#define is_upper(c)	iswupper((wint_t)c)
+#define is_xdigit(c)	iswxdigit((wint_t)c)
+#else
 #define is_alnum(c)	isalnum((unsigned char)(c))
 #define is_alpha(c)	isalpha((unsigned char)(c))
 #define is_cntrl(c)	iscntrl((unsigned char)(c))
@@ -185,6 +202,7 @@ extern char *sys_errlist[];
 #define is_space(c)	isspace((unsigned char)(c))
 #define is_upper(c)	isupper((unsigned char)(c))
 #define is_xdigit(c)	isxdigit((unsigned char)(c))
+#endif
 
 /* RRAND(lo,hi) returns a random integer in the range [lo,hi].
  * RAND() returns a random integer in the range [0,TF_RAND_MAX].
