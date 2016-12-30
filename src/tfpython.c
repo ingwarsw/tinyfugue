@@ -17,6 +17,12 @@
 #endif
 
 
+struct module_state {
+        PyObject *error;
+};
+
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+
 static PyObject* tfvar_to_pyvar( const struct Value *rc );
 static struct Value* pyvar_to_tfvar( PyObject *pRc );
 
@@ -161,7 +167,6 @@ static PyMethodDef tfMethods[] = {
 	{ NULL, NULL, 0, NULL }
 };
 
-
 // -------------------------------------------------------------------------------------
 // Helpers
 // -------------------------------------------------------------------------------------
@@ -211,12 +216,9 @@ static struct Value* pyvar_to_tfvar( PyObject *pRc )
 	}
 
 	// Convert string back into tf string
-	if( PyString_Check( pRc ) && ( PyString_AsStringAndSize( pRc, &cstr, &len ) != -1 ) ) {
+	if( PyBytes_Check( pRc ) && ( PyBytes_AsStringAndSize( pRc, &cstr, &len ) != -1 ) ) {
 		DPRINTF( "  rc string: %s", cstr );
 		rc = newstr( cstr, len );
-	} else if( PyInt_Check( pRc ) ) {
-		DPRINTF( "  rc int: %ld", PyInt_AsLong( pRc ) );
-		rc = newint( PyInt_AsLong( pRc ) );
 	} else if( PyLong_Check( pRc ) ) {
 		DPRINTF( "  rc long: %ld", PyLong_AsLong( pRc ) );
 		rc = newint( PyLong_AsLong( pRc ) );
@@ -261,6 +263,8 @@ static const char *init_src =
 	"		while '\\n' in self.buf:\n"
 	"			a, self.buf = self.buf.split('\\n',1)\n"
 	"			self.output( a )\n"
+	"	def flush( self ):\n"
+	"		pass\n"
 	"\n"
 	"sys.stdout = __dummyout( None )\n"  	// this could be to tf.out
 	"sys.stderr = __dummyout( tf.err )\n"
@@ -268,17 +272,61 @@ static const char *init_src =
 	"sys.argv=[ 'tf' ]\n"
 ;
 
+static int tf_traverse(PyObject *m, visitproc visit, void *arg) {
+    Py_VISIT(GETSTATE(m)->error);
+    return 0;
+}
+
+static int tf_clear(PyObject *m) {
+    Py_CLEAR(GETSTATE(m)->error);
+    return 0;
+}
+
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "tf",
+        NULL,
+        sizeof(struct module_state),
+        tfMethods,
+        NULL,
+        tf_traverse,
+        tf_clear,
+        NULL
+};
+
+PyMODINIT_FUNC
+PyInit_tf(void)
+{
+	// Tell it about our tf_eval
+    PyObject *module = PyModule_Create(&moduledef);
+
+    if (module == NULL) {
+		eputs( "tf module initialization failed NULL" );
+        return;
+    }
+
+	struct module_state *st = GETSTATE(module);
+
+    st->error = PyErr_NewException("tf.Error", NULL, NULL);
+    if (st->error == NULL) {
+        Py_DECREF(module);
+		eputs( "tf module initialization failed" );
+        return;
+    }
+    return module;
+}
+
 static void python_init()
 {
 	if( py_inited )
 		return;
 
+    PyImport_AppendInittab("tf", PyInit_tf);
+
 	// Initialize python
 	Py_Initialize();
 	
-	// Tell it about our tf_eval
-	Py_InitModule( "tf", tfMethods );
-
 	// get the basic modules
 	PyRun_SimpleString( "import os, sys, tf" );
 	PyRun_SimpleString( "sys.path.append( '.' )" );
@@ -300,7 +348,6 @@ static void python_init()
 	// These are both borrowed refs, we don't have to DECREF
 	main_module = PyImport_AddModule( "__main__");
 	main_dict = PyModule_GetDict( main_module );
-
 
 	py_inited = 1;
 }
@@ -385,6 +432,7 @@ struct Value *handle_python_load_command( String *args, int offset )
 	( buf = Stringnew( NULL, 0, 0 ) )->links++;
 	Sprintf( buf,
 		// if it exists, reload it, otherwise import it
+		"from importlib import reload\n"
 		"try:\n"
 		"  reload( %s )\n"
 		"except ( NameError, TypeError ):\n"

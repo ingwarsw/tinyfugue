@@ -2,13 +2,23 @@ language: c
 compiler: gcc
 
 os:
- - osx
- - linux
+  - osx
+  - linux
+
+dist: trusty
+sudo: false
+
+addons:
+  apt:
+    sources:
+      - deadsnakes
+    packages:
+      - python3.5-dev
+      - lua5.2
+      - liblua5.2-dev
 
 before_install:
-  - if [ -z "${TRAVIS_OS_NAME}" ]; then export TRAVIS_OS_NAME=linux; fi; # for our forks that do not have multi-os enabled.
-  - if [ "${TRAVIS_OS_NAME}" = "linux" ]; then travis_retry sudo apt-get update -qq; travis_retry sudo apt-get install lua5.2 liblua5.2-dev -y; fi
-  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then travis_retry brew update; travis_retry brew install lua pcre; fi
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then travis_retry brew update; travis_retry brew install lua pcre python3; fi
 
 env:
   matrix:
