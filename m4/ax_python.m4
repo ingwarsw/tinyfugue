@@ -92,7 +92,7 @@ if test x$ax_python_header != xno; then
   AC_SUBST(PYTHON_INCLUDE_DIR)
 fi
 if test x$ax_python_lib != xno; then
-  PYTHON_LIB=$ax_python_lib
+  PYTHON_LIB=$ax_python_lib -lpthread -ldl
   AC_SUBST(PYTHON_LIB)
 fi
 ])dnl
