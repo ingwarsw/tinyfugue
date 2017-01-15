@@ -325,7 +325,7 @@ static void python_init()
     PyImport_AppendInittab("tf", PyInit_tf);
 
 	// Initialize python
-	Py_Initialize();
+	Py_InitializeEx(0);
 	
 	// get the basic modules
 	PyRun_SimpleString( "import os, sys, tf" );
