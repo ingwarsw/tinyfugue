@@ -303,7 +303,7 @@ PyInit_tf(void)
 
     if (module == NULL) {
 		eputs( "tf module initialization failed NULL" );
-        return;
+        return NULL;
     }
 
 	struct module_state *st = GETSTATE(module);
@@ -312,7 +312,7 @@ PyInit_tf(void)
     if (st->error == NULL) {
         Py_DECREF(module);
 		eputs( "tf module initialization failed" );
-        return;
+        return NULL;
     }
     return module;
 }
