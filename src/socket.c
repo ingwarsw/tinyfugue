@@ -2524,9 +2524,14 @@ int handle_fake_recv_function(conString *string, const char *world,
 	return 0;
     }
     if (raw)
+    {
 	handle_socket_input(string->data, string->len);
+    }
     else
-	queue_socket_line(sock, string, 0, 0);
+    {
+        queue_socket_line(sock, string, 0, 0);
+        flushxsock();
+    }
     return 1;
 }
 
