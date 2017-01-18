@@ -56,29 +56,26 @@
 AC_DEFUN([AX_PYTHON],
 [AC_MSG_CHECKING(for python build information)
 AC_MSG_RESULT([])
-for python in python3.9 python3.8 python3.7 python3.6 python3.5 python3.4 python3.3 python3.2 python3.1 python3.0 python; do
+for python in python3.9 python3.8 python3.7 python3.6 python3.5 python3.4 python3.3 python3.2 python3.1 python3.0 python3 python; do
 AC_CHECK_PROGS(PYTHON_BIN, [$python])
 ax_python_bin=$PYTHON_BIN
 if test x$ax_python_bin != x; then
-   AC_CHECK_LIB($ax_python_bin, main, ax_python_lib=$ax_python_bin, ax_python_lib=no)
-   if test x$ax_python_lib == xno; then
-     AC_CHECK_LIB(${ax_python_bin}m, main, ax_python_lib=${ax_python_bin}m, ax_python_lib=no)
-   fi
-   if test x$ax_python_lib != xno; then
-     ax_python_header=`$ax_python_bin -c "from distutils.sysconfig import *; print(get_config_var('CONFINCLUDEPY'))"`
-     if test x$ax_python_header != x; then
+   AC_CHECK_PROGS(PYTHON_CONF, [$python-config])
+   ax_python_conf=$PYTHON_CONF
+   ax_python_lib=`$ax_python_conf --ldflags`
+   ax_python_header=`$ax_python_conf --includes`
+   if test "x$ax_python_header" != "x"; then
        break;
-     fi
    fi
 fi
 done
-if test x$ax_python_bin = x; then
+if test "x$ax_python_bin" = "x"; then
    ax_python_bin=no
 fi
-if test x$ax_python_header = x; then
+if test "x$ax_python_header" = "x"; then
    ax_python_header=no
 fi
-if test x$ax_python_lib = x; then
+if test "x$ax_python_lib" = "x"; then
    ax_python_lib=no
 fi
 
@@ -87,12 +84,12 @@ AC_MSG_RESULT([    Binary:      $ax_python_bin])
 AC_MSG_RESULT([    Library:     $ax_python_lib])
 AC_MSG_RESULT([    Include Dir: $ax_python_header])
 
-if test x$ax_python_header != xno; then
+if test "x$ax_python_header" != "xno"; then
   PYTHON_INCLUDE_DIR=$ax_python_header
   AC_SUBST(PYTHON_INCLUDE_DIR)
 fi
-if test x$ax_python_lib != xno; then
-  PYTHON_LIB=$ax_python_lib -lpthread -ldl
+if test "x$ax_python_lib" != "xno"; then
+  PYTHON_LIB=$ax_python_lib
   AC_SUBST(PYTHON_LIB)
 fi
 ])dnl
