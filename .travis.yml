@@ -18,7 +18,7 @@ addons:
       - liblua5.2-dev
 
 before_install:
-  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then travis_retry brew update; travis_retry brew install lua pcre python3; fi
+  - if [ "${TRAVIS_OS_NAME}" = "osx" ]; then travis_retry brew update; travis_retry brew install --force lua pcre python3; fi
 
 env:
   matrix:
