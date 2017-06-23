@@ -10852,4 +10852,196 @@ worlds
      tf_eval("/echo Hello world")
    end
 
+&python
+&/python
+
+python()
+
+  [1mFunction[22;0m Usage:
+
+  [1mpython[22;0m(<[4mcommand[22;0m>)
+
+  Command usage:
+
+  [1m/PYTHON[22;0m [<[4mcommand[22;0m>]
+
+  This executes a single python expression. It must be an expression with a
+  return code, not a statement. For instance [1m1+1[22;0m is a 
+  expression that returns [1m2[22;0m, but [1mprint(1+1)[22;0m 
+  is a statement and would be illegal. It will convert string, float, integer, 
+  or boolean return values to equivalent TF values.
+
+  Example:  
+
+  [1m/test[22;0m [1mecho[22;0m(python(strcat("'The current world is ", ${world_name},  ".'")))
+  The current world is (unnamed1).
+  
+  Note that quoting is slightly tricky here - you have to quote once for TF's 
+  sake, then once for python.
+
+  This invokes the python interpreter just as if you were entering commands at a
+  at a python cli. Each command must be standalone, but they can be statements
+  and there is a persistent environment, so you can do things like
+
+  [1m/python[22;0m import glob
+  [1m/python[22;0m tf.out( "Logfiles: " + ", ".join(glob.glob("*.log")) )
+  Logfiles: naughty.log, nice.log
+
+  Generally this is only useful in your .tfrc - or other script setup. It is 
+  slow since the command has to be recompiled every time, and you don't get 
+  any return values.  You won't see any output unless there's an error or you 
+  explcitly invoke [1mtf.out()[22;0m.
+
+  See [1m/python_load[22;0m and [1m/python_call[22;0m instead.
+
+  See [1m/help tf python[22;0m for calling back into TinyFugue
+  and for overall issues of performance and persistence.
+
+&/python_call
+
+/python_call
+
+  Usage:
+
+  [1m/python_call[22;0m [4mmodule[22;0m.[4mfunction[22;0m <[4margument[22;0m>
+
+  This calls a function in a python module you have loaded with [1m/python_load[22;0m.
+  Since the code is already byte compiled, this is the fastest way to execute 
+  python. And since the entire rest of the line is considered the argument, 
+  you don't have to worry about quoting issues.
+
+  Example:
+
+  [1m/python_load[22;0m mymodule
+  [1m/def[22;0m -mglob -p9Fq -thowdy howdy = /python_call mymodule.howdy %{*}
+
+  This will call mymodule.howdy() with the entire contents of the triggering
+  line as the argument whenever it matches a 'howdy' in a line. The real power
+  comes when using TinyFugue's powerful triggering and matching systems and
+  using a different method for each trigger type.
+
+  For a more complex example, see the included [1mtf-lib/urlwatch.py[22;0m which 
+  catches all urls going by and writes a url launching page.
+
+  See [1m/help tf python[22;0m for calling back into TinyFugue.
+
+&/python_kill
+
+/python_kill
+
+  Usage:
+
+  [1m/python_kill[22;0m <[4mmodule[22;0m>
+
+  This dumps the python interpreter and any loaded python modules. The next
+  time any of the other [1mpython[22;0m commands are used it will be reloaded 
+  and reinitialized.
+
+  This is intended as dead-man switch to prevent a required restart TinyFugue
+  if anything goes wrong with this beta-level python support.
+
+&/python_load
+
+/python_load
+
+  Usage:
+
+  [1m/python_load[22;0m <[4mmodule[22;0m>
+
+  This (re)imports a python module for you from your current [1mPYTHONPATH[22;0m, [1mTFPATH[22;0m,
+  and [1mTFLIBDIR[22;0m. Use this instead of just [1m/python import mymodule[22;0m
+  because it will also force a reload of the module for you in case it has been
+  changed. Any functions in the module are now ready to use with
+  [1m/python_call[22;0m.
+
+  Example:
+  [1m/python_load[22;0m mymodule
+  [1m/python_call[22;0m mymodule.dothis 1 2 3
+
+&tf.err
+&tf.eval
+&tf.getvar
+&tf.out
+&tf.send
+&tf.tfrc
+&tf.world
+&tf module
+TF Python Module
+
+  The TF Python module lets your python module do useful things with TinyFugue.
+  When using [1m/python[22;0m or [1mpython()[22;0m the tf module is already present in the
+  local namespace, but any [1m/python_load[22;0m script needs to 'import tf'.
+
+  [1mtf.err[22;0m(<[4mtext[22;0m>) - sends [4mtext[22;0m to your screen (tferr stream).
+
+  [1mtf.eval[22;0m(<[4mstring arg[22;0m>) - is the same as BOLDPRE/evalCHARPOST [4mstring arg[22;0m.
+
+  [1mtf.getvar[22;0m(<[4mvar[22;0m>, (<[4mdefault[22;0m>) - gets value of [4mvar[22;0m or [4mdefault[22;0m if it's not set.
+
+  [1mtf.out[22;0m(<[4mtext[22;0m>) - sends [4mtext[22;0m to your screen (tfout stream).
+
+  [1mtf.send[22;0m(<[4mtext[22;0m>, (<[4mworld[22;0m>) - sends [4mtext[22;0m to [4mworld[22;0m (default current)
+    without worrying about the flag/quoting problems of tf.eval()
+
+  [1mtf.tfrc[22;0m() - returns the file name of the loaded .tfrc file (or empty string if none)
+
+  [1mtf.world[22;0m() - returns the name of the current world or empty string if none.
+
+  [1mArbitrary data from TF[22;0m: Your program can retrieve any information it needs
+  from TinyFugue by doing the following (for example):
+
+  [1mtf.eval( '/test "${world_name}"' )[22;0m
+
+  will return a string containing the name of the current world or:
+
+  [1mtf.eval( '/test columns()' )[22;0m
+
+  will return an integer with the number of screen columns. Notice the
+  quoting is slightly depending on what we expect it to return.
+
+  See the included [1mtf-lib/urlwatch.py[22;0m and [1mtf-lib/config.py[22;0m for fairly complex
+  examples.
+
+  See also: [1mtf python[22;0m for overall info.
+
+&tf python
+TF Python
+
+  TF Python allows TinyFugue to use Python for scripting.
+
+  TinyFugue Commands (see each for details):
+  [1m/python[22;0m [4mcommand[22;0m
+  [1mpython[22;0m([4mcommand[22;0m)
+  [1m/python_load[22;0m [4mmodule[22;0m
+  [1m/python_call[22;0m [4mmodule[22;0m.[4mfunction[22;0m [4margument[22;0m
+  [1m/python_kill[22;0m
+
+  [1mCalling back into TinyFugue[22;0m: TF Python provides Python scripts with a 'tf'
+  module that has several methods - without these it's all fairly useless.
+  Please see [1m/help tf module[22;0m for info on this.
+
+  [1mSpeed[22;0m: The python interpreter is (dynamically) embedded in TinyFugue to
+  reduce overhead and allow tighter coupling. When using
+  [1m/python_load[22;0m and [1m/python_call[22;0m
+  all the code is byte compiled on load, so it's quite snappy.
+
+  [1mEnvironment[22;0m: The environment is persistent, so after '[1m/python[22;0m import glob'
+  subsequent commands will be able to reference module glob. More importantly
+  it means that after '[1m/python_load[22;0m mymodule'  mymodule will have persistent
+  variables between [1m/python_call[22;0m invocations.
+
+  [1mArbitrary data from TF[22;0m: Your program can retrieve any information it needs
+  from TinyFugue by using [1mtf.eval[22;0m.
+  Please see [1m/help tf module[22;0m for info on this.
+
+  [1mstdout[22;0m and [1mstderr[22;0m: by default, [1mstdout[22;0m is discarded (so you don't 
+  see the output of every [1m/python[22;0m command) and [1mstderr[22;0m
+  is sent to [1mtferr[22;0m. You can make [1mstdout[22;0m active again with:
+  [1m/python[22;0m sys.stdout.output = tf.out and shut it up again with:
+  [1m/python[22;0m sys.stdout.output = None
+  You can do the same with [1msys.stderr.output[22;0m, but use [1mtf.err[22;0m instead.
+
+  See the included [1mtf-lib/urlwatch.py[22;0m and [1mtf-lib/config.py[22;0m for fairly complex
+  examples.
+
 &
