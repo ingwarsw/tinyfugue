@@ -10974,7 +10974,7 @@ TF Python Module
 
   [1mtf.err[22;0m(<[4mtext[22;0m>) - sends [4mtext[22;0m to your screen (tferr stream).
 
-  [1mtf.eval[22;0m(<[4mstring arg[22;0m>) - is the same as BOLDPRE/evalCHARPOST [4mstring arg[22;0m.
+  [1mtf.eval[22;0m(<[4mstring arg[22;0m>) - is the same as [1m/eval[22;0m [4mstring arg[22;0m.
 
   [1mtf.getvar[22;0m(<[4mvar[22;0m>, (<[4mdefault[22;0m>) - gets value of [4mvar[22;0m or [4mdefault[22;0m if it's not set.
 
