@@ -1,0 +1,59 @@
+<title>TinyFugue: TF Python</title>
+<!--"@tf python"-->
+<h1>TF Python</h1>
+
+<p>
+  TF Python is a patch (which you apparently have installed) for TinyFugue 5.08b
+  which allows TinyFugue to use Python for scripting.
+
+<p>
+  TinyFugue Commands (see each for details):<br>
+  <a href="../commands/python.html">/python</a> <i>command</i><br>
+  <a href="../commands/python.html">python</a>( <i>command</i> )<br>
+  <a href="../commands/python_load.html">/python_load</a> <i>module</i><br>
+  <a href="../commands/python_call.html">/python_call</a> <i>module</i>.<i>function</i> <i>argument</i><br>
+  <a href="../commands/python_kill.html">/python_kill</a>
+
+<p>
+  <b>Calling back into TinyFugue</b>: TF Python provides Python scripts with a 'tf'
+  module that has several methods - without these it's all fairly useless.
+  Please see <b>/help</b> <a href="./tf_module.html">tf module</a> for info on this.</p>
+
+<p>
+  <b>Speed</b>: The python interpreter is (dynamically) embedded in TinyFugue to
+  reduce overhead and allow tighter coupling. When using
+  <a href="../commands/python_load.html">/python_load</a> and
+  <a href="../commands/python_call.html">/python_call</a>
+  all the code is byte compiled on load, so it's quite snappy.
+
+<p>
+  <b>Environment</b>: The environment is persistent, so after '/python import glob'
+  subsequent commands will be able to reference module glob. More importantly
+  it means that after '/python_load mymodule'  mymodule will have persistent
+  variables between /python_call invocations.
+
+<p>
+  <b>Arbitrary data from TF</b>: Your program can retrieve any information it needs
+  from TinyFugue by using tf.eval.
+  Please see <b>/help</b> <a href="./tf_module.html">tf module</a> for info on this.</p>
+
+<p>
+  <b>stdout and stderr</b>: by default, stdout is discarded (so you don't see the
+  output of every <a href="../commands/python.html">/python</a> command) and stderr
+  is sent to tferr. You can make stdout active again with:<br>
+  <code><a href="../commands/python.html">/python</a> sys.stdout.output = tf.out</code><br>
+  and shut it up again with:<br>
+  <code><a href="../commands/python.html">/python</a> sys.stdout.output = None</code><br>
+  You can do the same with sys.stderr.output, but use tf.err instead.
+
+<p>
+  See the included <b>tf-lib/urlwatch.py</b> and <b>tf-lib/config.py</b> for fairly complex
+  examples.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

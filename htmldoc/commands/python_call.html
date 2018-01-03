@@ -1,0 +1,43 @@
+<title>TinyFugue: /python_call</title>
+<!--"@/python_call"-->
+<h1>/python_call</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/python_call.html">/python_call</a> <i>module</i>.<i>function</i> <i>argument</i>
+
+<p>
+  This calls a function in a python module you have loaded with
+  <a href="../commands/python_load.html">/python_load</a>.
+  Since the code is already byte compiled, this is the fastest way to execute
+  python. And since the entire rest of the line is considered the argument,
+  you don't have to worry about quoting issues.
+
+<p>
+  Example:<br>
+  <code><a href="../commands/python_load.html">/python_load</a> mymodule</code><br>
+  <code><a href="../commands/def.html">/def</a> -mglob -p9Fq -thowdy howdy = 
+  <a href="../commands/python_call.html">/python_call</a> mymodule.howdy %{*}</code>
+
+<p>
+  This will call mymodule.howdy() with the entire contents of the triggering
+  line as the argument whenever it matches a 'howdy' in a line. The real power
+  comes when using TinyFugue's powerful triggering and matching systems and
+  using a different method for each trigger type.
+
+<p>
+  For a more complex example, see the included <b>tf-lib/urlwatch.py</b> which catches
+  all urls going by and writes a url launching page.
+
+<p>
+  See <a href="../topics/tf_python.html">tf python</a> for calling back into TinyFugue.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

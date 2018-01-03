@@ -1,0 +1,57 @@
+<title>TinyFugue: TF Python</title>
+<!--"@tf.err"-->
+<!--"@tf.eval"-->
+<!--"@tf.getvar"-->
+<!--"@tf.out"-->
+<!--"@tf.send"-->
+<!--"@tf.tfrc"-->
+<!--"@tf.world"-->
+<!--"@tf module"-->
+<h1>TF Python Module</h1>
+
+<p>
+  The TF Python module lets your python module do useful things with TinyFugue.
+  When using <a href="../commands/python.html">/python</a> or 
+  <a href="../commands/python.html">python()</a> module tf is already present in the
+  local namespace, but any <a href="../commands/python_load.html">/python_load</a>
+  script needs to 'import tf'.
+
+<p>
+  <b>tf.err</b>( <i>text</i> ) - sends <i>text</i> to your screen (tferr stream).
+<p>
+  <b>tf.eval</b>( <i>string arg</i> ) - is the same as <a href="../commands/eval.html">/eval</a> <i>string arg</i>.
+<p>
+  <b>tf.getvar</b>( <i>var</i>, (<i>default</i> ) - gets value of <i>var</i> or <i>default</i> if it's not set.
+<p>
+  <b>tf.out</b>( <i>text</i> ) - sends <i>text</i> to your screen (tfout stream).
+<p>
+  <b>tf.send</b>( <i>text</i>, (<i>world</i> ) - sends <i>text</i> to <i>world</i> (default current)
+    without worrying about the flag/quoting problems of tf.eval()
+<p>
+  <b>tf.tfrc</b>() - returns the file name of the loaded .tfrc file (or empty string if none)
+<p>
+  <b>tf.world</b>() - returns the name of the current world or empty string if none.
+
+<p>
+  <b>Arbitrary data from TF</b>: Your program can retrieve any information it needs
+  from TinyFugue by doing the following (for example):<br>
+  <code>tf.eval( '/test "${world_name}"' )</code><br>
+  will return a string containing the name of the current world or:<br>
+  <code>tf.eval( '/test columns()' )</code><br>
+  will return an integer with the number of screen columns. Notice the
+  quoting is slightly depending on what we expect it to return.
+
+<p>
+  See the included <b>tf-lib/urlwatch.py</b> and <b>tf-lib/config.py</b> for fairly complex
+  examples.
+
+<p>
+  See also: <a href="./tf_python.html">tf python</a> for overall info.</p>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>
