@@ -1,0 +1,44 @@
+<title>TinyFugue: /exit</title>
+<!--"@/exit"-->
+<h1>/exit</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/exit.html">/EXIT</a> [<i>n</i>]<br>
+<hr>
+
+<p>
+  When called directly or indirectly during a 
+  <a href="../commands/load.html">/load</a>,
+  <a href="../commands/exit.html">/exit</a> aborts execution of all enclosing
+  macro bodies, and aborts <i>n</i> (default 1) enclosing
+  <a href="../commands/load.html">/load</a>'s.
+
+<p>
+  When called outside of a <a href="../commands/load.html">/load</a>,
+  <a href="../commands/exit.html">/exit</a> has no effect.
+
+<p>
+  Example:  one way to prevent a file from being loaded more than once
+  is to put commands like these at the beginning of the file:
+<pre>
+  <a href="../commands/if.html">/if</a> (<i>variable</i>) <a href="../commands/exit.html">/exit</a>%; <a href="../commands/if.html">/endif</a>
+  <a href="../commands/set.html">/set</a> <i>variable</i>=1
+</pre>
+  ...where <i>variable</i> is the name of the file or some other unique name.
+
+<p>
+  See: <a href="../commands/load.html">/load</a>,
+  <a href="../commands/return.html">/return</a>,
+  <a href="../commands/break.html">/break</a>,
+  <a href="../commands/load.html">/loaded</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

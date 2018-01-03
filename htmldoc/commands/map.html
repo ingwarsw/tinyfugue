@@ -1,0 +1,96 @@
+<title>TinyFugue: mapping</title>
+<!--"@/map"--> 
+<!--"@/mark"--> 
+<!--"@/path"--> 
+<!--"@/revert"--> 
+<!--"@/savepath"--> 
+<!--"@/unpath"--> 
+<!--"@/unmark"--> 
+<!--"@/dopath"--> 
+<!--"@mapping"--> 
+<h1>mapping</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/load.html">/REQUIRE</a> map.tf<br>
+
+<p>
+  <a href="../commands/map.html">/MARK</a> <i>dir</i><br>
+  <a href="../commands/map.html">/UNMARK</a><br>
+  <a href="../commands/map.html">/PATH</a><br>
+  <a href="../commands/map.html">/RETURN</a><br>
+  <a href="../commands/map.html">/MAP</a><br>
+  <a href="../commands/map.html">/UNPATH</a><br>
+  <a href="../commands/map.html">/SAVEPATH</a> <i>name</i><br>
+  <a href="../commands/map.html">/DOPATH</a> <i>path</i><br>
+<hr>
+
+<p>
+  These commands, similar to those in tintin, help keep track of sequences
+  of directions between two locations on a mud.  When mapping is enabled
+  with <a href="../commands/map.html">/mark</a>,
+  all mud movement commands (n, s, e, w, ne, sw, nw, se, u, d) that you
+  type are recorded in the "current path".
+
+<p>
+  <a href="../commands/map.html">/mark</a>
+  clears the current path and starts recording your movement.
+
+<p>
+  <a href="../commands/map.html">/unmark</a>
+  disables map recording (but does not clear the current path).
+
+<p>
+  <a href="../commands/map.html">/path</a>
+  prints the current recorded path.
+
+<p>
+  <a href="../commands/map.html">/revert</a>
+  "undoes" the last movement by
+  deleting it from the path and executing the opposite movement command.
+  (This was called "/return" prior to version 4.0).
+
+<p>
+  <a href="../commands/map.html">/map</a>
+  adds <i>dir</i> to the current path as if you had actually gone
+  in that direction.
+
+<p>
+  <a href="../commands/map.html">/unpath</a>
+  deletes the last movement from the path (but does not move you to your
+  previous position)
+
+<p>
+  <a href="../commands/map.html">/savepath</a>
+  <a href="../commands/def.html">defines</a> a
+  <a href="../topics/macro.html">macro</a>
+  named <i>name</i> that will execute the movements in
+  the currently defined path.  (To save this
+  <a href="../topics/macro.html">macro</a> to a file, use
+  "<code><a href="../commands/save.html">/save</a>
+  [-a] <i>file</i> <i>name</i></code>").
+
+<p>
+  <a href="../commands/map.html">/dopath</a>
+  executes a <i>path</i>.  <i>Path</i> must be a space-separated list
+  of movement commands with optional repeat counts.  For example,
+  "<code><a href="../commands/map.html">/dopath</a> 10 n e d 2 w</code>"
+  will execute "n" 10 times, "e" once, "d" once, and "w" twice.
+
+<p>
+  See:
+  <a href="../commands/require.html">/require</a>, 
+  <a href="../commands/speedwalk.html">speedwalk</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>
+
+
+

@@ -1,0 +1,50 @@
+<title>TinyFugue: /getfile</title>
+<!--"@download"-->
+<!--"@/getfile_MUCK"-->
+<!--"@/getfile_LP"-->
+<!--"@/getfile_UNIX"-->
+<!--"@/getfile"-->
+<h1>/getfile</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/load.html">/REQUIRE</a> filexfer.tf<br>
+
+<p>
+  <a href="../commands/getfile.html">/GETFILE_MUCK</a> <i>file</i>
+  [<i>remote-file</i>]<br>
+  <a href="../commands/getfile.html">/GETFILE_LP</a> <i>file</i>
+  [<i>remote-file</i>]<br>
+  <a href="../commands/getfile.html">/GETFILE_UNIX</a> <i>file</i>
+  [<i>remote-file</i>]<br>
+<hr>
+
+<p>
+  Downloads text <i>remote-file</i> from a MUCK, LP, or remote UNIX shell to
+  <i>file</i> on the local host.  If <i>remote-file</i> is omitted,
+  <i>file</i> is used as the name on both ends.  Do not use "wildcard"
+  globbing characters in the file names.
+
+<p>
+  When using <a href="../commands/getfile.html">/getfile_UNIX</a>, an
+  extra line of garbage may appear at the beginning of the downloaded file
+  unless you first disable remote echo with "<code>stty -echo</code>".
+
+<p>
+  Bug: if there is a log open for the
+  <a href="../topics/sockets.html#current">current</a> world, it will be
+  closed by <a href="../commands/getfile.html">/getfile</a>.
+
+<p>
+  See: <a href="../commands/putfile.html">/putfile</a>,
+  <a href="../commands/log.html">/log</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

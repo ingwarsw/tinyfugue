@@ -1,0 +1,39 @@
+<title>TinyFugue: filename expansion</title>
+<!--"@file"-->
+<!--"@files"-->
+<!--"@filenames"-->
+<!--"@filename expansion"-->
+<h1>filename expansion</h1>
+
+<p>
+  Certain strings are treated as filenames in tf
+  (<a href="../topics/special_variables.html#%TFHELP">%{TFHELP}</a>;
+  <a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>;
+  <a href="../topics/special_variables.html#%TFLIBRARY">%{TFLIBRARY}</a>;
+  arguments to <a href="../commands/load.html">/load</a>,
+  <a href="../topics/functions.html#fwrite">fwrite()</a>; etc.).
+  Those strings undergo filename expansion as described below.
+
+<p>
+  If <i>file</i> begins with '~', all characters after the '~' up to the
+  first '/' or end of string are treated as a user name, and the '~' and user
+  name are replaced with the name of the home directory of that user.  If the
+  user name is empty,
+  <a href="../topics/special_variables.html#%HOME">%{HOME}</a> is substituted.
+
+<p>
+  For example, if bob's home directory is /users/bob, then the command
+  "<code><a href="../commands/load.html">/load</a> ~bob/macros.tf"</code>
+  will attempt to load the file /users/bob/macros.tf.
+
+<p>
+  "~user" expansion is not supported on systems that do not have the
+  getpwnam() function.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

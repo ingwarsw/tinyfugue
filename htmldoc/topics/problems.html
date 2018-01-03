@@ -1,0 +1,81 @@
+<title>TinyFugue: problems</title>
+<!--"@bug"-->
+<!--"@bugs"-->
+<!--"@core"-->
+<!--"@crash"-->
+<!--"@error"-->
+<!--"@report"-->
+<!--"@hawkeye"-->
+<!--"@kkeys"-->
+<!--"@kenkeys"-->
+<!--"@author"-->
+<!--"@support"-->
+<!--"@problems"-->
+<h1>problems</h1>
+
+<p>
+  If you have an old version of TF, chances are your bug has already been
+  fixed.  Current information and the latest version of TF can be found at
+  <a href="http://tinyfugue.sourceforge.net/">http://tinyfugue.sourceforge.net/</a>.
+
+<p>
+  For general bug reports, questions, etc, visit the website above (preferred),
+  or email kenkeys@users.sourceforge.net.  For
+  problems specific to the OS/2 version, contact Andreas Sahlbach at
+  asa@stardiv.de.  When reporting a problem or bug, please provide this
+  information:
+
+<ul>
+<li>The full version number of TF (type
+    "<a href="../commands/version.html">/version</a>" in tf).
+    Please give the <em>full</em> number, don't just say something like
+    "beta 4" or "the latest version".
+<li>The operating system name and version.  (On unix systems, type
+    "<code>uname -a</code>" in the shell to get the exact version information.)
+<li>If tf won't install, send the output of the installation process (on UNIX,
+    that's the output of configure and make).  Don't leave out parts just
+    because you don't know what they mean or think they're irrelevant.
+<li>If you have a bug or core:  do NOT send the core file, but do send
+    the debugging dump file (tf.<i>NNNNN</i>.dump) if tf generated one.
+    If not, give me ALL messages from tf (not just the last line).
+    In either case, tell me what you did or what happened before the problem,
+    and whether the problem is repeatable.
+<li>Optional:  If you have a core, you know how to use a debugger,
+    tf was compiled with core dumps enabled, and tf did not generate a
+    debugging dump file, a manual stack
+    trace would be useful (use the 'bt full' command in gdb or 'where' in dbx).
+    If you
+    don't know how, at least provide the other information described above.
+</ul>
+
+<p>
+<a name=""></a> The following bugs are known.  Don't bother reporting them.
+<ul>
+
+<li>
+  The <a href="../topics/special_variables.html#%lp">%{lp}</a> and
+  <a href="../topics/special_variables.html#%emulation">%{emulation}</a>
+  <a href="../topics/variables.html">variables</a> should work on a
+  per-<a href="../topics/sockets.html">socket</a>
+  basis (This is partially overcome with WORLD
+  <a href="../topics/hooks.html">hooks</a>).
+
+<li>
+  If a shell quote (<a href="../commands/quote.html">/quote</a> !) reads a
+  partial line from the child process, tf will hang until the line is
+  completed.
+
+<li>
+  <a href="../commands/recall.html">/recall</a> by timestamp doesn't work
+  when switching to/from daylight savings time (but
+  <a href="../commands/recall.html">/recall</a> by age always works).
+
+</ul>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,54 @@
+<title>TinyFugue: /grep</title>
+<!--"@oldgrep"--> 
+<!--"@grep.tf"--> 
+<h1>/grep</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/load.html">/REQUIRE</a> grep.tf<br>
+
+<p>
+  <a href="../commands/grep.html">/FGREP</a> <i>pattern</i> <i>command</i><br>
+  <a href="../commands/grep.html">/GREP</a> <i>pattern</i> <i>command</i><br>
+  <a href="../commands/grep.html">/EGREP</a> <i>pattern</i> <i>command</i><br>
+<hr>
+
+<p>
+  Executes <i>command</i> and prints only the output that matches
+  <i>pattern</i> (which must not contain spaces).
+  <a href="../commands/grep.html">/fgrep</a> prints lines that
+  <em>contain</em> the string <i>pattern</i>;
+  <a href="../commands/grep.html">/grep</a> prints lines that match
+  the <a href="../topics/patterns.html#glob">glob</a> <i>pattern</i>;
+  <a href="../commands/grep.html">/egrep</a> prints lines that match
+  the <a href="../topics/patterns.html#regexp">regexp</a> <i>pattern</i>.
+
+<p>
+  Remember to use "*" at each end of <i>pattern</i> to make
+  <a href="../commands/grep.html">/grep</a> match lines that <em>contain</em>
+  a piece that matches
+  the <a href="../topics/patterns.html#glob">glob</a> <i>pattern</i>;
+  without the "*"s, the entire line must match.
+
+<p>
+  Example:
+  "<code>/fgrep T'tiny.muck' /listworlds</code>"
+  lists all the worlds defined with the -T'tiny.muck' option.
+
+<p>
+  See:
+  <a href="../commands/textutil.html">textutil.tf</a>, 
+  <a href="../commands/require.html">/require</a>, 
+  <a href="../topics/patterns.html">patterns</a>,
+  <a href="../topics/expressions.html">expressions</a>,
+  <a href="../topics/functions.html">functions</a> 
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

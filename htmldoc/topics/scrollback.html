@@ -1,0 +1,144 @@
+<title>TinyFugue: virtual windows</title>
+<!--"@scrolling"-->
+<!--"@scrollback"-->
+<!--"@windows"-->
+<!--"@window"-->
+<!--"@virtual window"-->
+<!--"@virtual windows"-->
+<h1>virtual windows</h1>
+
+<p>
+Starting in version 5.0, TF maintains a separate virtual window for each
+open <a href="../topics/socket.html">socket</a>, including the "(no world)"
+pseudo-socket.
+Normally, a window scrolls when text is written to it.
+If the <a href="../commands/more.html">more</a> flag is set, automatic
+scrolling will stop when the window becomes full.
+You can manually scroll forwards and backwards in each 
+<a href="../topics/socket.html">socket</a>'s window
+using the keys in the table below.
+
+<p>
+Per-socket windows make it unnecessary to finish reading the
+text on one <a href="../topics/socket.html">socket</a> before switching
+to another.
+When you bring a new <a href="../topics/socket.html">socket</a> into the
+<a href="../topics/socket.html#foreground">foreground</a>, the old
+<a href="../topics/socket.html">socket</a>'s window
+is hidden, but remembers all of its text and current position; when
+you return that old <a href="../topics/socket.html">socket</a> to the
+<a href="../topics/socket.html#foreground">foreground</a>, the text is
+redrawn at the remembered position, and you can resume
+reading where you left off.
+A <a href="../topics/special_variables.html#%textdiv">dividing line</a>
+makes it easy to find the point where the old text ends and the new
+text begins.
+The text of a window is also refilled after resuming from
+<a href="../commands/suspend.html">/suspend</a>
+or <a href="../commands/sh.html">/sh</a>, and even when the terminal's
+size changes.
+
+<p>
+In the table below, the 
+"<a href="../commands/dokey.html">/dokey</a>" columns indicate the argument to
+the <a href="../commands/dokey.html">/dokey</a> command that performs the
+scrolling, and the "keys" column indicates the default keystrokes that perform
+the scrolling.
+<pre>
+    scroll       ....forward....   ...backward....
+    amount       <a href="../commands/dokey.html">/dokey</a>  keys      <a href="../commands/dokey.html">/dokey</a>     keys
+    -----------  ------- -------   ---------- ----
+    normal       <a href="../commands/dokey.html#pgdn">PgDn</a>    PgDn      <a href="../commands/dokey.html#pgup">PgUp</a>       PgUp
+    1/2 screen   <a href="../commands/dokey.html#hpage">hpage</a>   ^[h ^X]   <a href="../commands/dokey.html#hpageback">hpageback</a>  ^X[
+    1 screen     <a href="../commands/dokey.html#page">page</a>    TAB ^X}   <a href="../commands/dokey.html#pageback">pageback</a>   ^X{
+    1 line       <a href="../commands/dokey.html#line">line</a>    ^[^N      <a href="../commands/dokey.html#lineback">lineback</a>   ^[^P
+</pre>
+Note that the line-scrolling keys may be typable as meta-ctrl-n and meta-ctrl-p
+(depending on your
+<a href="../topics/special_variables.html#%meta_esc">%meta_esc</a> and
+<a href="../topics/locale.html">locale</a>).
+"Normal" scrolling is a full screenful by default.
+If you prefer PgUp and PgDn to scroll a half screen instead,
+you should redefine
+<pre>
+    <a href="../commands/def.html">/def</a> key_pgdn = /dokey_hpage
+    <a href="../commands/def.html">/def</a> key_pgup = /dokey_hpageback
+</pre>
+
+<p>
+Some terminal emulators do not send PgUp and PgDn keys to tf.
+If you have such a terminal, you may wish to
+<pre>
+    <a href="../commands/bind.html">/bind</a> ^F = /dokey_page
+    <a href="../commands/bind.html">/bind</a> ^B = /dokey_pageback
+</pre>
+If you're an emacs user, you may want to bind
+<pre>
+    <a href="../commands/bind.html">/bind</a> ^V = /dokey_page
+    <a href="../commands/bind.html">/bind</a> ^[v = /dokey_pageback
+</pre>
+(or, "<code>/load kb-emacs.tf</code>").
+
+<p>
+A virtual screen can be redrawn with ^L, or cleared with ^[^L (ESC ctrl-L).
+Once lines are cleared from a screen, they can be redrawn by scrolling
+back to them.  They are not automatically redrawn when you hide the
+screen and then unhide it again.
+
+<p>
+Some <a href="../topics/hooks.html">hooks</a> need to print messages that 
+do not make sense at the bottom of the
+<a href="../topics/socket.html#foreground">foreground</a>
+window (as they did before
+version 5.0).  For example, if you have world Foo in the
+<a href="../topics/socket.html#foreground">foreground</a>,
+and get activity in world Bar, it would not make sense for the
+<a href="../topics/hooks.html#ACTIVITY">ACTIVITY hook</a> to print
+"<code>% Activity in world Bar</code>" to Foo's window.
+Firstly, you might want to know about the activity even if you are not
+at the end of Foo's window buffer.
+Secondly, after you read the text in Bar and returned to Foo,
+the message would still be at the bottom of Foo's window buffer,
+misleadingly.
+Many messages of this type are now delivered as
+"<a href="../topics/tfio.html">alerts</a>".
+An <a href="../topics/tfio.html">alert</a> appears temporarily on the
+<a href="../topics/status_line.html">status line</a>, where you can
+see it immediately and it will not outlive its usefulness.
+Also, because text from different worlds is not mixed in 5.0,
+the <a href="../topics/hooks.html#WORLD">WORLD hook</a>
+no longer prints "<code>--- World <i>name</i> ---</code>".
+
+<p>
+The <a href="../commands/limit.html">/limit</a> command will filter the text
+displayed in a window.  The counters in the 
+<a href="../commands/more.html">more</a>
+prompt will count only the lines that match the
+<a href="../commands/limit.html">limit</a>.
+
+<p>
+If your terminal emulator has its own scrollback, it probably will not
+work very well with tf.  To avoid confusion and avoid polluting your
+terminal's scrollback with garbage, tf tries to switch to the terminal's
+"alternate buffer", which does not keep scrollback.  But not all terminals
+and configurations allow this (for example, xterm does, but only if the
+termcap or terminfo entry contains the correct codes, and it has not
+been disabled with xterm's titeInhibit resource).  If the terminal can
+not switch to an alternate buffer, the terminal's scrollback may appear
+to work for a while, but will become jumbled as soon as you switch worlds
+in tf or use tf's scrollback.  You are advised to not attempt to use your
+terminal's scrollback at all while running tf.
+
+<p>
+See also:
+<a href="../topics/interface.html">interface</a>,
+<a href="../topics/mode.html">visual</a>,
+<a href="../commands/limit.html">/limit</a>,
+<a href="../topics/keybindings.html">keybindings</a>.
+
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

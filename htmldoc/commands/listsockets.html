@@ -1,0 +1,119 @@
+<title>TinyFugue: /listsockets</title>
+<!--"@/listsockets"-->
+<h1>/listsockets</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/listsockets.html">/LISTSOCKETS</a>
+  [-sn] [-m<i>style</i>] [-S<i>field</i>] [-T<i>type</i>] [<i>name</i>]<br>
+<hr>
+
+  Lists the <a href="../topics/sockets.html">sockets</a> to which TinyFugue
+  is connected.
+
+<p>
+  <a href="../topics/options.html">Options</a> and arguments:
+  <dl compact>
+  <dt>-s		<dd>short form, list only world names
+  <dt>-n		<dd>print host and port in numeric form
+  <dt>-m<i>style</i>	<dd>Use <i>style</i> for
+			<a href="../topics/patterns.html">pattern matching</a>
+			in other options
+			(default: <a href="../topics/special_variables.html#%matching">%{matching}</a>).
+
+  <dt>-S<i>field</i>	<dd>Sort sockets by <i>field</i>.  <i>Field</i>
+  			may be "name", "type", "character",
+			"host", "port", "lines", "idle",
+			or "-" (don't sort; this is the default).
+			Only the first character is necessary.
+  <dt>-T<i>type</i>	<dd>list only worlds with a type matching the
+			<a href="../topics/patterns.html">pattern</a>
+			<i>type</i>.
+  <dt><i>name</i>	<dd>list only worlds with a name matching the
+			<a href="../topics/patterns.html">pattern</a>
+			<i>name</i>.
+  </dl>
+
+<p>
+  The output will look something like this (unless the -s option is given):
+<pre>
+     LINES IDLE TYPE      NAME            HOST                       PORT
+   10+  48  13h tiny.muck Cave            tcp.com                    2283
+*  foregnd   1m tiny.mush DeepSeas        muds.okstate.edu           6250
+         0   7s telnet    whitehouse.gov, whitehouse.gov             smtp
+ ?       0  15s tiny      SlowMUD         slow.machine.com           4201
+</pre>
+  The columns and their meanings are:
+  <dl>
+  <dt>unlabeled first column
+          <dd>"*" marks the
+          <a href="../topics/sockets.html#current">current</a> socket.
+  <dt>unlabeled second column
+          <dd>the state of the <a href="../topics/sockets.html">socket</a> is
+	  one of:
+	  <dl>
+          <dt>!<dd>dead
+          <dt>?<dd>hostname lookup or network connection is incomplete
+	  <dt>C/c<dd>an established normal connection
+	  <dt>S/s<dd>an established connection currently in telnet
+	      subnegotiation
+	  <dt>X/x<dd>an established <a href="../topics/ssl.html">SSL</a>
+	      connection
+	  <dt>O<dd>an open
+	    <a href="../topics/sockets.html#connectionless">connectionless</a>
+	    socket
+	  </dl>
+	  A lowercase state character indicates the connection is using
+	  <a href="../topics/mccp.html">MCCP</a>.
+  <dt>unlabeled third column
+	  <dd>"P" if the connection is
+	  <a href="../topics/proxy.html">proxied</a>
+  <dt>LINES
+          <dd>for a <a href="../topics/sockets.html#background">background</a>
+          <a href="../topics/sockets.html">socket</a>,
+          the number of old (seen) and new (unseen) lines past the
+	  bottom of the <a href="../topics/sockets.html">socket</a>'s window
+	  (ignoring any <a href="../command/limit.html">limit</a>
+	  that may be in effect on that window);
+	  or, "foregnd" for a
+	  <a href="../topics/sockets.html#foreground">foreground</a>
+          <a href="../topics/sockets.html">socket</a>.
+  <dt>IDLE
+          <dd>how long since the last text was received on the
+          <a href="../topics/sockets.html">socket</a>.
+  <dt>TYPE
+          <dd>the type of the world (set with
+          <a href="../commands/addworld.html">/addworld</a> -T).
+  <dt>NAME
+          <dd>the name of the world associated with the
+          <a href="../topics/sockets.html">socket</a>.
+  <dt>HOST
+          <dd>the host to which the
+          <a href="../topics/sockets.html">socket</a> is connected.
+  <dt>PORT
+          <dd>the port to which the
+          <a href="../topics/sockets.html">socket</a> is connected.
+  </dl>
+
+<p>
+  The return value of 
+  <a href="../commands/listsockets.html">/listsockets</a>
+  is the number of sockets listed.
+
+<p>
+  See: <a href="../topics/sockets.html">sockets</a>,
+  <a href="../topics/special_variables.html#%background">%background</a>,
+  <a href="../commands/connect.html">/connect</a>,
+  <a href="../commands/fg.html">/fg</a>,
+  <a href="../topics/functions.html#nactive">nactive()</a>,
+  <a href="../topics/functions.html#idle">idle()</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

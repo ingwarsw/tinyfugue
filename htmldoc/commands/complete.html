@@ -1,0 +1,66 @@
+<title>TinyFugue: /complete</title>
+<!--"@completion"--> 
+<!--"@/complete"--> 
+<h1>/complete</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/complete.html">/COMPLETE</a> [<i>type</i>]<br>
+<hr>
+
+<p>
+  When a part of a word is typed, and then 
+  <a href="../commands/complete.html">/complete</a> is called
+  (from a <a href="../topics/keybindings.html">keybinding</a>),
+  it will attempt to fill in the rest of the word.
+  The possible words it chooses from depend on <i>type</i>.
+  If no <i>type</i> is given, it completes from context:
+  it will choose the type of completion based on earlier parts of the
+  line being typed, plus previous
+  <a href="../topics/history.html">input history</a>.
+  For example, if the line begins with "/connect",
+  it will use worldname completion;
+  if the word begins with "%" or "%{", it will use variable name completion;
+  etc.
+
+<p>
+  The following table lists the meanings and the default
+  <a href="../topics/keybindings.html">keybindings</a> for each type.
+
+<pre>
+    Keys		Type		Meaning
+    ----		----		-------
+    ^[^I (ESC TAB)			complete word depending on context
+    ^[^W		worldname	complete tf world name
+    ^[$			macroname	complete tf macro name
+    ^[%			variable	complete tf variable name
+    ^[/			filename	complete file name (unix only)
+    ^[;			user_defined	complete from <a href="../commands/complete.html">%{completion_list}</a>
+    ^[i			input_history	complete from previously typed words
+			sockname	complete name of open tf socket
+</pre>
+
+<p>
+  The "ESC TAB" and "ESC ;" bindings will use the
+  <a href="../commands/complete.html">%{completion_list}</a>
+  <a href="../topics/variables.html">variable</a>, in which you can store a
+  list of any words you want to be able to complete.
+
+<p>
+  You can also define your own types of completion.  See the
+  <a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>/complete.tf
+  file for more information.
+
+<p>
+  See: <a href="../topics/keybindings.html">keybindings</a>, 
+  <a href="../topics/interface.html">interface</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

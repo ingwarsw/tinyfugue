@@ -1,0 +1,59 @@
+<title>TinyFugue: /prompt</title>
+<!--"@/prompt"-->
+<h1>/prompt</h1>
+
+<p>
+  <a href="../topics/functions.html">Function</a> usage:
+
+<p>
+  <a href="../commands/prompt.html">PROMPT</a>(<i>text</i>)<br>
+
+<p>
+  Command usage:
+
+<p>
+  <a href="../commands/prompt.html">/PROMPT</a> [-a<i>attrs</i>] [-p] <i>text</i><br>
+<hr>
+
+<p>
+  Sets the <a href="../topics/prompts.html">prompt</a> for the
+  <a href="../topics/sockets.html#current">current</a>
+  <a href="../topics/sockets.html">socket</a> to <i>text</i>,
+  replacing any existing <a href="../topics/prompts.html">prompt</a>.
+
+<p>
+  Command <a href="../topics/options.html">options</a>:
+  <dl>
+  <dt><code>-a<i>attrs</i></code>
+	<dd>Apply the <a href="../topics/attributes.html">attributes</a>
+	given by <i>attrs</i> to <i>text</i>.
+  <dt><code>-p</code>
+	<dd>Interpet "<code>@{<i>attr</i>}</code>" strings within <i>text</i>
+	as commands to set <a href="../topics/attributes.html">attributes</a>
+	inline.
+	See <a href="../topics/functions.html#decode_attr">decode_attr()</a>.
+  </dl>
+
+<p>
+  <a href="../commands/prompt.html">/prompt</a> is most useful when called
+  from a PROMPT <a href="../topics/hooks.html">hook</a>, like this:
+<pre>
+    <a href="../commands/def.html">/def</a> <a href="../commands/def.html#-h">-h</a>"PROMPT *&gt; " catch_prompt = <a href="../commands/test.html">/test</a> <a href="../commands/prompt.html">prompt</a>(<a href="../topics/substitution.html#%*">{*}</a>)
+</pre>
+  Then, any text that ends in "&gt;" without a newline will be made the prompt.
+
+<p>
+  For a more sophisticated example, see
+  "<a href="../topics/status_line.html#prompt example">status line</a>".
+
+<p>
+  See: <a href="../topics/prompts.html">prompts</a>,
+  <a href="../topics/hooks.html">hooks</a> (PROMPT)
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,89 @@
+<title>TinyFugue: /trig</title>
+<!--"@/act"-->
+<!--"@/trigpc"-->
+<!--"@/trigp"-->
+<!--"@/trigc"-->
+<!--"@/trig"-->
+<h1>/trig</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/trig.html">/TRIG</a> <i>pattern</i> = <i>body</i><br>
+  <a href="../commands/trig.html">/TRIGP</a> <i>priority</i> <i>pattern</i> =
+  <i>body</i><br>
+  <a href="../commands/trig.html">/TRIGC</a> <i>chance</i> <i>pattern</i> =
+  <i>body</i><br>
+  <a href="../commands/trig.html">/TRIGPC</a> <i>priority</i> <i>chance</i>
+  <i>pattern</i> = <i>body</i><br>
+<hr>
+
+<p>
+  Creates an unnamed <a href="../topics/macros.html">macro</a> that will
+  <a href="../topics/triggers.html">trigger</a> on
+  <i><a href="../topics/patterns.html">pattern</a></i> and execute
+  <i>body</i>.  If <i>chance</i> is given with
+  <a href="../commands/trig.html">/trigc</a> or
+  <a href="../commands/trig.html">/trigpc</a>, it will be the percentage
+  probability of the <a href="../topics/triggers.html">trigger</a> going off;
+  default is 100%.  If <i>priority</i> is given with
+  <a href="../commands/trig.html">/trigp</a> or
+  <a href="../commands/trig.html">/trigpc</a>, it will be the
+  <a href="../topics/priority.html">priority</a> of the
+  <a href="../topics/triggers.html">trigger</a>; default is 0.  The matching
+  style of the <a href="../topics/triggers.html">trigger</a> is determined by
+  the global <a href="../topics/variables.html">variable</a>
+  <a href="../topics/special_variables.html#%matching">%{matching}</a>.
+
+<p>
+  If the command fails it returns 0.  Otherwise, it creates a new
+  <a href="../topics/macros.html">macro</a> and returns its (positive) number
+  (useful in <a href="../commands/undefn.html">/undefn</a> and
+  <a href="../commands/edit.html">/edit</a>).
+
+<p>
+  <a href="../commands/trig.html">/trig</a> is equivalent to:
+  <a href="../commands/def.html">/def</a>
+    <a href="../commands/def.html#-t">-t</a><i>pattern</i>
+    = <i>body</i>.<br>
+  <a href="../commands/trig.html">/trigp</a> is equivalent to:
+  <a href="../commands/def.html">/def</a>
+    <a href="../commands/def.html#-p">-p</a><i>priority</i>
+    <a href="../commands/def.html#-t">-t</a><i>pattern</i>
+    = <i>body</i>.<br>
+  <a href="../commands/trig.html">/trigc</a> is equivalent to:
+  <a href="../commands/def.html">/def</a>
+    <a href="../commands/def.html#-c">-c</a><i>chance</i>
+    <a href="../commands/def.html#-t">-t</a><i>pattern</i>
+    = <i>body</i>.<br>
+  <a href="../commands/trig.html">/trigpc</a> is equivalent to:
+  <a href="../commands/def.html">/def</a>
+    <a href="../commands/def.html#-p">-p</a><i>priority</i>
+    <a href="../commands/def.html#-c">-c</a><i>chance</i>
+    <a href="../commands/def.html#-t">-t</a><i>pattern</i>
+    = <i>body</i>.<br>
+
+<p>
+  Note:  the <a href="../commands/trig.html">/trig</a> commands create
+  <a href="../topics/macros.html">macros</a> without names.  Thus each
+  <a href="../commands/trig.html">/trig</a> command will create a new
+  <a href="../topics/macros.html">macro</a> macro instead of replacing
+  an old <a href="../topics/macros.html">macro</a>.  For this reason,
+  it is usually better to use <a href="../commands/def.html">/def</a>
+  and give your <a href="../topics/macros.html">macros</a> names.
+
+<p>
+  See: <a href="../topics/triggers.html">triggers</a>,
+  <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../topics/patterns.html">patterns</a>,
+  <a href="../commands/def.html">/def</a>,
+  <a href="../commands/untrig.html">/untrig</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

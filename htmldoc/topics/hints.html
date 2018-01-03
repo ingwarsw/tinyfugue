@@ -1,0 +1,166 @@
+<title>TinyFugue: hints</title>
+<!--"@style"-->
+<!--"@tips"-->
+<!--"@hints"-->
+<h1>hints</h1>
+
+<p>
+  Some hints and style tips:
+
+<p>
+  <ul>
+  <li> Use a high-<a href="../topics/priority.html">priority</a>
+  <a href="../topics/triggers.html">trigger</a> on
+  yourself to prevent loops.  Say I want to throw a tomato at anyone who says
+  the word "tomato", and I write the following
+  <a href="../topics/triggers.html">trigger</a>:
+<pre>
+  <a href="../commands/def.html">/def</a> -t"*tomato*" tomato = :throws a tomato at <a href="../topics/substitution.html#%n">%1</a>.
+</pre>
+  If Ben uses the word tomato, I will
+  <a href="../topics/triggers.html">trigger</a>, and then see the text
+  "Hawkeye throws a tomato at Ben." That text contains the word tomato, which
+  will <a href="../topics/triggers.html">trigger</a> me again, creating an
+  infinite loop.  One way to prevent this is by creating a
+  high-<a href="../topics/priority.html">priority</a>
+  <a href="../topics/triggers.html">trigger</a> on myself which does nothing:
+<pre>
+  <a href="../commands/def.html">/def</a> -p99999 -t"{Hawkeye|You}*" anti_loop
+</pre>
+  Now, when I see "Hawkeye throws a tomato at Ben", the /anti_loop
+  <a href="../topics/triggers.html">trigger</a> will catch it before /tomato
+  does, so I won't loop.
+
+<p>
+  <li> Use multiple lines, spacing, and indentation in
+  <a href="../commands/load.html">/load</a> files.  Normally, commands must
+  be on one line.  But in files read with
+  <a href="../commands/load.html">/load</a>, if a line ends in '\', the
+  following line will have leading whitespace stripped and the two lines will
+  be joined.  This makes it much easier (for humans) to read complex
+  <a href="../topics/macros.html">macros</a>.  Compare the two identical
+  <a href="../topics/macros.html">macros</a> below, and see which is easier
+  to read.
+
+<p>
+<pre>
+  <a href="../commands/def.html">/def</a> count=<a href="../commands/let.html">/let</a> i=1%;<a href="../commands/while.html">/while</a> (i&lt;=<a href="../topics/substitution.html#%n">%1</a>) say %i%;<a href="../commands/let.html">/let</a> i=$[i+1]%;<a href="../commands/while.html">/done</a>
+</pre>
+
+<p>
+<pre>
+  <a href="../commands/def.html">/def</a> count = \
+      <a href="../commands/let.html">/let</a> i=1%; \
+      <a href="../commands/while.html">/while</a> ( i &lt;= <a href="../topics/substitution.html#%n">%1</a> ) \
+	  say %i%; \
+	  <a href="../commands/let.html">/let</a> i=$[i + 1]%; \
+      <a href="../commands/while.html">/done</a>
+</pre>
+
+<p>
+  <li> Use comments in <a href="../commands/load.html">/load</a> files.
+  Complicated <a href="../topics/macros.html">macros</a> are much easier to
+  read if you include a short comment describing the arguments to the
+  <a href="../topics/macros.html">macro</a> and what it does.  Lines
+  beginning with ';' or '#' are comments, and are ignored during
+  <a href="../commands/load.html">/load</a>.
+
+<p>
+  <li> Name all <a href="../topics/triggers.html">triggers</a> and
+  <a href="../topics/hooks.html">hooks</a>.  If you ever need to
+  <a href="../commands/load.html">/load</a> a file a second time,
+  <a href="../topics/triggers.html">triggers</a>,
+  <a href="../topics/attributes.html">hilite</a>s,
+  <a href="../topics/hooks.html">hooks</a>, and
+  <a href="../topics/attributes.html">gag</a>s without names may be
+  duplicated.  But if they are named, old copies of
+  <a href="../topics/macros.html">macros</a> will be replaced with new copies
+  of <a href="../topics/macros.html">macros</a> with the same name.  Naming
+  <a href="../topics/macros.html">macros</a> also makes them easier to
+  manipulate with commands like
+  <a href="../commands/list.html">/list</a> and
+  <a href="../commands/undef.html">/undef</a>.
+
+<p>
+  <li> Don't use "weird" characters in
+  <a href="../topics/macros.html">macro</a> names.  Although any
+  <a href="../topics/macros.html">macro</a> name is legal, some characters
+  can have unwanted <a href="../topics/evaluation.html">expansion</a>
+  effects.  Weird characters are also harder to read.  You should stick to
+  letters, numbers, and '_' characters.  In particular, avoid '~' characters,
+  since they are used in library <a href="../topics/macros.html">macros</a>.
+
+<p>
+  <li> Use local <a href="../topics/variables.html">variables</a> instead of
+  global <a href="../topics/variables.html">variables</a> if possible.  This
+  avoids conflicts when two <a href="../topics/macros.html">macros</a> use a
+  <a href="../topics/variables.html">variable</a> with the same name.
+  If you're using a
+  <a href="../topics/variables.html">variable</a> in an
+  <a href="../topics/expressions.html">expression</a>,
+  use <a href="../commands/let.html">/let</a> first to initialize the
+  <a href="../topics/variables.html">variable</a> in the local scope.
+  But remember, when you use a <a href="../topics/variables.html">variable</a>
+  reference (by name, as opposed to a
+  <a href="../topics/variables.html">variable</a> substitution using "%"), TF
+  uses dynamic scoping (see: <a href="../topics/scope.html">scope</a>).
+
+<p>
+  <li> Use <a href="../topics/variables.html">variable</a> references
+  instead of %-substitutions
+  in <a href="../topics/expressions.html">expressions</a>.
+  Because <a href="../topics/macros.html">macro</a> bodies
+  are <a href="../topics/evaluation.html">expanded</a>, something like
+  "<a href="../commands/test.html">/test</a>
+  <a href="../topics/substitution.html#%n">%1</a>" is prone to problems if
+  <a href="../topics/substitution.html#%n">%1</a> contains any special
+  characters.  But by using a <a href="../topics/variables.html">variable</a>
+  reference you can avoid this problem;
+  for example, "<code><a href="../commands/test.html">/test</a> {1}</code>".
+
+<p><li>
+  "<a href="../commands/set.html">/set</a>
+  <a href="../topics/special_variables.html#%pedantic">pedantic</a>=on" to
+  make tf generate warnings about some potential problems.
+
+<p><li>
+  "<a href="../commands/set.html">/set</a>
+  <a href="../topics/special_variables.html#%defcompile">defcompile</a>=on" to
+  see syntax errors in a <a href="../topics/macros.html">macro</a>
+  when you define it, instead of waiting until you first run it.
+
+<p><li>
+  "<a href="../commands/set.html">/set</a>
+  <a href="../topics/special_variables.html#%mecho">mecho</a>=on" to
+  see what commands are being executed, or
+  <a href="../commands/connect.html">/connect</a> to a
+  normal or <a href="../topics/sockets.html#connectionless">connectionless</a>
+  <a href="../topics/sockets.html">socket</a>
+  defined with
+  "<code><a href="../commands/addworld.html">/addworld</a> -e</code>"
+  to see what you're sending to the
+  <a href="../topics/sockets.html">socket</a>.
+
+<p><li>
+  "<a href="../commands/set.html">/set</a>
+  <a href="../topics/special_variables.html#%emulation">emulation</a>=debug"
+  and "<a href="../topics/special_variables.html#%telopt">telopt</a>=on"
+  to see exactly what the socket is sending to tf.
+
+<p><li>
+  Use the -n or -l option of <a href="../commands/trigger.html">/trigger</a>
+  to see a list of <a href="../topics/triggers.html">trigger</a>
+  <a href="../topics/macros.html">macros</a> that would match a given line.
+
+  </ul>
+
+<p>
+  See also <a href="../topics/debugging.html">debugging</a>.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

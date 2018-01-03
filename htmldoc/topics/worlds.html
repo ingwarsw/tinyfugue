@@ -1,0 +1,117 @@
+<title>TinyFugue: worlds</title>
+<!--"@worlds"-->
+<h1>worlds</h1>
+
+<p>
+  Associated commands:
+  <dl>
+  <dt><a href="../commands/addworld.html">/addworld</a>
+          <dd>define a new world
+  <dt><a href="../commands/world.html">/world</a>
+          <dd>connect to a defined world
+  <dt><a href="../commands/dc.html">/dc</a>
+          <dd>disconnect from a world
+  <dt><a href="../commands/unworld.html">/unworld</a>
+          <dd>undefine a world
+  <dt><a href="../commands/purgeworld.html">/purgeworld</a>
+          <dd>undefine a group of worlds
+  <dt><a href="../commands/saveworld.html">/saveworld</a>
+          <dd>save world definitions to a file
+  <dt><a href="../commands/loadworld.html">/loadworld</a>
+          <dd>load world definitions from a file
+  <dt><a href="../commands/listworlds.html">/listworlds</a>
+          <dd>display world definitions
+  <dt><a href="../topics/tools.html">/edworld</a>
+          <dd>edit a world definition
+  <dt><a href="../topics/functions.html#world_info">world_info()</a>
+          <dd>get world information
+  </dl>
+
+<p>
+<a name="$world_name"></a>
+<a name="$world_character"></a>
+<a name="$world_password"></a>
+<a name="$world_host"></a>
+<a name="$world_port"></a>
+<a name="$world_mfile"></a>
+<a name="$world_type"></a>
+<a name="fields"></a>
+  Fugue stores a list of "worlds" that it knows about.  Each world has several
+  fields associated with it:
+  <dl>
+  <dt>name	<dd>a label used to refer to the world
+  <dt>type	<dd>an optional string for matching
+		<a href="../commands/def.html#-T">/def -T</a>
+  <dt>character	<dd>optional login name
+  <dt>password	<dd>optional login password
+  <dt>host	<dd>server's internet host name, IPv4 address, or (if your
+		platform supports it) IPv6 address
+  <dt>port	<dd>server's TCP port number or name
+  <dt>mfile	<dd>optional <a href="../topics/macros.html">macro</a> file
+  <dt>login	<dd>"1" if <a href="../topics/login.html">automatic login</a>
+		is enabled for the world's
+		<a href="../topics/sockets.html">socket</a>, "0" otherwise.
+  <dt>proxy	<dd>"1" if this world's
+		<a href="../topics/sockets.html">socket</a> is using a
+		<a href="../topics/proxy.html">proxy</a>, "0" otherwise
+  <dt>src	<dd>optional name or address used for client (tf) end of
+		connection.
+  <dt>cipher	<dd>current cipher used by SSL connection to world.
+  </dl>
+
+<p>
+  The character name, password, and type are used by
+  <a href="../topics/login.html">automatic login</a>, if the
+  <a href="../topics/special_variables.html#%login">%{login}</a> flag is on.
+
+<p>
+  The <a href="../topics/macros.html">macro</a> file is
+  <a href="../commands/load.html">loaded</a> when a
+  <a href="../topics/sockets.html">socket</a> is opened to the world.  It can
+  contain any commands you want executed automatically when you connect to
+  that world.  If the flag
+  <a href="../topics/special_variables.html#%sockmload">%{sockmload}</a> is
+  on, this file will also be <a href="../commands/load.html">loaded</a>
+  whenever you switch to a world with the
+  SOCKETB and SOCKETF keys (see <a href="../topics/sockets.html">sockets</a>,
+  <a href="../commands/dokey.html">/dokey</a>,
+  <a href="../topics/hooks.html">hooks</a> (CONNECT)).
+
+<p>
+  World information can be accessed with the macro expansion
+  ${world_<var>fieldname</var>} or the
+  <a href="../topics/functions.html">function</a>
+  <a href="../topics/functions.html#world_info">world_info</a>(<var>worldname</var>,
+  <var>fieldname</var>), where <i>fieldname</i> is one of the fields
+  described above.
+
+<p>
+  For example:
+<br><code>
+  <a href="../commands/eval.html">/eval</a> say I am
+  <a href="../topics/worlds.html#$world_character">${world_character}</a>
+  on <a href="../topics/worlds.html#$world_name">${world_name}</a>.
+</code><br>
+  This would tell the rest of the world some stuff they probably don't care
+  about, namely the label your Fugue has assigned to the
+  <a href="../topics/sockets.html#current">current</a> world and
+  the character name under which it logged on.
+
+<a name="">
+<p>
+  Fugue also keeps track of a world named "default", which is just a dummy
+  world with a character name and password, and optionally a
+  <a href="../topics/macros.html">macro</a> file.  If a default world is
+  defined, worlds without character, password, or file fields will use the
+  values from the default world.
+
+<p>
+  See also: <a href="../topics/sockets.html">sockets</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

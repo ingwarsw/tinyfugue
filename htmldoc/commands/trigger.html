@@ -1,0 +1,81 @@
+<title>TinyFugue: /trigger</title>
+<!--"@/trigger"-->
+<h1>/trigger</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/trigger.html">/TRIGGER</a> [-ln] [-g] [-w[<i>world</i>]]
+  [-h[<i>event</i>]] <i>text</i><br>
+<hr>
+
+<p>
+  Executes <a href="../topics/macros.html">macros</a> with
+  <a href="../topics/triggers.html">triggers</a> or
+  <a href="../topics/hooks.html">hook</a> arguments that match <i>text</i>,
+  just as if <i>text</i> had come from a
+  <a href="../topics/sockets.html">socket</a> or a hook event had occurred
+  with <i>text</i> as its arguments.
+  The return value of <a href="../commands/trigger.html">/trigger</a>
+  is the number of (non-<a href="../commands/def.html#-q">quiet</a>)
+  <a href="../topics/macros.html">macros</a> that were executed.
+  <a href="../commands/trigger.html">/Trigger</a> is useful
+  for debugging
+  <a href="../topics/triggers.html">triggers</a> and
+  <a href="../topics/hooks.html">hooks</a>.
+
+<p>
+  <a href="../topics/options.html">Options:</a>
+  <dl>
+    <dt>-g
+      <dd>Match "global" <a href="../topics/triggers.html">triggers</a>
+      or <a href="../topics/hooks.html">hooks</a> that were not defined with
+      <a href="../commands/def.html">/def</a>
+      <a href="../commands/def.html#-w">-w</a>
+    <dt>-w<i>world</i>
+      <dd>Match <a href="../topics/triggers.html">triggers</a> or
+      <a href="../topics/hooks.html">hooks</a> for <i>world</i>,
+      or the <a href="../topics/sockets.html#current">current</a>
+      <a href="../topics/worlds.html">world</a> if <i>world</i> is omitted.
+    <dt>-h<i>event</i>
+      <dd>Match <a href="../topics/hooks.html">hooks</a> where <i>event</i>
+      matches the hook event and <i>text</i> matches the hook argument pattern.
+      Without -h, <a href="../commands/trigger.html">/trigger</a> matches
+      <a href="../topics/triggers.html">triggers</a>,
+      not <a href="../topics/hooks.html">hooks</a>.
+    <dt>-n
+      <dd>Do not execute any of the matched macros; instead, display a list
+      of each macro that would have matched, including its
+      <a href="../commands/def.html#-F">fallthru flag</a>,
+      <a href="../commands/def.html#-p">priority</a>, and name.
+      (Note that if any macro in the list would have executed
+      <a href="../commands/substitute.html">substitute()</a> or
+      <a href="../commands/substitute.html">/substitute</a>,
+      the macros listed after it may not be correct.)
+    <dt>-l
+      <dd>Like -n, but list each macro in full, as if by
+      <a href="../commands/list.html">/list</a>.
+  </dl>
+  If neither -g nor -w options are given, both are assumed.
+  That is, <i>text</i>
+  is matched against global <a href="../topics/triggers.html">triggers</a>
+  or <a href="../topics/hooks.html">hooks</a>, as well as
+  <a href="../topics/triggers.html">triggers</a>
+  or <a href="../topics/hooks.html">hooks</a> for the
+  <a href="../topics/sockets.html#current">current</a>
+  <a href="../topics/worlds.html">world</a>.
+
+<p>
+  See: <a href="../topics/triggers.html">triggers</a>,
+  <a href="../topics/hooks.html">hooks</a>,
+  <a href="../topics/debugging.html">debugging</a>,
+  <a href="../commands/def.html">/def</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

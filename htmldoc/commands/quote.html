@@ -1,0 +1,197 @@
+<title>TinyFugue: /quote</title>
+<!--"@/quote"-->
+<h1>/quote</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="./quote.html">/QUOTE</a> [<i>options</i>] [<i>pre</i>] '"<i>file</i>"[<i>suf</i>]<br>
+  <a href="./quote.html">/QUOTE</a> [<i>options</i>] [<i>pre</i>] #"<i>recall_args</i>"[<i>suf</i>]<br>
+  <a href="./quote.html">/QUOTE</a> [<i>options</i>] [<i>pre</i>] !"<i>shell_cmd</i>"[<i>suf</i>]<br>
+  <a href="./quote.html">/QUOTE</a> [<i>options</i>] [<i>pre</i>] `"<i>TF_cmd</i>"[<i>suf</i>]<br>
+<hr>
+
+<p>
+  <a href="../commands/quote.html">/Quote</a> generates lines of text, one
+  for each line quoted from a file, shell command,
+  <a href="../topics/history.html">history</a>, or TF command.
+  Each generated line is then echoed, sent to a socket, or executed as
+  a command.
+  Lines will be generated at a rate described in the section
+  "<a href="../topics/processes.html">processes</a>".
+
+<p>
+  <a href="../topics/options.html">Options</a> and arguments:
+  <dl>
+  <dt>-d<i>disp</i>
+          <dd>disposition of generated text.  <i>Disp</i> is one of: "echo"
+          (echo to the screen), "send" (send directly to the
+          <a href="../topics/sockets.html">socket</a>), or "exec" (execute
+          text as a tf command).  The default <i>disp</i> is "send" if there
+          is no <i>pre</i>, and "exec" if there is a <i>pre</i>.
+  <dt>-w<i>world</i>
+          <dd>Generated commands will be executed with <i>world</i> as the
+          <a href="../topics/sockets.html#current">current</a>
+          world.  If <i>world</i> is blank, it uses the world that was
+          <a href="../topics/sockets.html#current">current</a>
+          when the <a href="../commands/quote.html">/quote</a>
+          started.  If -w is omitted, each command's
+          <a href="../topics/sockets.html#current">current</a> world will be
+          whatever happens to be in the
+	  <a href="../topics/sockets.html#foreground">foreground</a>
+	  when each command occurs.
+          (See "<a href="../topics/sockets.html">sockets</a>").
+  <dt>-<i>time</i>
+          <dd>The delay between each generated line.  It can have the format
+          "<i>hours</i>:<i>minutes</i>:<i>seconds</i>",
+          "<i>hours</i>:<i>minutes</i>", or "<i>seconds</i>",
+	  and <i>seconds</i> may be specified to the nearest microsecond.
+          If -<i>time</i> is omitted, the
+          <a href="../topics/variables.html">variable</a>
+          <a href="../topics/special_variables.html#%ptime">%{ptime}</a> is
+          used.
+	  If <i>time</i> is given as the letter "S", the quote will run
+          synchronously, with no delay.
+	  If a slow shell command is used with
+          <a href="../commands/quote.html">/quote</a> -S !, tf will hang
+          until the command produces some output or exits.  A synchronous
+          <a href="../commands/quote.html">/quote</a> may be used inside
+          another <a href="../commands/quote.html">/quote</a>.
+	  If <i>time</i> is given as the letter "P", the quote will run
+          whenever a <a href="../topics/prompts.html">prompt</a> is received.
+          See "<a href="../topics/processes.html">processes</a>" for more
+	  information on process timing.
+  <dt>-s<i>sub</i>
+          <dd><a href="../topics/expansion.html">Expand</a> <i>TF_cmd</i> as if
+          <a href="../topics/special_variables.html#%sub">%{sub}</a> were set
+          to <i>sub</i>.
+          By default, <a href="../commands/quote.html">/quote</a>
+          <a href="../topics/expansion.html">expands</a> <i>TF_cmd</i> as if
+          <a href="../topics/special_variables.html#%sub">%{sub}</a>
+          were "full".
+  <dt><i>pre</i>
+          <dd> <i>pre</i> is prefixed to each generated line.  If <i>pre</i>
+          contains any of the command characters ('!`#), they must be
+          preceded with '\' to remove their special meaning.
+  <dt>'<i>file</i>
+          <dd>Get text from <i>file</i>.  The <i>file</i> name is expanded as
+          described under <a href="../commands/help.html">/help</a>
+          filenames.
+  <dt>!<i>shell_cmd</i>
+          <dd>Get text from the standard output and standard error of
+          executing <i>shell_cmd</i> in the shell.
+  <dt>`<i>TF_cmd</i>
+          <dd>Get text from the output of executing <i>TF_cmd</i> in tf.
+  <dt>#<i>recall_args</i>
+          <dd>Get text from executing 
+          <code><a href="../commands/recall.html">/recall</a>
+          <i>recall_args</i></code>.  (See
+          "<a href="../topics/recall.html">recall</a>" for the exact syntax).
+  <dt><i>suf</i>
+          <dd>Append <i>suf</i> to each generated line.  If omitted,
+          the double quotes around the <i>file</i> or <i>command</i> may
+	  also be omitted.
+  </dl>
+
+<p>
+
+<p>
+  An asynchronous (background) <a href="../commands/quote.html">/quote</a>
+  (i.e., a
+  <a href="../commands/quote.html">/quote</a> without -S) returns the pid
+  of the new <a href="../topics/processes.html">process</a>, or 0 if an
+  error occurred.  A synchronous (-S) shell (!) or
+  command (`) quote returns the return value of the command.  A synchronous
+  file (') quote returns 0 on error, nonzero otherwise.
+
+<p>
+  The <a href="../topics/utilities.html">library</a> file
+  <a href="../commands/quoter.html">quoter.tf</a> defines some
+  useful <a href="../commands/quoter.html">quoter commands</a>
+  that are shortcuts for some common uses of
+  <a href="../commands/quote.html">quote</a>.
+
+<p>
+  The following is a list of some nearly equivalent pairs of commands:
+  <dl>
+  <dt> <a href="../commands/quote.html">/quote</a> -S -dexec '<i>file</i>
+          <dd><a href="../commands/load.html">/load</a> <i>file</i>
+  <dt> <a href="../commands/quote.html">/quote</a> -S /echo -aG - #<i>args</i>
+          <dd><a href="../commands/recall.html">/recall</a> <i>args</i>
+  <dt> <a href="../commands/quote.html">/quote</a> <i>opts</i>
+  `<a href="../commands/recall.html">/recall</a> <i>args</i>
+          <dd> <a href="../commands/quote.html">/quote</a> <i>opts</i>
+          #<i>args</i>
+  </dl>
+
+<p>
+<hr>
+
+<p>
+  Examples:
+
+<p>
+<pre>
+  <a href="../commands/quote.html">/quote</a> -1 :reads about '"/usr/dict/words" in the dictionary.
+</pre>
+  This sends off lines like:<br>
+<pre>
+  :reads about aardvark in the dictionary.
+  :reads about aardvore in the dictionary.
+</pre>
+  with one-second delays between lines.
+
+<p>
+<pre>
+  <a href="../commands/quote.html">/quote</a> -S <a href="../commands/echo.html">/echo</a> !ps -gux
+</pre>
+  This displays the output of the system command "ps -gux" by echoing it
+  locally, immediately.
+
+<p>
+<pre>
+  <a href="../commands/quote.html">/quote</a> -0 :heard: #-wCave /2 *pages*
+</pre>
+  This sends off quickly:
+
+<p>
+  :heard: [the last 2 lines from Cave that contain "pages"]
+
+<p>
+<pre>
+  <a href="../commands/quote.html">/quote</a> :is using `<a href="../commands/version.html">/version</a>
+</pre>
+  will tell everybody in the room what version of TF you're running.
+
+<p>
+<pre>
+  <a href="../commands/quote.html">/quote</a> -wlpmud -dsend 'prog.c
+</pre>
+  will send the file "prog.c" to the world "lpmud", without any
+  interpretation of leading spaces or slashes (in lines like "/* comment */"),
+  etc.)
+
+<p>
+<hr>
+
+<p>
+  See: <a href="../topics/processes.html">processes</a>,
+  <a href="../topics/special_variables.html#%ptime">%ptime</a>,
+  <a href="../topics/special_variables.html#%lpquote">%lpquote</a>,
+  <a href="../commands/quoter.html">quoter.tf</a>,
+  <a href="../topics/history.html">history</a>,
+  <a href="../topics/substitution.html#$()">command subs</a>,
+  <a href="../commands/load.html">/load</a>,
+  <a href="../commands/recall.html">/recall</a>,
+  <a href="../commands/sh.html">/sh</a>,
+  <a href="../commands/sys.html">/sys</a>,
+  <a href="../commands/paste.html">/paste</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

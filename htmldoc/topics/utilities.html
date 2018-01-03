@@ -1,0 +1,88 @@
+<title>TinyFugue: utilities</title>
+<!--"@util"-->
+<!--"@utils"-->
+<!--"@map"-->
+<!--"@/psh"-->
+<!--"@space_page"-->
+<!--"@/speedwalk"-->
+<!--"@tintin"-->
+<!--"@/watch"-->
+<!--"@utilities"-->
+<h1>utilities</h1>
+
+<p>
+  The library directory
+  <a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>
+  contains many useful utility files ending in ".tf".  To use any one of
+  them, simply <a href="../commands/load.html">/load</a> or
+  <a href="../commands/load.html">/require</a> the file.  For example, to
+  enable ESC-TAB completion automatically, just
+  "<code><a href="../commands/load.html">/require</a>
+  completion.tf</code>" from your <a href="../topics/tfrc.html">.tfrc</a>
+  file.  Some of the more useful files:
+
+<p>
+  <dl>
+  <dt>alias.tf
+          <dd><a href="../commands/alias.html">/alias</a>, etc: create
+          commands without '/'.
+  <dt>at.tf
+          <dd><a href="../commands/at.html">/at</a>: execute commands at a
+          specified time.
+  <dt>filexfer.tf
+          <dd><a href="../commands/putfile.html">/putfile</a>,
+          <a href="../commands/getfile.html">/getfile</a>: transfer files
+          to/from a mud.
+  <dt>kb-os2.tf
+          <dd>Extra default key bindings for OS/2 keyboards.
+  <dt>kbbind.tf
+          <dd>Default <a href="../topics/keybindings.html">keybindings</a>.
+  <dt>kbfunc.tf
+          <dd>Macros used by kbbind.tf.
+  <dt>map.tf
+          <dd>Mapping commands (like tintin).
+  <dt>psh.tf
+          <dd><a href="../topics/utilities.html">/psh</a>: like
+          <a href="../commands/sh.html">/sh</a>, but uses your favorite
+          shell.
+  <dt><a href="../commands/quoter.html">quoter.tf</a>
+          <dd>Various quoting <a href="../topics/macros.html">macros</a>.
+  <dt>rwho.tf
+          <dd>Remote WHO from a mudwho server.
+  <dt>spc-page.tf
+          <dd>Old-style SPACE key scrolling at
+          <a href="../commands/more.html">--More--</a> prompt.
+  <dt>spedwalk.tf
+          <dd>Single character movement (like tintin).
+  <dt>spell.tf
+          <dd>Spelling checker.
+  <dt>tick.tf
+          <dd>Diku tick counter (like tintin).
+  <dt>tintin.tf
+          <dd>tintin-like commands.
+  <dt>tr.tf
+          <dd><a href="../topics/utilities.html">/tr</a>: character translation
+  <dt>watch.tf
+          <dd><a href="../topics/utilities.html">/watch</a>: Watch for a
+          particular player.
+  </dl>
+
+<p>
+  There are also other files, not listed here.
+
+<p>
+  For complete instructions on any of these utilities, see the help section
+  for that topic if there is one, or read the comments at the top of each
+  file.  Sorry, I haven't gotten around to documenting them very well.
+
+<p>
+  Note to unix users: many library files were renamed in version 3.5, but the
+  old names still work (via soft links).
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,159 @@
+<title>TinyFugue: /list</title>
+<!--"@/listbind"-->
+<!--"@/listdef"-->
+<!--"@/listgag"-->
+<!--"@/listhilite"-->
+<!--"@/listhook"-->
+<!--"@/listtrig"-->
+<!--"@/list"-->
+<h1>/list</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/list.html">/LIST</a> [-s] [<i>macro-options</i>]
+  [<i>name</i>] [= <i>body</i>]<br>
+<hr>
+
+<p>
+  Lists <a href="../topics/macros.html">macros</a> having all the specified
+  options.  Except for "-s", each option is compared against a
+  <a href="../topics/macros.html">macro</a>'s option, and the
+  <a href="../topics/macros.html">macro</a> selected only if the options
+  match.  Omitted options are "don't care", and will not be used in the
+  comparison.  Thus, with no arguments,
+  <a href="../commands/list.html">/list</a> will list all
+  non-<a href="../commands/def.html#-i">invisible</a>
+  <a href="../topics/macros.html">macros</a>.
+
+<p>
+  <a name="list options"></a>
+  <a href="../topics/options.html">Options:</a>
+  <dl>
+  <dt>-s
+          <dd> List <a href="../topics/macros.html">macros</a> in short
+          format.
+  <dt>-S
+          <dd> Sort <a href="../topics/macros.html">macros</a> by name.
+  <dt>-m<i>matching</i>
+          <dd>Determines matching style used for comparison of string fields
+          (<a href="../topics/triggers.html">trigger</a>, keybinding, keyname,
+          <a href="../topics/hooks.html">hook</a>, worldtype, name, and
+          body).  This is <em>not</em> compared against the -m options of
+          <a href="../topics/macros.html">macros</a>.  If omitted, the style
+          is determined by
+          <a href="../topics/special_variables.html#%matching">%{matching}</a>.
+  <dt>-t<i>pattern</i>
+  <dt>-b<i>pattern</i>
+  <dt>-B<i>pattern</i>
+  <dt>-E<i>pattern</i>
+  <dt>-T<i>pattern</i>
+          <dd>Matches <a href="../topics/macros.html">macros</a> with
+          a corresponding <a href="../commands/def.html">/def</a> option
+          whose option-argument matches <i>pattern</i>.
+          <i>pattern</i>.  An option with no pattern matches all
+          <a href="../topics/macros.html">macros</a> that have that option,
+          regardless of the value of the option-argument.
+          A "{}" <a href="../topics/patterns.html#glob">glob</a> pattern or
+          "^$" <a href="../topics/patterns.html#regexp">regexp</a>
+          can be used to match
+          <a href="../topics/macros.html">macros</a> that <em>don't</em>
+          have that option,
+  <dt>-h["<i>event</i>[ <i>pattern</i>]"]
+          <dd>Matches <a href="../topics/macros.html">macros</a> with
+          <a href="../topics/hooks.html">hooks</a> matching <i>event</i>
+          and <i>pattern</i>.
+          "-h" by itself matches all non-empty
+          <a href="../topics/hooks.html">hooks</a>; "-h0" matches only
+          <a href="../topics/macros.html">macros</a> without
+          <a href="../topics/hooks.html">hooks</a>.
+  <dt>-a<i>attrs</i>
+          <dd>Matches <a href="../topics/macros.html">macros</a> having one
+          or more of the display
+          <a href="../topics/attributes.html">attributes</a> in <i>attrs</i>.
+  <dt>-P<i>part</i><i>attrs</i>
+          <dd>Matches <a href="../topics/macros.html">macros</a> having a
+	  <a href="../commands/def.html#-P">-P</a><i>part</i>
+	  with one or more of the display
+          <a href="../topics/attributes.html">attributes</a> in <i>attrs</i>.
+  <dt>-i
+          <dd> Matches invisible <a href="../topics/macros.html">macros</a>
+          as well as normal <a href="../topics/macros.html">macros</a>.
+  <dt>-I
+          <dd> Matches only invisible
+          <a href="../topics/macros.html">macros</a>.
+  <dt><i>name</i>
+          <dd>A pattern that <a href="../topics/macros.html">macro</a> names
+          must match.  The
+          <a href="../topics/patterns.html#glob">glob</a>
+          pattern "{}" or
+          <a href="../topics/patterns.html#regexp">regexp</a>
+          "^$" will match only
+          <a href="../topics/macros.html">macros</a> without names.
+          If <i>name</i> starts with "#", it is compared against macro
+          numbers, instead of as a pattern against macro names.
+  <dt>= <i>body</i>
+          <dd><i>body</i> is a pattern that macro bodies must match.  The
+          <a href="../topics/patterns.html#glob">glob</a> pattern "{}", or the
+          <a href="../topics/patterns.html#regexp">regexp</a> "^$" or the
+          <a href="../topics/patterns.html#simple">simple pattern</a>
+          "" will match
+          bodyless <a href="../topics/macros.html">macros</a> only.
+  </dl>
+  <a name=""></a>
+
+<p>
+  Other options allowed by <a href="../commands/def.html">/def</a> may
+  be used with <a href="../commands/list.html">/list</a>, and are compared
+  directly to macros.
+
+<p>
+  The return value of <a href="../commands/list.html">/list</a> is the number
+  of the last <a href="../topics/macros.html">macro</a> listed, or 0 if no
+  <a href="../topics/macros.html">macros</a> were listed (because of error or
+  none matched the specified options).
+
+<p>
+  The standard library also defines the
+  <a href="../topics/macros.html">macros</a>
+  <a href="../commands/list.html">/listbind</a>,
+  <a href="../commands/list.html">/listdef</a>,
+  <a href="../commands/list.html">/listgag</a>,
+  <a href="../commands/list.html">/listhilite</a>,
+  <a href="../commands/list.html">/listfullhilite</a>,
+  <a href="../commands/list.html">/listpartial</a>,
+  <a href="../commands/list.html">/listhook</a>, and
+  <a href="../commands/list.html">/listtrig</a>, which list
+  <a href="../topics/macros.html">macros</a> of the appropriate type.
+
+<p>
+  Example:
+<pre>
+    <a href="../commands/list.html">/list</a> -mregexp -n0 -t -aurh ^foo =
+</pre>
+  will list all <a href="../topics/macros.html">macros</a> whose names begin
+  with "foo"; have a <a href="../topics/triggers.html">trigger</a>; are not
+  multi-shots; have any of the underline, reverse, or
+  <a href="../topics/attributes.html">hilite</a>
+  <a href="../topics/attributes.html">attributes</a>; and have an empty body.
+
+<p>
+  To list functions for named keys, try
+  "<code><a href="../commands/list.html">/list</a> -i key_*</code>".
+
+<p>
+  See: <a href="../topics/macros.html">macros</a>,
+  <a href="../topics/triggers.html">triggers</a>,
+  <a href="../topics/patterns.html">patterns</a>,
+  <a href="../topics/attributes.html">attributes</a>,
+  <a href="../topics/library.html">library</a>,
+  <a href="../commands/def.html">/def</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

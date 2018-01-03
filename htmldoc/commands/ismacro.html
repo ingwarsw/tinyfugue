@@ -1,0 +1,39 @@
+<title>TinyFugue: /ismacro</title>
+<!--"@/ismacro"-->
+<h1>/ismacro</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/ismacro.html">/ISMACRO</a> <i>macro-options</i><br>
+<hr>
+
+<p>
+  If <i>macro-options</i> matches one or more existing
+  <a href="../topics/macros.html">macros</a>,
+  <a href="../commands/ismacro.html">/ismacro</a> returns the number of the
+  last matching <a href="../topics/macros.html">macro</a>; otherwise,
+  <a href="../commands/ismacro.html">/ismacro</a> returns 0.
+  <i>Macro-options</i> may include any of the options accepted by
+  <a href="../commands/list.html">/list</a>.  If -m is not specified,
+  <a href="../topics/special_variables.html#%matching">%{matching}</a> is
+  used.
+
+<p>
+  Example:
+<pre>
+  <a href="../commands/if.html">/if</a> /!ismacro -b"^X*"%; <a href="../commands/if.html">/then</a> <a href="../commands/bind.html">/bind</a> ^X = <a href="../commands/foobar.html">/foobar</a>%; <a href="../commands/if.html">/endif</a>
+</pre>
+
+<p>
+  See: <a href="../commands/list.html">/list</a>,
+  <a href="../topics/macros.html">macros</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,133 @@
+<title>TinyFugue: getopts()</title>
+<!--"@getopts"-->
+<!--"@getopts()"-->
+<h1>getopts()</h1>
+
+<p>
+  Usage:
+
+<p>
+  getopts(<i>options</i> [, <i>init</i>])<br>
+<hr>
+
+<p>
+  <a href="../topics/getopts.html">getopts()</a> is a
+  <a href="../topics/functions.html">function</a> that parses
+  and validates <a href="../topics/macros.html">macro</a> options according
+  to the format described by <i>options</i>.  <i>Options</i> is a list of
+  letters that <a href="../topics/getopts.html">getopts()</a>
+  will accept.
+  If a letter is followed by ":",
+  the option will be expected to have a string argument;
+  if a letter is followed by "#",
+  the option will be expected to have a
+  <a href="../topics/expression.html">expression</a> argument that
+  evaluates to a (possibly signed) integer;
+  if a letter is followed by "@",
+  the option will be expected to have a time argument.
+  The option syntax accepted by
+  <a href="../topics/getopts.html">getopts()</a> is a subset of that accepted
+  by builtin tf commands, as described under
+  "<a href="../topics/options.html">options</a>".
+
+<p>
+  When an option is found, <a href="../topics/getopts.html">getopts()</a>
+  creates a new local <a href="../topics/variables.html">variable</a>
+  named "opt_X", where "X" is the letter of the
+  option.  If an argument is expected, the
+  <a href="../topics/variables.html">variable</a> will get that argument as
+  its value; otherwise, the <a href="../topics/variables.html">variable</a>
+  will have a value of "1".
+
+<p>
+  If <i>init</i> is given, the
+  <a href="../topics/variables.html">variables</a> corresponding
+  to each letter of <i>options</i> are initialized to <i>init</i>
+  before processing the command line options.
+  If <i>init</i> is omitted, the
+  <a href="../topics/variables.html">variables</a>
+  are not initialized, so if <a href="../topics/variables.html">variables</a>
+  with the same names already exist and are not set by
+  <a href="../topics/getopts.html">getopts()</a>,
+  they will be unchanged.  You can use this to set the
+  <a href="../topics/variables.html">variables</a> to some default
+  value before calling <a href="../topics/getopts.html">getopts()</a>.
+
+<p>
+  The argument list will be shifted to discard the options that have been
+  parsed, so <a href="../topics/substitution.html#%*">%{*}</a> will contain
+  the remainder of the arguments, without the options.
+
+<p>
+  If <a href="../topics/getopts.html">getopts()</a> encounters an error, it
+  will print an error message and return 0; otherwise, it returns nonzero.
+
+<p>
+  Using <a href="../topics/getopts.html">getopts()</a>,
+  <a href="../commands/escape.html">/escape</a>, and
+  <a href="../commands/split.html">/split</a>, it is possible to write
+  <a href="../topics/macros.html">macros</a> that behave just like builtin tf
+  commands.
+
+<p>
+  Here's a contrived example to illustrate how
+  <a href="../topics/getopts.html">getopts()</a> works:
+
+<p>
+<pre>
+  <a href="../commands/def.html">/def</a> foo = \
+      <a href="../commands/if.html">/if</a> (!getopts("abn#s:", "")) <a href="../commands/return.html">/return</a> 0%; <a href="../commands/if.html">/endif</a>%; \
+      <a href="../commands/echo.html">/echo</a> option a:  %{opt_a}%;\
+      <a href="../commands/echo.html">/echo</a> option b:  %{opt_b}%;\
+      <a href="../commands/echo.html">/echo</a> option n:  %{opt_n}%;\
+      <a href="../commands/echo.html">/echo</a> option s:  %{opt_s}%;\
+      <a href="../commands/echo.html">/echo</a> args: <a href="../topics/substitution.html#%*">%{*}</a>%;\
+      <a href="../commands/split.html">/split</a> <a href="../topics/substitution.html#%*">%{*}</a>%;\
+      <a href="../commands/echo.html">/echo</a> name: <a href="../topics/substitution.html#%Pn">%{P1}</a>%;\
+      <a href="../commands/echo.html">/echo</a> body: <a href="../topics/substitution.html#%Pn">%{P2}</a>
+</pre>
+
+<p>
+  Now, all of these commands are equivalent:
+<pre>
+      /foo -a -b -n5 -s"can't stop" -- whiz = bang biff
+      /foo -a -b -n5 -s'can\'t stop' whiz = bang biff
+      /foo -n5 -ba -s`can't stop` whiz = bang biff
+      /foo -as"can't stop" -bn5 whiz = bang biff
+</pre>
+  and produce this output:
+<pre>
+      option a:  1
+      option b:  1
+      option n:  5
+      option s:  can't stop
+      args: whiz = bang biff
+      name: whiz
+      body: bang biff
+</pre>
+
+<p>
+  But the command:
+<pre>
+      /foo -a -x whiz = bang biff
+</pre>
+  produces the error:
+<pre>
+      % foo: invalid option 'x'
+      % foo: options: -ab -n&lt;integer&gt; -s&lt;string&gt;
+</pre>
+
+<p>
+  See: <a href="../topics/expressions.html">expressions</a>,
+  <a href="../topics/functions.html">functions</a>,
+  <a href="../topics/options.html">options</a>,
+  <a href="../commands/escape.html">/escape</a>,
+  <a href="../commands/split.html">/split</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

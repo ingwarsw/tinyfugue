@@ -1,0 +1,104 @@
+<title>TinyFugue: prompts</title>
+<!--"@lp"-->
+<!--"@diku"-->
+<!--"@prompt"-->
+<!--"@prompts"-->
+<h1>prompts</h1>
+
+<p>
+  Most LP muds, Diku muds, telnetd, and some other types of servers
+  send unterminated <a href="../topics/prompts.html">prompts</a>, that is,
+  <a href="../topics/prompts.html">prompts</a>
+  that do not end with newline or any other special character.
+  Normally, TF will not display text
+  until a newline is received, so you may not see the
+  <a href="../topics/prompts.html">prompt</a> until after you
+  press return.  But if the
+  <a href="../topics/special_variables.html#%lp">%{lp}</a> flag is on, TF will
+  attempt to separate these <a href="../topics/prompts.html">prompts</a>
+  from normal text and display them correctly.
+
+<p>
+  The recommended way to use the
+  <a href="../topics/special_variables.html#%lp">%{lp}</a> flag is to define
+  your worlds with one of the
+  <a href="../commands/addworldtype.html">/addlp</a>,
+  <a href="../commands/addworldtype.html">/adddiku</a>, or
+  <a href="../commands/addworldtype.html">/addtelnet</a> commands.  The
+  <a href="../topics/special_variables.html#%lp">%{lp}</a> flag will be turned
+  on automatically when you switch to such a world, and turned off for the
+  other predefined world types.  See:
+  <a href="../commands/addworld.html">/addworld</a>.
+
+<p>
+  TF also provides a PROMPT <a href="../topics/hooks.html">hook</a>, which
+  allows you to tell it what to look for in a
+  <a href="../topics/prompts.html">prompt</a>.  When an unterminated
+  line is received, the PROMPT <a href="../topics/hooks.html">hook</a> is
+  called immediately.  If there is no match, TF will use the timeout method
+  described below (if <a href="../topics/special_variables.html#%lp">%{lp}</a>
+  is on).  But if there is a matching PROMPT
+  <a href="../topics/hooks.html">hook</a>, TF will forget about the line
+  (unless the hook was defined with
+  <a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-q">-q</a>)
+  and let the <a href="../topics/hooks.html">hook</a> deal with it.  By
+  combining the PROMPT <a href="../topics/hooks.html">hook</a> with the
+  <a href="../commands/prompt.html">/prompt</a> command, you can recognize
+  most <a href="../topics/prompts.html">prompts</a> immediately without
+  having to use the <a href="../topics/special_variables.html#%lp">%{lp}</a>
+  timing mechanism.  The typical way of doing this is:
+<pre>
+    <a href="../commands/def.html">/def</a> -h"PROMPT *&gt; " catch_prompt = <a href="../commands/test.html">/test</a> <a href="../commands/prompt.html">prompt</a>(<a href="../topics/substitution.html#%*">{*}</a>)
+</pre>
+  So, whenever TF receives an unterminated line that ends in "&gt; ",
+  catch_prompt will see it, and use
+  <a href="../commands/prompt.html">/prompt</a> to copy it to the current
+  <a href="../topics/prompts.html">prompt</a>.
+
+<p>
+  If an unterminated line is not matched by any PROMPT
+  <a href="../topics/hooks.html">hook</a>, and it is not followed by more
+  text within a short period of time, TF will assume it is a
+  <a href="../topics/prompts.html">prompt</a>.  This
+  method is not foolproof.  If the delay is too short, broken lines will look
+  like <a href="../topics/prompts.html">prompts</a>, and will briefly
+  appear in the input window until the rest of
+  the line arrives, at which time both parts of the line will be printed as
+  normal output.  If the delay is too long, there will be an annoying delay
+  before displaying real <a href="../topics/prompts.html">prompts</a>.
+
+<p>
+  The delay can be varied by setting the
+  <a href="../topics/variables.html">variable</a>
+  <a href="../topics/special_variables.html#%prompt_wait">prompt_wait</a>.
+  Its default value is 0.25 seconds.
+
+<p>
+  All of this hackery can be avoided if the server sends unambiguous
+  <a href="../topics/prompts.html">prompts</a>.
+  TF will recognize "*\b" (that is, "*" followed by backspace) and anything
+  ending with
+  <a href="../topics/prompt_protocol.html">GOAHEAD</a> or
+  <a href="../topics/prompt_protocol.html">END-OF-RECORD</a>
+  telnet characters.  When TF sees
+  such text, it does not wait for a delay, but calls the PROMPT hook
+  immediately; if there is no match, TF displays the prompt immediately.
+  To avoid some minor glitches, you
+  should leave the <a href="../topics/special_variables.html#%lp">%{lp}</a>
+  flag off when connected to such a server.  If you are responsible for a
+  server and wish to make it more TF-friendly, see
+  "<a href="../topics/prompt_protocol.html">prompt protocol</a>".
+
+<p>
+  See also: <a href="../topics/special_variables.html#%login">%login</a>,
+  <a href="../topics/prompt_protocol.html">prompt protocol</a>,
+  <a href="../commands/addworld.html">/addworld</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

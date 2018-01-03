@@ -1,0 +1,43 @@
+<title>TinyFugue: /tr</title>
+<!--"@/tr"--> 
+<h1>/tr</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/load.html">/REQUIRE</a> tr.tf<br>
+
+<p>
+  <a href="../commands/tr.html">/TR</a>
+    <i>domain</i> <i>range</i> <i>string</i><br>
+<hr>
+
+<p>
+  <i>Domain</i> and <i>range</i> are lists of characters of equal length.
+  Each character in <i>string</i> that appears in <i>domain</i>
+  is translated to the corresponding character in <i>range</i>,
+  and the resulting string is printed.
+
+<p>
+  Example:<br>
+    command:
+      <a href="../commands/def.html">/def</a> biff =
+      <a href="../commands/tr.html">/tr</a> OIS. 01Z!
+      $[<a href="../topics/functions.html#toupper">toupper</a>({*})]<br>
+    command: /biff TinyFugue is cool wares, dude.<br>
+    output:  T1NYFUGUE 1Z C00L WAREZ, DUDE!<br>
+
+<p>
+  See:
+  <a href="../commands/require.html">/replace</a>, 
+  <a href="../topics/expressions.html">expressions</a>,
+  <a href="../topics/functions.html">functions</a> 
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>
