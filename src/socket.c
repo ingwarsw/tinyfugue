@@ -365,8 +365,10 @@ static void  do_naws(Sock *sock);
 static void  telnet_debug(const char *dir, const char *str, int len);
 static void  preferred_telnet_options(void);
 static void  killsock(Sock *sock);
+#if HAVE_SSL
 static int   ssl_check_cert_verify(Sock *sock);
 static int   ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx);
+#endif
 
 #define zombiesock(sock)	killsock(sock)
 #define flushxsock() \
@@ -2137,6 +2139,7 @@ static int establish(Sock *sock)
     return 1;
 }
 
+#if HAVE_SSL
 static int ssl_check_cert_verify(Sock *sock) 
 {
     int ret = 0;
@@ -2152,6 +2155,7 @@ static int ssl_check_cert_verify(Sock *sock)
     }
     return ret;
 }
+#endif
 
 /* clear most of sock's fields, but leave it consistent and extant */
 static void killsock(Sock *sock)
