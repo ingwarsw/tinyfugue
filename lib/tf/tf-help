@@ -8402,7 +8402,6 @@ prompts
 &ip
 &ipv4
 &ipv6
-&ssl
 &rfc
 &rfcs
 &protocols
@@ -8433,6 +8432,29 @@ Protocols
     * [1mftp://src.doc.ic.ac.uk/rfc/[22;0m 
 
   and other sites.  
+
+&ssl
+
+  To see if Secure Sockets Layer (SSL) is enabled:
+
+    /features
+
+  To connect using SSL:
+
+    /connect -x
+    /addworld -x
+
+  To configure SSL options:
+
+    /set ssl_ca_dir
+    /set ssl_ca_file
+    /set ssl_continue
+    /set ssl_depth
+    /set ssl_verbose
+
+  See: [1mprotocols[22;0m, [1mfeatures[22;0m, [1mconnect[22;0m, [1maddworld[22;0m, [1mworlds[22;0m, [1mfields[22;0m, [1mlistsockets[22;0m, 
+  [1mspecial variables[22;0m, [1mssl_ca_dir[22;0m, [1mssl_ca_file[22;0m, [1mssl_continue[22;0m, [1mssl_depth[22;0m, 
+  [1mssl_verbose[22;0m
 
 &firewall
 &proxy
@@ -9479,6 +9501,31 @@ Special global variables
 #%sprefix
   [1msprefix[22m= 
           Prefix prepended to lines echoed by [1m%{secho}[22;0m.  
+
+#ssl_ca_dir
+#%ssl_ca_dir
+  [1mssl_ca_dir[22m
+	  Path to directory containing CA certificates in PEM format.
+
+#ssl_ca_file
+#%ssl_ca_file
+  [1mssl_ca_file[22m
+          Path to file of CA certificates in PEM format.
+
+#ssl_continue
+#%ssl_continue
+  [1mssl_continue[22m=on
+          Whether to continue connection if cert verify fails.
+
+#ssl_depth
+#%ssl_depth
+  [1mssl_depth[22m=10
+          Limit the maximum depth of the certificate chain to this number.
+
+#ssl_verbose
+#%ssl_verbose
+  [1mssl_verbose[22m=on
+          Show cert chain when connecting.
 
 #start_color
 #%start_color
