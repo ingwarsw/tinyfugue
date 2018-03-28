@@ -1,0 +1,44 @@
+<title>TinyFugue: /grab</title>
+<!--"@/grab"-->
+<h1>/grab</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/grab.html">/GRAB</a> <i>text</i><br>
+<hr>
+
+<p>
+  This command puts <i>text</i> into the input buffer.  It is not really
+  useful from the normal command line, but is quite useful when called from a
+  <a href="../topics/macros.html">macro</a> to redefine
+  <a href="../topics/macros.html">macros</a>, or perhaps when bound to a key
+  to speed up part of a line (<a href="../topics/macros.html">macros</a>
+  allow you to largely do what this would allow, however).  Any text already
+  in the input buffer is discarded.
+
+<p>
+  Example:
+<pre>
+  <a href="../commands/def.html">/def</a> reedit = <a href="../commands/grab.html">/grab</a> <a href="../commands/edit.html">/edit</a> <a href="../topics/substitution.html#%n">%1</a> = $<a href="../topics/substitution.html#%n">%1</a>
+</pre>
+  If you had previously done "<code><a href="../commands/def.html">/def</a>
+  flail = :flails at his keyboard</code>", the command "<code>/reedit
+  flail</code>" would place "<code><a href="../commands/edit.html">/edit</a>
+  flail = :flails at his keyboard</code>" in the input buffer and allow you
+  to edit it using the editing keys.  See
+  "<a href="../topics/evaluation.html">evaluation</a>" for details on how
+  <a href="../topics/macros.html">macros</a> like this work.
+
+<p>
+  See: <a href="../commands/input.html">/input</a>,
+  <a href="../topics/general.html">general</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

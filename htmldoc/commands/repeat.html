@@ -1,0 +1,151 @@
+<title>TinyFugue: /repeat</title>
+<!--"@delay"-->
+<!--"@/repeat"-->
+<h1>/repeat</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/repeat.html">/REPEAT</a> [-w[<i>world</i>]]
+  [-n] {[-<i>time</i>]|-S|-P} <i>count</i> <i>command</i><br>
+<hr>
+
+<p>
+  Repeats <i>command</i>, <i>count</i> times.  <i>Command</i> may be any
+  legal <a href="../topics/macros.html">macro</a> body.  If <i>count</i>
+  is "<code>i</code>", the <i>command</i> repeats indefinitely.
+  This works through a <a href="../topics/processes.html">process</a>,
+  which runs concurrently with normal operations.
+
+<p>
+  <a href="../topics/options.html">Options:</a>
+  <dl>
+  <dt>-w[<i>world</i>]
+	<dd><i>Command</i> will execute with <i>world</i> as the
+	    <a href="../topics/sockets.html#current">current</a> world.
+	    If <i>world</i> is omitted, it is assumed to be the world that
+	    was <a href="../topics/sockets.html#current">current</a> for
+	    /repeat.
+	    If this option is omitted entirely, the
+	    <i>command</i>'s 
+	    <a href="../topics/sockets.html#current">current</a> world will be
+	    whatever world happens to be in the
+	    <a href="../topics/sockets.html#foreground">foreground</a>
+	    when it's time for <i>command</i> to run.
+  <dt>-<i>time</i>
+	<dd><i>Time</i> is the delay between each execution of <i>command</i>.
+	    <i>Time</i> may be specified in the format
+	    "<i>hours</i>:<i>minutes</i>:<i>seconds</i>",
+	    "<i>hours</i>:<i>minutes</i>", or "<i>seconds</i>"
+	    (<i>seconds</i> may be specified to the nearest microsecond).
+  <dt>-S
+	<dd>The repeat will run synchronously.
+  <dt>-P
+	<dd>The repeat will run whenever a
+	<a href="../topics/prompts.html">prompt</a> is received.
+  <dt>-n
+	<dd>When combined with the -<i>time</i> option, this makes the first
+	execution of <i>command</i> happen with no delay.
+  </dl>
+
+  At most one of the -S, -P, and -<i>time</i> options should be specified.
+  If none are specified, the delay between each execution of <i>command</i>
+  is determined by the <a href="../topics/variables.html">variable</a>
+  <a href="../topics/special_variables.html#%ptime">%{ptime}</a>.
+  See "<a href="../topics/processes.html">processes</a>" for more information
+  on process timing.
+
+<p>
+  The <i>command</i> undergoes <a href="../topics/macros.html">macro</a> body
+  <a href="../topics/substitution.html">substitution</a> when it is executed.
+
+<p>
+  An asynchronous <a href="../commands/repeat.html">/repeat</a> (without -S)
+  returns the pid of the new <a href="../topics/processes.html">process</a>,
+  or 0 if an error occurred.
+  A synchronous <a href="../commands/repeat.html">/repeat</a>
+  returns the return value of the last command.
+
+<p>
+  Since the first run is not done until after the first interval
+  (for <a href="../commands/repeat.html">/repeat</a> without -S or -n),
+  a useful trick is to use
+  "<a href="../commands/repeat.html">/repeat</a> -<i>time</i> 1
+  <i>command</i>" to delay the execution of a single command.
+
+<p>
+  Example: <code><a href="../commands/repeat.html">/repeat</a> -0:30 1
+    <a href="../commands/echo.html">/echo</a> -ab Dinner's ready</code>
+
+<a name="sleep"></a>
+<p>
+There is no good way to directly "sleep" within a
+<a href="../topics/macros.html">macro</a> body.
+Any attempt to write your own /sleep macro will, at best, "freeze" tf
+for the duration of the sleep, or even worse hog the machine's CPU time
+in a busy wait.
+The best way to achieve the effect a sleep in a
+<a href="../commands/while.html">/while</a>
+loop is probably to use a <a href="../commands/repeat.html">/repeat</a>
+where each execution of the <a href="../commands/repeat.html">/repeat</a>
+body corresponds to an iteration of the desired
+<a href="../commands/while.html">/while</a> loop.
+That is, if you want to write
+
+<pre>
+    <a href="../commands/def.html">/def</a> foo = \
+	/before_stuff%; \
+	<a href="../commands/while.html">/while</a> (condition) \
+            /do_stuff%; \
+            /sleep 5%; \
+	<a href="../commands/while.html">/done</a>%; \
+	/after_stuff
+</pre>
+
+you must instead write:
+
+<pre>
+    <a href="../commands/def.html">/def</a> foo = \
+	/before_stuff%; \
+	/foo_loop
+
+    <a href="../commands/def.html">/def</a> foo_loop = \
+	<a href="../commands/if.html">/if</a> (condition) \
+            /do_stuff%; \
+	    <a href="../commands/repeat.html">/repeat</a> -5 1 /foo_loop%; \
+	<a href="../commands/if.html">/else</a>
+	    /after_stuff%; \
+	<a href="../commands/if.html">/endif</a>
+</pre>
+Of course, local <a href="../topics/variables.html">variables</a>
+will not survive between calls of /do_stuff in the second version as they
+would in the first (if it were possible), so any
+<a href="../topics/variables.html">variables</a> you need to share between
+iterations must be global.
+<p>
+But, if the reason you want to sleep is to wait for a response from a
+server, then you really don't want to sleep at all:  you want a
+<a href="../topics/trigger.html">trigger</a>.
+First, set up <a href="../topics/trigger.html">triggers</a> on the possible
+responses, then send the command.  If one of the possible responses is
+no response at all, then a <a href="../commands/repeat.html">/repeat</a> can
+be useful to wait for some maximum timeout and then handle the no-reponse
+case and delete the response <a href="../topics/trigger.html">triggers</a>.
+This is in general the best way to write
+<a href="../topics/macros.html">macros</a> that interact with a server.
+<a name=""></a>
+
+<p>
+  See: <a href="../topics/processes.html">processes</a>,
+  <a href="../topics/special_variables.html#%ptime">%ptime</a>,
+  <a href="../commands/at.html">/at</a>,
+  <a href="../topics/keybindings.html#kbnum">kbnum</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

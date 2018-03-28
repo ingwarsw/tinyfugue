@@ -1,0 +1,54 @@
+<title>TinyFugue: /features</title>
+<!--"@/features"-->
+<h1>/features</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/features.html">/FEATURES</a> [<i>name</i>]<br>
+<hr>
+
+<p>
+  With no arguments, <a href="../commands/features.html">/features</a>
+  prints a list of optional TF features, each prefixed with "+" or "-"
+  to indicate that it is enabled or disabled, respectively.
+
+<p>
+  With a <i>name</i> argument, <a href="../commands/features.html">/features</a>
+  returns 0 or 1 if the feature <i>name</i> is disabled or enabled,
+  respectively, in this instance of tf.  Case is insignificant in <i>name</i>.
+
+<pre>
+  Feature           Meaning
+  -------           -------
+  256colors         256 color support
+  core              If tf crashes, it can dump a core file
+  float             Floating point arithmetic and functions
+  ftime             <a href="../commands/ftime.html">ftime</a>() accepts % formatting
+  history           /recall and /quote #
+  IPv6              Internet Protocol version 6
+  locale            allow alternate character sets and date formats
+                    (see: <a href="../topics/locale.html">locale</a>)
+  MCCPv1            Mud Client Compression Protocol version 1 (see: <a href="../topics/mccp.html">mccp</a>)
+  MCCPv2            Mud Client Compression Protocol version 2 (see: <a href="../topics/mccp.html">mccp</a>)
+  process           /repeat and /quote
+  SOCKS             SOCKS proxy
+  ssl               Secure Sockets Layer
+  subsecond         time is measured with subsecond accuracy
+  TZ                honors the <a href="../topics/special_variables.html">TZ</a> variable
+</pre>
+
+<p>
+  Example:
+  <pre>
+  <a href="../commands/if.html">/if</a> (!features("ssl")) <a href="../commands/echo.html">/echo</a> -e warning: socket is not secure%; /endif
+  </pre>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

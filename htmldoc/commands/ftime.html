@@ -1,0 +1,92 @@
+<title>TinyFugue: ftime()</title>
+<!--"@ftime"-->
+<!--"@ftime()"-->
+<h1>ftime()</h1>
+
+<p>
+  <a href="../topics/functions.html">Function</a> usage:
+
+<p>
+  <a href="../commands/ftime.html">ftime</a>([<i>format</i> 
+  [, <i>time</i>]])<br>
+<hr>
+
+<p>
+Returns a string formatted from an absolute system time <i>time</i>
+(obtained from
+<a href="../topics/functions.html#time">time()</a> or
+<a href="../topics/functions.html#mktime">mktime()</a>)
+according to
+<i>format</i>.
+If <i>time</i> is omitted, it defaults to the current time.
+If <i>time</i> is out of range, ftime() returns an empty string
+and prints an error message.
+If <i>format</i> is omitted, it defaults to 
+  <a href="../topics/special_variables.html#%time_format">%time_format</a>.
+If <i>format</i> is "<code>@</code>", a raw system time
+(e.g., seconds since 1970-01-01 00:00:00 UTC) will be displayed.
+Otherwise, each "%" in <i>format</i> describes a conversion:
+<dl compact>
+<dt><code>%@</code>	<dd>raw system time, in seconds, to the nearest microsecond (nonstandard)
+<dt><code>%.</code>	<dd>microseconds since last whole second (nonstandard)
+<dt><code>%a</code>	<dd>abbreviated weekday name
+<dt><code>%A</code>	<dd>full weekday name
+<dt><code>%b</code>	<dd>abbreviated month name
+<dt><code>%B</code>	<dd>full month name
+<dt><code>%c</code>	<dd><a href="../topics/locale.html">local</a> time and date
+        representation
+<dt><code>%d</code>	<dd>day of month (01-31)
+<dt><code>%F</code>	<dd>ISO 8601 date format (equivalent to "<code>%Y-%m-%d</code>")
+<dt><code>%H</code>	<dd>hour on 24-hour clock (00-23)
+<dt><code>%I</code>	<dd>hour on 12-hour clock (01-12)
+<dt><code>%j</code>	<dd>day of year (001-366)
+<dt><code>%m</code>	<dd>month (01-12)
+<dt><code>%M</code>	<dd>minute (00-59)
+<dt><code>%p</code>	<dd><a href="../topics/locale.html">local</a> equivalent of "AM" or "PM"
+<dt><code>%s</code>	<dd>raw system time, rounded down to the nearest whole second (nonstandard)
+<dt><code>%S</code>	<dd>second (00-61)
+<dt><code>%T</code>	<dd>ISO 8601 time format (equivalent to "<code>%H:%M:%S</code>")
+<dt><code>%U</code>	<dd>week number of year, Sunday is first day of week (00-53)
+<dt><code>%w</code>	<dd>weekeday (0-6, Sunday is 0)
+<dt><code>%W</code>	<dd>week number of year, Monday is first day of week (00-53)
+<dt><code>%x</code>	<dd><a href="../topics/locale.html">local</a> date representation
+<dt><code>%X</code>	<dd><a href="../topics/locale.html">local</a> time representation
+<dt><code>%y</code>	<dd>year without century (00-99)
+<dt><code>%Y</code>	<dd>year with century
+<dt><code>%Z</code>	<dd>time zone name, if any
+<dt><code>%%</code>	<dd>"<code>%</code>"
+</dl>
+Names and conversions labeled "local" may be affected by the
+setting of the LC_TIME <a href="../topics/locale.html">locale</a> category.
+Additional "%" conversions may be supported by your system, including
+3-character conversions starting with "%E" and "%O"; see your system's
+<code>strftime()</code> documentation for details.
+All other characters in <i>format</i> are copied unmodified to the result.
+
+<p>
+The formats <code>"%@"</code> and <code>"%s.%."</code> do not give the same
+results if <i>time</i> is negative.
+
+<p>
+Example:<br>
+command: <code><a href="../commands/expr.html">/expr</a>
+<a href="../commands/ftime.html">ftime</a>("Today is %a %b %d",
+<a href="../topics/functions.html#time">time</a>())</code><br>
+output:  <code>Today is Thu Jul 02</code><br>
+
+<p>
+  See:
+  <a href="../topics/functions.html">functions</a>,
+  <a href="../topics/functions.html#time">time()</a>,
+  <a href="../topics/locale.html">locale</a>,
+  <a href="../topics/special_variables.html#%TZ">%TZ</a>,
+  <a href="../topics/special_variables.html#%time_format">%time_format</a>,
+  <a href="../topics/special_variables.html#%clock_format">%clock_format</a>.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,42 @@
+<title>TinyFugue: /nth</title>
+<!--"@/first"-->
+<!--"@/last"-->
+<!--"@/nth"-->
+<h1>/nth</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/nth.html">/FIRST</a> <i>text</i><br>
+  <a href="../commands/nth.html">/LAST</a> <i>text</i><br>
+  <a href="../commands/nth.html">/NTH</a> <i>n</i> <i>text</i><br>
+<hr>
+
+<p>
+  Echoes the first, last, or <i>n</i>th word from text.
+  `<a href="../commands/nth.html">/first</a> <i>text</i>' is equivalent to
+  `<a href="../commands/nth.html">/nth</a> 1 <i>text</i>'.
+
+<p>
+  These commands can be useful in command substitutions.  For example, to
+  make "ctrl-O 1" input the first word of the most recent mud output, you could
+  do this:
+
+<p>
+  <a href="../commands/bind.html">/bind</a> ^O1 =
+  <a href="../commands/input.html">/input</a>
+  $(<a href="../commands/nth.html">/first</a>
+  $(<a href="../commands/recall.html">/recall</a> 1))
+
+<p>
+  See: <a href="../topics/substitution.html#parameters">parameters</a>,
+  <a href="../topics/substitution.html#$()">command substitution</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

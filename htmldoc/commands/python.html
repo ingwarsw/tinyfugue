@@ -1,0 +1,61 @@
+<title>TinyFugue: /python</title>
+<!--"@python"-->
+<!--"@/python"-->
+<h1>python()</h1>
+
+<p>
+  Function Usage:
+  
+<p>
+  <a href="../commands/python.html">python</a>( <i>command</i> )<br>
+
+<p>
+  This executes a single python expression. It must be an expression with a
+  return code, not a statement. For instance '1+1' is a expression that returns
+  2, but 'print 1+1' is a statement and would be illegal. It will convert
+  string, float, integer, or boolean return values to equivalent TF values.
+
+<p>
+  Example:<br>  
+  <code>/test echo( <a href="../commands/python.html">python</a>( strcat("'The current world is ", ${world_name},  ".'") ) )</code><br>
+  <code>The current world is (unnamed1).</code><br>
+  <br>
+  Note that quoting is slightly tricky here - you have to quote once for TF's sake, then
+  once for python.
+
+<p>
+  Command usage:
+
+<p>
+  <a href="../commands/python.html">/PYTHON</a> [<i>command</i>]<br>
+
+<p>
+  This invokes the python interpreter just as if you were entering commands at a
+  at a python cli. Each command must be standalone, but they can be statements
+  and there is a persistent environment, so you can do things like
+
+<p>
+  <code>/python import glob</code><br>
+  <code>/python tf.out( "Logfiles: " + ", ".join(glob.glob("*.log")) )</code><br>
+  <code>Logfiles: naughty.log, nice.log</code><br>
+  
+<p>
+  Generally this is only useful in your .tfrc - or other script setup. It is slow since
+  the command has to be recompiled every time, and you don't get any return values.
+  You won't see any output unless there's an error or you explcitly invoke tf.out().
+
+<p>
+  See <a href="../commands/python_load.html">/python_load</a> and
+  <a href="../commands/python_call.html">/python_call</a> instead.
+
+<p>
+  See /help <a href="../topics/tf_python.html">tf python</a> for calling back into TinyFugue
+  and for overall issues of performance and persistence.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,93 @@
+<title>TinyFugue: /recordline</title>
+<!--"@/recordline"-->
+<h1>/recordline</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/recordline.html">/RECORDLINE</a> [-lig]
+  [-w[<i>world</i>]] [-t<i>time</i>] <i>text</i><br>
+<hr>
+
+<p>
+  Records <i>text</i> into a <a href="../topics/history.html">history</a>
+  buffer.
+
+<p>
+  <a href="../topics/options.html">Options:</a>
+  <dl>
+  <dt>-w
+          <dd> record to <a href="../topics/sockets.html#current">current</a>
+          world's <a href="../topics/history.html">history</a>
+  <dt>-w<i>world</i>
+          <dd>record to <i>world</i>'s
+          <a href="../topics/history.html">history</a>
+  <dt>-l
+          <dd> record to local <a href="../topics/history.html">history</a>
+  <dt>-g
+          <dd> record to global <a href="../topics/history.html">history</a>
+          (default)
+  <dt>-i
+          <dd> record to input history
+  <dt>-t<i>time</i>
+          <dd> record the line with the system time <i>time</i> (as displayed
+          by <code><a href="../commands/recall.html">/recall</a> -t@</code>)
+          instead of the current time
+  <dt>-a<i>attrs</i>
+	<dd>Record <i>text</i> with the
+	<a href="../topics/attributes.html">attributes</a> given by
+	<i>attrs</i>.
+  <dt>-p
+	<dd>Interpet "<code>@{<i>attr</i>}</code>" strings as commands to
+        set <a href="../topics/attributes.html">attributes</a> inline.
+        "<code>@@</code>" strings are interpreted as "<code>@</code>".
+	"<code>@{n}</code>" or "<code>@{x}</code>" will
+        turn attributes off.
+	See also: <a href="../topics/functions.html#decode_attr">decode_attr()</a>.
+  </dl>
+
+<p>
+  The <i>text</i> will not be echoed to the screen or saved in any log.
+
+<p>
+  <a href="../commands/recordline.html">/Recordline</a> can be combined with
+  <a href="../commands/quote.html">/quote</a> to read a log file back into
+  <a href="../topics/history.html">history</a>.  For example, if you had
+  created a log with "<code><a href="../commands/log.html">/log</a> -i
+  input.log</code>" in an earlier tf session, you could start a new tf
+  session and use
+
+<p>
+<code>
+  <a href="../commands/quote.html">/quote</a> -S -dexec
+  <a href="../commands/recordline.html">/recordline</a> -i 
+  <a href="../topics/options.html">-</a> 'input.log
+</code>
+
+<p>
+  to restore that input <a href="../topics/history.html">history</a>.  That
+  way, you could use the RECALLB, RECALLF, RECALLBEG, RECALLEND, SEARCHB, and
+  SEARCHF (^P, ^N, ^[&lt;, ^[&gt;, ^[P, and ^[N) keys to recall lines you typed
+  in the earlier session.
+
+<p>
+  Note that <a href="../commands/recordline.html">/recordline</a>
+  always appends to the end of a <a href="../topics/history.html">history</a>.
+  <code><a href="../commands/recordline.html">/Recordline</a>
+  -t<i>time</i></code> makes it possible to insert lines that
+  are not in chronological order, which may produce strange results with
+  <a href="../commands/recall.html">/recall</a>.
+
+<p>
+  See: <a href="../commands/recall.html">/recall</a>,
+  <a href="../commands/quote.html">/quote</a>,
+  <a href="../topics/history.html">history</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

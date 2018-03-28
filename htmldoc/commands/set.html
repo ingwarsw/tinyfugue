@@ -1,0 +1,55 @@
+<title>TinyFugue: /set</title>
+<!--"@/set"-->
+<h1>/set</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/set.html">/SET</a> <i>name</i>=<i>value</i><br>
+  <a href="../commands/set.html">/SET</a> [<i>name</i> [<i>value</i>]]<br>
+<hr>
+
+<p>
+  In the first form, or with two arguments,
+  <a href="../commands/set.html">/set</a> will set the value of
+  <a href="../topics/variables.html">variable</a> <i>name</i> to <i>value</i>.
+  With one argument, <a href="../commands/set.html">/set</a> will display
+  the value of <a href="../topics/variables.html">variable</a> <i>name</i>.
+  With no arguments, <a href="../commands/set.html">/set</a>
+  will display the value of all internal
+  <a href="../topics/variables.html">variables</a>.  If the first form is
+  used, there should be no spaces on either side of the '='.
+
+<p>
+  <a href="../topics/variables.html">Variable</a> <i>name</i> will be an
+  internal <a href="../topics/variables.html">variable</a> unless it has
+  already been defined as an environment
+  <a href="../topics/variables.html">variable</a>.
+
+<p>
+  Note: The <a href="../topics/variables.html">variables</a>
+  'L' and 'R' are reserved.  You should not assign values to them.
+
+<p>
+  When setting a variable, <a href="../commands/set.html">/set</a> returns
+  1 if successful, 0 if not.
+  When listing variables, <a href="../commands/set.html">/set</a> returns
+  the number of variables listed.
+
+<p>
+  See: <a href="../topics/variables.html">variables</a>,
+  <a href="../commands/listvar.html">/listvar</a>,
+  <a href="../commands/setenv.html">/setenv</a>,
+  <a href="../commands/export.html">/export</a>,
+  <a href="../commands/let.html">/let</a>,
+  <a href="../commands/unset.html">/unset</a>,
+  <a href="../topics/tools.html">/edvar</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

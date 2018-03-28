@@ -1,0 +1,56 @@
+<title>TinyFugue: /escape</title>
+<!--"@/escape"-->
+<h1>/escape</h1>
+
+<p>
+  <a href="../topics/functions.html">Function</a> usage:
+<p>
+  <a href="../commands/escape.html">ESCAPE</a>(<i>metacharacters</i>,
+  <i>string</i>)<br>
+
+<p>
+  Command usage:
+<p>
+  <a href="../commands/escape.html">/ESCAPE</a> <i>metacharacters</i>
+  <i>string</i><br>
+<hr>
+
+<p>
+  Echoes (in command form) or returns (in
+  <a href="../topics/functions.html">function</a> form) <i>string</i>,
+  with any <i>metacharacters</i> or '\' characters contained in <i>string</i>
+  preceded by a '\' character.
+
+<p>
+  Example:
+
+<p>
+<code>
+  <a href="../commands/def.html">/def</a> blue =
+  <a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-a">-a</a>Cblue
+  <a href="../commands/def.html#-t">-t</a>"$(<a href="../commands/escape.html">/escape</a> " <a href="../topics/substitution.html#%*">%*</a>)"<br>
+  /blue * pages, "*"
+</code>
+
+<p>
+  When the second command executes, it will
+  <a href="../topics/evaluation.html">expand</a> to:
+
+<p>
+<code>
+  <a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-a">-a</a>Cblue
+  <a href="../commands/def.html#-t">-t</a>"* pages, \"*\""
+</code>
+
+<p>
+  See: <a href="../topics/evaluation.html">evaluation</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

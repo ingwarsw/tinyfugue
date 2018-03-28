@@ -1,0 +1,125 @@
+<title>TinyFugue: proxy server</title>
+<!--"@firewall"-->
+<!--"@proxy"-->
+<!--"@/proxy_connect"-->
+<!--"@/proxy_command"-->
+<!--"@proxy server"-->
+<h1>proxy server</h1>
+
+<p>
+  If <a href="../topics/special_variables.html#%proxy_host">%{proxy_host}</a>
+  is set, all connections will go through a proxy server (firewall) defined
+  by <a href="../topics/special_variables.html#%proxy_host">%proxy_host</a> and
+  <a href="../topics/special_variables.html#%proxy_port">%proxy_port</a>.
+  Note that
+  <a href="../topics/special_variables.html#%proxy_host">%{proxy_host}</a>
+  should usually <em>not</em> be set if TF has been compiled to use SOCKS.
+
+<p>
+  When the connection to
+  <a href="../topics/special_variables.html#%proxy_host">%proxy_host</a> 
+  <a href="../topics/special_variables.html#%proxy_port">%proxy_port</a>
+  is made, only the PROXY
+  <a href="../topics/hooks.html">hook</a> is called; the CONNECT and LOGIN
+  <a href="../topics/hooks.html">hooks</a> which are normally called after
+  making a connection are not called when a proxy is used.
+  A PROXY <a href="../topics/hooks.html">hook</a> defined in the standard
+  library calls <a href="../topics/proxy.html">/proxy_command</a>, which by
+  default sends "<code>telnet
+  <a href="../topics/worlds.html#world_host">${world_host}</a>
+  <a href="../topics/worlds.html#world_port">${world_port}</a></code>", and
+  then invoke the CONNECT and LOGIN <a href="../topics/hooks.html">hooks</a>
+  (which, by default, bring the
+  <a href="../topics/worlds.html">world</a> into the
+  <a href="../topics/sockets.html#foreground">foreground</a>
+  and perform an <a href="../topics/login.html">automatic login</a>).
+
+<p>
+  Before the connection to the proxy server is made,
+  <a href="../topics/worlds.html#world_host">${world_host}</a>,
+  <a href="../topics/worlds.html#world_port">${world_port}</a>,
+  error messages, and <a href="../commands/listsockets.html">/listsockets</a>
+  all refer to the proxy server; after the connection is made, they
+  refer to the target server defined in
+  <a href="../commands/addworld.html">/addworld</a>.
+
+<p>
+  The proxy connection command is done with this standard
+  <a href="../topics/macros.html">macro</a>:
+<pre>
+<a href="../commands/def.html">/def</a> -i proxy_connect = telnet <a href="../topics/worlds.html#world_host">${world_host}</a> <a href="../topics/worlds.html#world_port">${world_port}</a>
+</pre>
+  If your proxy server requires a different command, you should redefine
+  <code>proxy_connect</code>.  That will be sufficient for most proxy servers.
+  (Before version 5.0, a custom connect command required you to redefine
+  <code>proxy_command</code>.  This should be avoided now if possible.)
+
+<p>
+  If your proxy server has more complex requirements, or you want better
+  error detection, you will need to redefine the <code>proxy_command</code>
+  <a href="../topics/macros.html">macro</a>.  By default,
+  <code>proxy_command</code> immediately calls <code>/proxy_connect</code>,
+  enables <a href="../commands/localecho.html">localecho</a>, and invokes the
+  CONNECT and LOGIN <a href="../topics/hooks.html">hooks</a>.
+  There are several reasons you might want to redefine
+  <code>proxy_command</code>:
+  <ul>
+  <li>The default <code>proxy_command</code> can not detect when
+      <code>proxy_connect</code> fails, so it will always send your login
+      command even if the proxy server did not connect to the target server.
+  <li>Your proxy server may not accept commands immediately, so
+      <code>proxy_command</code> should wait for some indication that the
+      proxy server is ready before sending commands.
+  </ul>
+
+<p>
+  For example, say you use a Gauntlet telnet proxy that
+  leaves <a href="../commands/localecho.html">localecho</a> off;
+  prints a "tn-gw-&gt;" <a href="../topics/prompts.html">prompt</a>;
+  requires you to send "telnet <i>hostname</i> <i>port</i>" to connect;
+  after a successful connection, prints "Connected to <i>hostname</i>";
+  and after a failed connection prints an error message and prints another
+  <a href="../topics/prompts.html">prompt</a>.
+  So, you could use this definition:
+
+<pre>
+<a href="../commands/def.html">/def</a> proxy_command =\
+    <a href="../commands/def.html">/def</a> -p10000 -w -1 -h'PROMPT tn-gw-&gt;' =\
+        /proxy_connect%%; \
+        <a href="../commands/localecho.html">/localecho</a> on%%; \
+        <a href="../commands/def.html">/def</a> -p10002 -w -1 -h'PROMPT tn-gw-&gt;' proxy_error_<a href="../topics/worlds.html#world_name">$${world_name}</a> =\
+            <a href="../commands/undef.html">/undef</a> proxy_success_<a href="../topics/worlds.html#world_name">$$${world_name}</a>%%%;\
+            <a href="../commands/dc.html">/dc</a>%%;\
+        <a href="../commands/def.html">/def</a> -p10002 -w -1 -t'Connected to *' proxy_success_<a href="../topics/worlds.html#world_name">$${world_name}</a> =\
+            <a href="../commands/undef.html">/undef</a> proxy_error_<a href="../topics/worlds.html#world_name">$$${world_name}</a>%%%;\
+            <a href="../commands/trigger.html">/trigger</a> -hCONNECT <a href="../topics/worlds.html#world_name">$$${world_name}</a>%%%;\
+            <a href="../commands/if.html">/if</a> (<a href="../topics/worlds.html#world_character">$$${world_character}</a> !~ "" &amp; <a href="../topics/worlds.html#world_login">$$${world_login}</a>) \
+                <a href="../commands/trigger.html">/trigger</a> -hLOGIN <a href="../topics/worlds.html#world_name">${world_name}</a>%%%;\
+            <a href="../commands/if.html">/endif</a>
+</pre>
+
+  The first <a href="../commands/def.html">/def</a> waits for the first
+  <a href="../topics/prompts.html">prompt</a>
+  before doing anything.  It then sends the connection command,
+  turns <a href="../commands/localecho.html">localecho</a> back on,
+  and sets up <a href="../topics/macros.html">macros</a>
+  to catch the results of the connection command.
+  The success <a href="../topics/triggers.html">trigger</a>
+  undefines the error <a href="../topics/hooks.html">hook</a>,
+  and invokes the CONNECT and LOGIN <a href="../topics/hooks.html">hooks</a>.
+  The error <a href="../topics/hooks.html">hook</a>
+  undefines the success <a href="../topics/triggers.html">trigger</a>
+  and disconnects from the proxy.
+
+<p>
+  See: <a href="../commands/addworld.html">/addworld</a>,
+  <a href="../topics/special_variables.html#%proxy_host">%proxy_host</a>,
+  <a href="../topics/special_variables.html#%proxy_port">%proxy_port</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

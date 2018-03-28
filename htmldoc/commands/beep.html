@@ -1,0 +1,33 @@
+<title>TinyFugue: /beep</title>
+<!--"@/beep"--> 
+<h1>/beep</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/beep.html">/BEEP</a> [<i>number</i>|ON|OFF]<br>
+<hr>
+
+<p>
+  <a href="../commands/beep.html">/beep</a> causes Fugue to emit 
+  <i>number</i> beeps (ASCII 7).  <a href="../commands/beep.html">/beep</a> 
+  with no arguments will emit three beeps.  
+  <a href="../commands/beep.html">/beep</a> OFF causes Fugue to ignore 
+  further calls to <a href="../commands/beep.html">/beep</a> until a 
+  <a href="../commands/beep.html">/beep</a> ON is performed.  
+
+<p>
+  Note that on many terminals, multiple immediate beeps are indistinguishable.
+  You can use <a href="../commands/repeat.html">/repeat</a> to put a delay
+  between beeps:
+<pre>
+  <a href="../commands/repeat.html">/repeat</a> -0.2 5 <a href="../commands/beep.html">/beep</a>
+</pre>
+
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

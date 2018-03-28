@@ -1,0 +1,189 @@
+<title>TinyFugue: /addworld</title>
+<!--"@/addworld"--> 
+<!--"@addworld()"--> 
+<h1>addworld()</h1>
+
+<p>
+  <a href="../topics/functions.html">Function</a> usage:
+
+<p>
+  <a href="../commands/addworld.html">ADDWORLD</a>(<i>name</i>, <i>type</i>,
+  [<i>host</i>, <i>port</i>
+  [, <i>char</i>, <i>pass</i> [, <i>file</i> [, <i>flags</i> [, <i>srchost</i>]]]]])<br>
+
+<p>
+  Command usage: 
+
+<p>
+  <a href="../commands/addworld.html">/ADDWORLD</a> [-pxe] [-T<i>type</i>] [-s<i>srchost</i>] 
+  <i>name</i> [<i>char</i> <i>pass</i>] <i>host</i> <i>port</i> 
+  [<i>file</i>]<br>
+  <a href="../commands/addworld.html">/ADDWORLD</a> [-T<i>type</i>] [-s<i>srchost</i>] 
+  <i>name</i><br>
+  <a href="../commands/addworld.html">/ADDWORLD</a> [-T<i>type</i>] DEFAULT 
+  [<i>char</i> <i>pass</i> [<i>file</i>]]<br>
+<hr>
+
+<p>
+  Defines a new <a href="../topics/worlds.html">world</a> or redefines an
+  existing <a href="../topics/worlds.html">world</a> with the name <i>name</i>.
+  <i>Name</i> may not contain spaces; addtionally, when defining a new world,
+  <i>name</i> may not begin with "(".
+
+<p>
+  <i>Host</i> is a server's internet hostname, IPv4 address, or (if your
+  platform supports it) IPv6 address.  <i>Port</i> is the number or name
+  of a TCP port on the host.
+  If <i>host</i> and <i>port</i> are blank, then "connecting" to the world
+  will only create a tf window for the world, it will not open an actual
+  network connection; this is called a "connectionless" socket.
+
+<p>
+  There may be a special <a href="../topics/worlds.html">world</a>
+  named "default" which does not have a <i>host</i> or <i>port</i>.  If a
+  normal <a href="../topics/worlds.html">world</a> is defined without a
+  <i>character</i>, <i>pass</i>, <i>type</i>, or <i>mfile</i>, then that
+  <a href="../topics/worlds.html">world</a> will use the corresponding field
+  of the "default" <a href="../topics/worlds.html">world</a> if there is one.
+  If the "default" <a href="../topics/worlds.html">world</a> is redefined,
+  <a href="../topics/worlds.html">worlds</a> with omitted fields will use
+  the new default values.
+
+<p>
+  In function form, <i>flags</i> is a string of 0 or more letters
+  that modify the behavior of the function.
+  For compatability with older versions of TF, an "f" or "0" in <i>flags</i>
+  has the same effect as "p", and an "n" or "1" in <i>flags</i> has no effect.
+
+<p>
+  <a href="../topics/options.html">Options</a>:
+  <dl>
+
+  <dt>command: <code>-p</code>
+  <dt>function: <i>flags</i> contains "p"
+      <dd><a href="../topics/special_variables.html#%proxy_host">%{proxy_host}</a>
+      will be ignored, and all connections to the world will be direct.
+      By default, worlds use
+      <a href="../topics/special_variables.html#%proxy_host">%{proxy_host}</a>
+      if it is set.
+
+  <dt>command: <code>-x</code>
+  <dt>function: <i>flags</i> contains "x"
+      <dd>TF will use the SSL protocol to make connections to this world.
+
+  <dt>command: <code>-e</code>
+  <dt>function: <i>flags</i> contains "e"
+      <dd>all text sent to the world will be echoed right back as if it were
+      received from the world (in addition to being sent to the server).
+      This is most useful with connectionless sockets.
+
+  <dt>command: <code>-s<i>srchost</i></code>
+  <dt>function: <i>srchost</i>
+      <dd>defines the host name or IP address to use for
+      the local (tf) side of the connection.  This is useful if the host has
+      multiple network interfaces and you need to override the default choice
+      of the OS.
+
+  <dt>command: <code>-T<i>type</i></code>
+  <dt>function: <i>type</i>
+      <dd>The optional <i>type</i> is used in hooks and triggers, and for
+      automatic <a href="../topics/login.html">login</a> and flag setting.
+      (See below.)
+  </dl>
+
+<p>
+  The library pre-defines WORLD and LOGIN hooks for 
+  types that match these
+  <a href="../topics/patterns.html#glob">glob patterns</a>:
+
+<p>
+  <dl>
+  <dt>(none) 
+          <dd>TinyMud <a href="../topics/login.html">login</a> format
+          ("connect <i>char</i> <i>pass</i>"), the value of
+          <a href="../topics/special_variables.html#%lp">lp</a> is not changed.
+
+<p>
+  <dt>tiny, tiny.* 
+          <dd>TinyMud <a href="../topics/login.html">login</a> format
+          ("connect <i>char</i> <i>pass</i>"),
+          <a href="../topics/special_variables.html#%lp">lp</a>=off.
+
+<p>
+  <dt>lp, lp.* 
+  <dt>diku, diku.* 
+  <dt>aber, aber.* 
+          <dd>LP/Diku <a href="../topics/login.html">login</a> format
+          (sends <i>char</i> and <i>pass</i> on separate lines),
+          <a href="../topics/special_variables.html#%lp">lp</a>=on.
+          For servers that send unterminated prompts.  
+
+<p>
+  <dt>lpp, lpp.* 
+          <dd>LP/Diku <a href="../topics/login.html">login</a> format, 
+          <a href="../topics/special_variables.html#%lp">lp</a>=off.
+          For muds that use GOAHEAD or EOR
+          <a href="../topics/prompt_protocol.html">prompt protocol</a>.
+
+<p>
+  <dt>telnet, telnet.* 
+          <dd>Telnet <a href="../topics/login.html">login</a> format
+          (sends <i>char</i> and <i>pass</i> when "login:" and "password:"
+          prompts are received),
+          <a href="../topics/special_variables.html#%lp">lp</a>=on, 
+          <a href="../commands/localecho.html">/localecho</a> on.  
+          For any line-by-line telnet service.  
+  </dl>
+<p>
+  You can define your own world types for use in other triggers or hooks.  If 
+  you use names that match the
+  <a href="../topics/patterns.html#glob">glob</a>
+  patterns above, the standard library 
+  hooks will still work.  For example, if you did: 
+
+<pre>
+  <a href="../commands/test.html">/test</a> <a href="../commands/addworld.html">addworld</a>("Cave", "tiny.muck.",     "cave.tcp.com", 2283, <i>char</i>, <i>pass</i>)
+  <a href="../commands/test.html">/test</a> <a href="../commands/addworld.html">addworld</a>("Foo",  "tiny.muck.msp.", "foo.com",      9999, <i>char</i>, <i>pass</i>)
+  <a href="../commands/test.html">/test</a> <a href="../commands/addworld.html">addworld</a>("Cow",  "tiny.moo.",      "cow.com",      8267, <i>char</i>, <i>pass</i>)
+  <a href="../commands/test.html">/test</a> <a href="../commands/addworld.html">addworld</a>("Buzz", "tiny.moo.msp.",  "buzz.org",     8267, <i>char</i>, <i>pass</i>)
+</pre>
+
+  then tiny-style <a href="../topics/login.html">autologin</a> would still
+  work (using the library hooks), and 
+  you could also define your own <a href="../topics/triggers.html">triggers</a>
+  and <a href="../topics/hooks.html">hooks</a> specific to TinyMUCKs or 
+  TinyMOOs (e.g., "<code><a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-T">-T</a>tiny.muck.*</code>")
+  or to worlds that support MSP regardless of their server type
+  (e.g., "<code><a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-T">-T</a>*.msp.*</code>"),
+  etc.  Note the trailing period on the world type defintions, which
+  make it easier to write matching triggers.
+
+<p>
+  Any <i>type</i> is valid, but is only useful if it is matched by a
+  "<a href="../commands/def.html#-T">-T<i>type</i></a>" option of a
+  <a href="../topics/hooks.html">hook</a> or
+  <a href="../topics/triggers.html">trigger</a>.  
+
+<p>
+  If <a href="../commands/addworld.html">addworld()</a> with a password is
+  executed from a file that has permissions making it readable by others,
+  it will produce a warning.  You should change the file 
+  permissions to prevent other people from reading your password.  
+
+<p>
+  See: <a href="../topics/worlds.html">worlds</a>, 
+  <a href="../commands/connect.html">/connect</a>, 
+  <a href="../commands/fg.html">/fg</a>, 
+  <a href="../commands/unworld.html">/unworld</a>, 
+  <a href="../topics/tools.html">/edworld</a>,
+  <a href="../commands/telnet.html">/telnet</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

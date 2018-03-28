@@ -1,0 +1,46 @@
+<title>TinyFugue: /watchname</title>
+<!--"@/watchname"-->
+<h1>/watchname</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/watchname.html">/WATCHNAME</a> [OFF|ON]<br>
+  <a href="../commands/watchname.html">/WATCHNAME</a> <i>n1</i>
+  [<i>n2</i>]<br>
+<hr>
+
+<p>
+  Sets the flag
+  <a href="../topics/special_variables.html#%watchname">%{watchname}</a>.
+  This flag determines whether Fugue will watch for players displaying lots
+  of output.  Fugue looks for names which have begun the line <i>n1</i> times
+  out of <i>n2</i> (<i>n1</i> defaults to 4 and <i>n2</i> to 5) and
+  <a href="../topics/attributes.html">gag</a> that person (with a message),
+  so with the default settings Fugue will
+  <a href="../topics/attributes.html">gag</a> any person whose name has begun
+  4 of the last 5 lines.
+
+<p>
+  The <i>n1</i> and <i>n2</i> settings for
+  <a href="../commands/watchname.html">/watchname</a> are distinct from the
+  <i>n1</i> and <i>n2</i> settings for
+  <a href="../commands/watchdog.html">/watchdog</a>.
+
+<p>
+  The flag
+  <a href="../topics/special_variables.html#%watchname">%{watchname}</a>
+  defaults to 0 (off).
+
+<p>
+  See: <a href="../topics/special_variables.html#%watchname">%watchname</a>,
+  <a href="../commands/watchdog.html">/watchdog</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

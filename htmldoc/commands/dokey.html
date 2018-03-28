@@ -1,0 +1,148 @@
+<title>TinyFugue: /dokey</title>
+<!--"@/dokey"-->
+<h1>/dokey</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/dokey.html">/DOKEY</a> <i>name</i><br>
+<hr>
+
+<p>
+  Performs an action that is intended to be invoked from a 
+  <a href="../topics/keybindings.html">keybinding</a>
+  created with <a href="../commands/bind.html">/bind</a> or
+  <a href="../commands/def.html#-b">/def -b</a>.
+  Most of the actions not meaningful or useful when the
+  <a href="../commands/dokey.html">/dokey</a> command is executed from the
+  command line.
+
+<p>
+
+<!-- In the preformatted table below, newlines after anchors are eliminated
+ ! by commenting them out.  The comment close is exactly 8 characters,
+ ! to keep tab columns correct. -->
+
+<pre>
+<!-- -->  Name		Default binding	  Action
+<!-- -->  ----		---------------	  --------
+<a name="bs"></a><a name="backspace"></a><a name="bspc"></a><!--
+---- -->  BSPC		(stty), ^H, ^?	  Backspace
+<a name="bword"></a><!--
+---- -->  BWORD		(stty), ^W	  Delete previous word
+<a name="dline"></a><!--
+---- -->  DLINE		(stty), ^U	  Delete entire line
+<a name="refresh"></a><!--
+---- -->  REFRESH	(stty), ^R	  Refresh line
+<a name="lnext"></a><!--
+---- -->  LNEXT		(stty), ^V	  Ignore any binding next key might have
+<a name=""></a>
+<a name="up"></a><!--
+---- -->  UP		(none)		  Cursor up
+<a name="down"></a><!--
+---- -->  DOWN		(none)		  Cursor down
+<a name="right"></a><!--
+---- -->  RIGHT		<a href="../topics/keybindings.html">key_right</a>	  Cursor right
+<a name="left"></a><!--
+---- -->  LEFT		<a href="../topics/keybindings.html">key_left</a>	  Cursor left
+<a name=""></a>
+<a name="newline"></a><!--
+---- -->  NEWLINE	^J, ^M		  Execute current line
+<a name="recallb"</a><!--
+---- -->  RECALLB	^P		  Recall previous input line
+<a name="recallf"></a><!--
+---- -->  RECALLF	^N		  Recall next input line
+<a name="recallbeg"></a><!--
+---- -->  RECALLBEG	^[&lt;		  Recall first input line
+<a name="recallend"></a><!--
+---- -->  RECALLEND	^[&gt;		  Recall last input line
+<a name="searchb"></a><!--
+---- -->  SEARCHB	^[p		  Search backward in input history
+<a name="searchf"></a><!--
+---- -->  SEARCHF	^[n		  Search forward in input history
+<a name="socketb"></a><!--
+---- -->  SOCKETB	^[b		  Switch to previous <a href="../topics/sockets.html">socket</a>
+<a name="socketf"></a><!--
+---- -->  SOCKETF	^[f		  Switch to next <a href="../topics/sockets.html">socket</a>
+<a name="dword"></a><!--
+---- -->  DWORD		^[d		  Delete word
+<a name="del"></a><a name="delete"></a><a name="dch"></a><!--
+---- -->  DCH		^D		  Delete character under cursor
+<a name="redraw"></a><!--
+---- -->  REDRAW	^L		  Redraw screen
+<a name="clear"></a><!--
+---- -->  CLEAR		^[^L		  Clear screen
+<a name="home"></a><!--
+---- -->  HOME		^A		  Go to beginning of line
+<a name="end"></a><!--
+---- -->  END		^E		  Go to end of line
+<a name="wleft"></a><!--
+---- -->  WLEFT		^B		  Go left, to beginning of word
+<a name="wright"></a><!--
+---- -->  WRIGHT	^F		  Go right, to end of word
+<a name="deol"></a><!--
+---- -->  DEOL		^K		  Delete from cursor to end of line
+<a name="pause"></a><!--
+---- -->  PAUSE		^S		  Pause screen
+<a name="page"></a><!--
+---- -->  PAGE		<a href="../topics/keybindings.html">key_tab</a>		  Scroll 1 page forward ("<a href="../commands/more.html">more</a>")
+<a name="pageback"></a><!--
+---- -->  PAGEBACK	(none)		  Scroll 1 page backward ("<a href="../commands/more.html">more</a>")
+<a name="hpage"></a><!--
+---- -->  HPAGE		^X]		  Scroll half page forward ("<a href="../commands/more.html">more</a>")
+<a name="hpageback"></a><!--
+---- -->  HPAGEBACK	^X[		  Scroll half page backward ("<a href="../commands/more.html">more</a>")
+<a name="pgup"></a><!--
+---- -->  PGDN		<a href="../topics/keybindings.html">key_pgdn</a>	  <a href="../commands/dokey.html#page">/dokey_hpage</a>
+<a name="pgup"></a><!--
+---- -->  PGUP		<a href="../topics/keybindings.html">key_pgup</a>	  <a href="../commands/dokey.html#pageback">/dokey_hpageback</a>
+<a name="line"></a><!--
+---- -->  LINE		^[^N		  Scroll forward 1 line ("<a href="../commands/more.html">more</a>")
+<a name="lineback"></a><!--
+---- -->  LINEBACK	^[^P		  Scroll backward 1 line ("<a href="../commands/more.html">more</a>")
+<a name="flush"></a><!--
+---- -->  FLUSH		^[j		  Jump to end of scroll buffer
+<a name="selflush"></a><!--
+---- -->  SELFLUSH	^[J		  Show lines with <a href="../topics/attributes.html">attributes</a>,
+				      and jump to end of buffer
+</pre>
+<a name=""></a>
+
+<p>
+  A default of "(stty)" means the key sequence is that used by your terminal
+  driver.  A default of the form "key_<i>name</i>" means the key named
+  <i>name</i> (see <a href="../topics/keybindings.html">keybindings</a>).
+
+<p>
+  The return value of <a href="../commands/dokey.html">/dokey</a> depends on
+  the action.  The movement and deletion actions return the new position
+  of the cursor; the scrolling actions return the number of lines scrolled.
+  The return values of other actions aren't very useful.
+
+<p>
+  See "<a href="../topics/keybindings.html">keybindings</a>" for a complete
+  list of keybindings.
+
+<p>
+  Example:
+<pre>
+  <a href="../commands/bind.html">/bind</a> ^B = <a href="../commands/dokey.html">/dokey</a> RECALLB
+  <a href="../commands/bind.html">/bind</a> ^F = <a href="../commands/dokey.html">/dokey</a> RECALLF
+</pre>
+  Then, ^B and ^F could be used to recall input backwards and forwards.
+
+<p>
+  See: <a href="../topics/keybindings.html">keybindings</a>,
+  <a href="../commands/bind.html">/bind</a>,
+  <a href="../topics/sockets.html">sockets</a>,
+  <a href="../topics/history.html">history</a>,
+  <a href="../commands/more.html">/more</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

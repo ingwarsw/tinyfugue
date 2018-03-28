@@ -1,0 +1,69 @@
+<title>TinyFugue: /sh</title>
+<!--"@/sh"-->
+<h1>/sh</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/sh.html">/SH</a> [-q] [<i>command</i>]<br>
+  <a href="../commands/psh.html">/PSH</a> [<i>command</i>]<br>
+<hr>
+
+<p>
+  If no command is given, <a href="../commands/sh.html">/sh</a> and
+  <a href="../commands/psh.html">/psh</a> execute an interactive shell
+  named by <a href="../topics/special_variables.html#%SHELL">%{SHELL}</a>.
+  With a <i>command</i>, <a href="../commands/sh.html">/sh</a> will execute
+  <i>command</i> in the default shell (/bin/sh on unix), and 
+  <a href="../commands/psh.html">/psh</a> will execute <i>command</i>
+  in the shell named by
+  <a href="../topics/special_variables.html#%SHELL">%{SHELL}</a>.
+  <i>Command</i> is executed interactively,
+  so it may accept input and may produce any output.
+
+<p>
+  In <a href="../topics/mode.html">visual mode</a>,
+  <a href="../commands/sh.html">/sh</a> and
+  <a href="../commands/psh.html">/psh</a>
+  will fix the screen first, and restore it after executing the shell.
+  <a href="../commands/sys.html">/Sys</a> does not.
+
+<p>
+  If the -q option is given, /sh will be quiet:  the
+  <a href="../topics/hooks.html#SHELL">SHELL</a>
+  <a href="../topics/hooks.html">hook</a> will not
+  be called, and the "Executing" line will not be printed.
+
+<p>
+  If the <a href="../topics/special_variables.html#%shpause">%{shpause}</a>
+  and <a href="../topics/special_variables.html#%interactive">%{interactive}</a>
+  flags are on, TF will wait for a keypress before returning.
+
+<p>
+  Note: calling <a href="../commands/sh.html">/sh</a> or
+  <a href="../commands/psh.html">/psh</a> with arguments from a
+  <a href="../topics/triggers.html">trigger</a> is very dangerous.  If not
+  written carefully, such a <a href="../topics/triggers.html">trigger</a>
+  could allow anyone connected to the server to gain access to your shell
+  account.
+
+<p>
+  The return value of <a href="../commands/sh.html">/sh</a> and
+  <a href="../commands/psh.html">/psh</a> is the exit
+  status of the shell if it exited normally, -1 otherwise.  Note that UNIX
+  shell commands usually return 0 for success and nonzero for failure.
+
+<p>
+  See: <a href="../commands/quote.html">/quote</a>,
+  <a href="../commands/sys.html">/sys</a>,
+  <a href="../topics/utilities.html">utilities</a>
+  (<a href="../topics/utilities.html">/psh</a>)
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

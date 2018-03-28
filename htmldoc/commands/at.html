@@ -1,0 +1,51 @@
+<title>TinyFugue: /at</title>
+<!--"@/at"--> 
+<h1>/at</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/at.html">/AT</a> [-v] [<i>date</i>] <i>time</i> <i>commands</i><br>
+<hr>
+
+<p>
+  <i>Commands</i> will be executed at <i>date</i> and <i>time</i>.
+  <i>Date</i> must be of the form "<i>year</i>-<i>month</i>-<i>day</i>"
+  or "<i>month</i>-<i>day</i>", where <i>year</i> may be 2 or 4 digits.
+  <i>Time</i> must be of the form "<i>hours</i>:<i>minutes</i>" or
+  "<i>hours</i>:<i>minutes</i>:<i>seconds</i>",
+  where <i>hours</i> is between 0 and 23, and <i>seconds</i> may be specified
+  to the nearest microsecond.
+  If any part of the date is omitted, it defaults to the nearest value
+  for which <i>date</i> and <i>time</i> are in the future.
+  For example, if the current time is 16:00, then an argument of
+  "15:00" means 15:00 tomorrow, and "17:00" means 17:00 today.
+
+<p>
+  <a href="../topics/options.html">Options</a>:
+  <dl>
+  <dt>-v    <dd>verbose: prints full date and time
+  </dl>
+
+<p>
+  Examples: <br>
+  <code><a href="../commands/at.html">/at</a> 04-01 00:00:00
+    <a href="../commands/echo.html">/echo</a> Happy April Fools Day!</code><br>
+  <code><a href="../commands/def.html">/def</a> lunch_reminder =
+    <a href="../commands/at.html">/at</a> 12:00
+    <a href="../commands/echo.html">/echo</a> Lunchtime!%%;
+    /lunch_reminder</code><br>
+
+<p>
+  See: <a href="../topics/processes.html">processes</a>, 
+  <a href="../commands/repeat.html">/repeat</a>, 
+  <a href="../commands/quote.html">/quote</a> 
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,83 @@
+<title>TinyFugue: introduction</title>
+<!--"@intro"-->
+<!--"@me"-->
+<!--"@newbie"-->
+<!--"@tinyfugue"-->
+<!--"@introduction"-->
+<h1>introduction</h1>
+
+<p>
+  TinyFugue is a MUD client.  It helps you connect to a MUD, in a much more
+  convenient manner than telnet.  You can connect to a mud world using the
+  same syntax as you would with telnet: "<a href="../topics/tf.html">tf</a>
+  <i>host</i> <i>port</i>".  Or, while running tf, you can use
+  "<a href="../commands/connect.html">/connect</a> <i>host</i> <i>port</i>".
+  To make things easier, you can give names to worlds, using
+  <a href="../commands/addworld.html">/addworld</a>, and then use
+  "<a href="../topics/tf.html">tf</a> <i>name</i>" and
+  "<a href="../commands/connect.html">/connect</a> <i>name</i>".  If you
+  store a set of <a href="../commands/addworld.html">/addworld</a> commands
+  in a file, TF can read them automatically when it starts.  You can even
+  connect to more than one world at the same time, and switch between them.
+  See: <a href="../commands/connect.html">/connect</a>,
+  <a href="../commands/fg.html">/fg</a>,
+  <a href="../commands/addworld.html">/addworld</a>,
+  <a href="../topics/worlds.html">worlds</a>,
+  <a href="../topics/tfrc.html">tfrc</a>.
+
+<p>
+  Normally, TF will split the screen into two windows: one for input,
+  and one for output.  TF will display useful information on the line
+  separating the two windows, such as the name of the
+  <a href="../topics/sockets.html#foreground">foreground</a> world.
+  See: <a href="../topics/mode.html">windows</a>.
+
+<p>
+  Any line you type that starts with a single '/' is a tf command.  Anything
+  else you type will be sent to the mud.  See:
+  <a href="../topics/interface.html">interface</a>,
+  <a href="../commands/">commands</a>.
+
+<p>
+  You can define your own tf commands, called
+  <a href="../topics/macros.html">macros</a>.  The simplest type of
+  <a href="../topics/macros.html">macro</a> is just an abbreviation or alias
+  for a longer command or commands.  But
+  <a href="../topics/macros.html">macros</a> can also perform much more
+  powerful tasks.  See: <a href="../topics/macros.html">macros</a>,
+  <a href="../commands/def.html">/def</a>.
+
+<p>
+  You can tell tf to watch for certain patterns in the text from the mud, and
+  then do special things when it sees that pattern: display the text in a
+  special way (<a href="../topics/attributes.html">hilite</a>); not display
+  the text at all (<a href="../topics/attributes.html">gag</a>); execute a
+  <a href="../topics/macros.html">macro</a> command
+  (<a href="../topics/triggers.html">trigger</a>); or do any combination of
+  these.  See: <a href="../topics/attributes.html">attributes</a>,
+  <a href="../topics/triggers.html">triggers</a>,
+  <a href="../commands/hilite.html">/hilite</a>,
+  <a href="../commands/gag.html">/gag</a>,
+  <a href="../commands/trig.html">/trig</a>,
+  <a href="../commands/def.html">/def</a>.
+
+<p>
+  TF keeps a <a href="../topics/history.html">history</a> of every line it
+  prints, every line sent by the mud, and every command you enter.  You can
+  see those histories using <a href="../commands/recall.html">/recall</a>.
+  You can also have this text saved in a file using
+  <a href="../commands/log.html">/log</a>.  See:
+  <a href="../topics/history.html">history</a>,
+  <a href="../commands/recall.html">/recall</a>,
+  <a href="../commands/log.html">/log</a>.
+
+<p>
+  See also: <a href="../topics/">topics</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

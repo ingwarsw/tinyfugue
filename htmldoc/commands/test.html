@@ -1,0 +1,64 @@
+<title>TinyFugue: /test</title>
+<!--"@/test"-->
+<h1>/test</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/test.html">/TEST</a>
+  <i><a href="../topics/expressions.html">expression</a></i><br>
+<hr>
+
+<p>
+  <a href="../commands/test.html">/test</a> evaluates the
+  <i><a href="../topics/expressions.html">expression</a></i> and returns
+  its value, also setting the special
+  <a href="../topics/variables.html">variable</a>
+  <a href="../topics/special_variables.html#?">%?</a>.
+  The return value may be any type (before version 4.0, only integer values
+  were allowed).
+  A new <a href="../topics/variables.html">variable</a> scope is NOT created.
+
+<p>
+  <a href="../commands/test.html">/Test</a> can be useful for evaluating
+  an <a href="../topics/expressions.html">expression</a> for its side
+  effects, ignoring the return value.  For example, the command
+  "<code><a href="../commands/test.html">/test</a>
+  <a href="../topics/functions.html#kbdel">kbdel</a>(<a href="../topics/functions.html#kbpoint">kbpoint()</a> - 1)</code>"
+  will perform a backspace, and
+  "<code><a href="../commands/test.html">/test</a> <a href="../topics/functions.html#regmatch">regmatch</a>('foo(.*)',
+  'foobar')</code>" will assign "bar" to <a href="../topics/substitution.html#%Pn">%P1</a>.
+
+<p>
+  Before version 3.5, <a href="../commands/test.html">/test</a> was
+  frequently used as the condition of an
+  <a href="../commands/if.html">/IF</a> or
+  <a href="../commands/while.html">/WHILE</a> statement.  This is no longer
+  needed, since <a href="../commands/if.html">/IF</a> and
+  <a href="../commands/while.html">/WHILE</a> can now take an
+  <a href="../topics/expressions.html">expression</a> as a condition.
+
+<p>
+  Before version 4.0, <a href="../commands/test.html">/test</a> was sometimes
+  used to set the return value of a <a href="../topics/macros.html">macro</a>,
+  since a <a href="../topics/macros.html">macro</a>'s return value is that of
+  the last command executed.  The preferred way to do this now is with
+  <a href="../commands/return.html">/return</a> or
+  <a href="../commands/return.html">/result</a>.
+
+<p>
+  See: <a href="../commands/return.html">/return</a>,
+  <a href="../commands/if.html">/if</a>,
+  <a href="../commands/while.html">/while</a>,
+  <a href="../topics/expressions.html">expressions</a>,
+  <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../topics/variables.html">variables</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

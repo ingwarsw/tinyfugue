@@ -1,0 +1,30 @@
+<title>TinyFugue: /python_load</title>
+<!--"@/python_load"-->
+<h1>/python_load</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/python_load.html">/python_load</a> <i>module</i>
+
+<p>
+  This (re)imports a python module for you from your current PYTHONPATH, TFPATH,
+  and TFLIBDIR. Use this instead of just
+  '<a href="../commands/python.html">/python</a> import mymodule'
+  because it will also force a reload of the module for you in case it has been
+  changed. Any functions in the module are now ready to use with
+  <a href="../commands/python_call.html">/python_call</a>.
+
+<p>
+  Example:<br>
+  <code><a href="../commands/python_load.html">/python_load</a> mymodule</code><br>
+  <code><a href="../commands/python_call.html">/python_call</a> mymodule.dothis 1 2 3</code><br>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

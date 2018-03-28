@@ -1,0 +1,77 @@
+<title>TinyFugue: /bind</title>
+<!--"@/bind"--> 
+<h1>/bind</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/bind.html">/BIND</a> <i>sequence</i> = 
+  <i>command</i><br>
+<hr>
+
+<p>
+  Creates a <a href="../topics/macros.html">macro</a> that will be executed 
+  when <i>sequence</i> is typed at the keyboard.  The <i>sequence</i> may use 
+  ^<i>key</i> notation for a control key, and \<i>number</i> for an ascii 
+  character code in octal, hexadecimal, or decimal.  For example, the escape 
+  character can be given by any of these forms:
+  <code>^[</code>, <code>\033</code>, <code>\0x1B</code>, or <code>\27</code>.
+
+<p>
+  When the key sequence <i>sequence</i> is typed at the keyboard, 
+  <i>command</i> is executed.  The command is actually a 
+  <a href="../topics/macros.html">macro</a> body, so all the substitutions 
+  described under "<a href="../topics/evaluation.html">evaluation</a>" will 
+  be performed.  The most common command used with a key binding is 
+  <a href="../commands/dokey.html">/dokey</a>.  
+
+<p>
+  At <a href="../topics/tf.html">startup</a>, TF defines bindings for 
+  <a href="../commands/dokey.html">/dokey</a> BSPC, BWORD, DLINE, REFRESH, 
+  LNEXT, UP, DOWN, RIGHT, and LEFT based on your terminal settings.  Also, 
+  the standard <a href="../topics/macros.html">macro</a> library defines a 
+  set of (invisible) default bindings, one for each of the 
+  <a href="../commands/dokey.html">/dokey</a> functions.  
+
+<p>
+  If <a href="../commands/bind.html">/bind</a> fails for any reason, it 
+  returns 0.  Otherwise, it returns the number of the new 
+  <a href="../topics/macros.html">macro</a> (useful in 
+  <a href="../commands/undefn.html">/undefn</a> and 
+  <a href="../commands/edit.html">/edit</a>).  
+
+<p>
+  As of version 3.5, the NUL character (^@) is allowed in keybindings.  
+
+<p>
+  The command<br>
+  <code><a href="../commands/bind.html">/bind</a> <i>sequence</i> = 
+  <i>command</i></code><br>
+  is equivalent to<br>
+  <code><a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-b">-b</a>"<i>sequence</i>" = 
+  <i>command</i></code>.<br>
+
+<p>
+  Examples: 
+<pre>
+  <a href="../commands/bind.html">/bind</a> ^Xtw = :jumps to the left%;:steps to the right!
+  <a href="../commands/bind.html">/bind</a> ^[q = <a href="../commands/set.html">/set</a> <a href="../topics/special_variables.html#%more">more</a> off
+  <a href="../commands/bind.html">/bind</a> ~ky = <a href="../commands/input.html">/input</a> Kyosuke
+</pre>
+
+<p>
+  See: <a href="../topics/keys.html">keys</a>, 
+  <a href="../commands/dokey.html">/dokey</a>, 
+  <a href="../commands/unbind.html">/unbind</a>, 
+  <a href="../commands/input.html">/input</a>, 
+  <a href="../topics/interface.html">interface</a> 
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

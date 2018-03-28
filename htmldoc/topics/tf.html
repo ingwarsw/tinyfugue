@@ -1,0 +1,118 @@
+<title>TinyFugue: tf</title>
+<!--"@command line"-->
+<!--"@commandline"-->
+<!--"@startup"-->
+<!--"@initialization"-->
+<!--"@invocation"-->
+<!--"@tf"-->
+<h1>tf</h1>
+
+<p>
+  Syntax:
+
+<p>
+  tf [-L<i>dir</i>] [-f[<i>file</i>]] [-c<i>command</i>] [-vlqn] [<i>world</i>]<br>
+  tf [-L<i>dir</i>] [-f[<i>file</i>]] [-c<i>command</i>] [-vlq] <i>host</i> <i>port</i>
+<hr>
+
+<p>
+  At startup, TF takes the following steps:
+  <ol>
+  <li>Initializes <a href="../topics/special_variables.html">special
+      variables</a>.  Any <a href="../topics/variables.html">variables</a>
+      defined in the environment will override TF's default values for the
+      <a href="../topics/variables.html">variables</a> with the same name.
+  <li>Loads commands from the
+      <a href="../topics/library.html">standard macro library (stdlib.tf)</a>,
+      the optional
+      <a href="../topics/library.html">local macro library (local.tf)</a>,
+      and your <a href="../topics/tfrc.html">personal configuration file</a>
+      (see <a href="../topics/tfrc.html">tfrc</a>).
+  <li>Executes <i>command</i>, if one was given.
+  <li>Enables <a href="../topics/mode.html">visual mode</a> if -v was not
+      given and <a href="../topics/special_variables.html#%visual">%visual</a>
+      has not been explicitly set to "off".
+  <li>Tries to connect to <i>world</i>, or <i>host</i> <i>port</i>.  If no
+      <a href="../topics/worlds.html">world</a>
+      is given, and the -n option is not given, TF will try to connect
+      to the first <a href="../topics/worlds.html">world</a> defined with
+      <a href="../commands/addworld.html">addworld()</a> in the configuration
+      file(s).  If no <a href="../topics/worlds.html">worlds</a> are defined,
+      or TF can not connect to the specified
+      <a href="../topics/worlds.html">world</a>,
+      TF will start up in unconnected mode.
+  </ol>
+
+<p>
+  Options:
+  <dl compact>
+  <dt>-L<i>dir</i>
+          <dd>Use <i>dir</i> instead of
+          <a href="../topics/special_variables.html#%TFLIBDIR">%TFLIBDIR</a>
+          as library directory.
+  <dt>-f<i>file</i>
+          <dd>Load <i>file</i> instead of the normal personal config file.
+  <dt>-f
+          <dd> Do not load any personal config file at startup.
+  <dt>-c<i>command</i>
+          <dd>Execute <i>command</i> after loading config file.
+          <i>Command</i> is treated as if it had been typed on the tf command
+          line (i.e., the value of 
+          <a href="../topics/special_variables.html#%sub">%sub</a> is
+          significant).
+  <dt>-n
+          <dd> Do not connect to a <a href="../topics/worlds.html">world</a>
+          automatically at startup if no
+          <i>world</i> or <i>host</i>/<i>port</i> are specified.
+  <dt>-l
+          <dd> Disable
+          <a href="../topics/login.html">automatic login</a>.
+          (see: <a href="../topics/login.html">login</a>)
+  <dt>-q
+          <dd> Enable
+          <a href="../topics/special_variables.html#%quiet">quiet login</a>.
+          (see: <a href="../topics/special_variables.html#%quiet">%quiet</a>)
+  <dt>-v
+          <dd> Disable automatic switch to
+          <a href="../topics/mode.html">visual mode</a>.
+  </dl>
+
+<p>
+  The library directory is determined by the first of the following which
+  has a value:
+  -L option;
+  <a href="../topics/special_variables.html#%TFLIBDIR">%TFLIBDIR</a>
+    environment <a href="../topics/variables.html">variable</a>; or,
+  compiled-in default.
+
+  The standard library file is determined by the first of the following which
+  has a value:
+  <a href="../topics/special_variables.html#%TFLIBRARY">TFLIBRARY</a>
+    environment <a href="../topics/variables.html">variable</a>; or,
+  appending "/stdlib.tf" to
+    <a href="../topics/special_variables.html#%TFLIBDIR">%TFLIBDIR</a>.
+
+<p>
+  TF honors several <a href="../topics/locale.html">locale</a> categories,
+  which can be set to make TF work better with languages other than English.
+  See <a href="../topics/locale.html">locale</a>.
+
+<p>
+  See
+  <a href="http://tinyfugue.sourceforge.net/">http://tinyfugue.sourceforge.net/</a>
+  for the latest info on TF.
+
+<p>
+  See also: <a href="../topics/intro.html">intro</a>,
+  <a href="../topics/tfrc.html">tfrc</a>,
+  <a href="../topics/library.html">library</a>,
+  <a href="../topics/worlds.html">worlds</a>,
+  <a href="../commands/addworld.html">/addworld</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

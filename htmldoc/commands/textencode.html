@@ -1,0 +1,54 @@
+<title>TinyFugue: /textencode</title>
+<!--"@/textencode"-->
+<h1>textencode()</h1>
+
+<p>
+  <a href="../commands/require.html">/require</a> textencode.tf<br>
+<p>
+  Function usage:
+
+<p>
+  <a href="../commands/textencode.html">textencode</a>(<i>string</i>)<br>
+  <a href="../commands/textencode.html">textdecode</a>(<i>encodedstring</i>)<br>
+<hr>
+
+<p>
+  <a href="../commands/textencode.html">textencode</a> converts <i>string</i>
+  to a form that contains only letters, digits, and underscores.
+  <a href="../commands/textencode.html">textdecode</a> converts
+  <i>encodedstring</i> (returned by a previous call to
+  <a href="../commands/textencode.html">textencode</a>)
+  back to the original string.
+
+<p>
+  These two functions can be useful for converting arbitrary text, such
+  as a world name or the name of a player on a mud, into a form that is
+  safe to use as part of a tf
+  <a href="../topics/variables.html">variable</a> or
+  <a href="../topics/macros.html">macro</a> name,
+  or a filename.
+
+<p>
+  The following example records the time a player connects to the mud,
+  and is safe even if the player name contains characters that are not
+  legal in tf <a href="../topics/variables.html">variable</a> names:<br>
+  <code>
+  <a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-m">-m</a>glob
+  <a href="../commands/def.html#-t">-t</a>'{*} has connected.'
+  record_connect_time = \<br>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="../commands/set.html">/set</a>
+  connect_time_<a href="../topics/substitution.html#$[">$[</a><a href="../commands/textencode.html">textencode</a>(<a href="../topics/substitution.html#%n">{1}</a>)]=<a href="../topics/substitution.html#$[">$[</a><a href="../topics/functions.html#time">time</a>()]
+  </code>
+
+<p>
+  See: <a href="../topics/functions.html">functions</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,86 @@
+<title>TinyFugue: /hook</title>
+<!--"@/hook"-->
+<h1>/hook</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/hook.html">/HOOK</a> <i>event</i>[ <i>pattern</i>] [=
+  <i>body</i>]<br>
+  <a href="../commands/hook.html">/HOOK</a> [OFF|ON]<br>
+<hr>
+
+<p>
+  Creates a <a href="../topics/macros.html">macro</a> which will execute
+  <i>body</i> when <i>event</i> occurs and the event's arguments match the
+  optional <i>pattern</i>.  The <i>event</i> may be a single event or a list
+  of events separated by '|'.  If omitted, <i>pattern</i> will default to
+  "*".
+
+<p>
+  <a href="../commands/hook.html">/hook</a> with no arguments displays the
+  state of the <a href="../topics/special_variables.html#%hook">%{hook}</a>
+  flag.  <a href="../commands/hook.html">/hook</a> with an argument of ON or
+  OFF sets the <a href="../topics/special_variables.html#%hook">%{hook}</a>
+  flag, which determines if <a href="../topics/hooks.html">hooks</a> will
+  execute their associated <a href="../topics/macros.html">macros</a>.
+
+<p>
+  The matching style of the <a href="../topics/hooks.html">hook</a> pattern
+  is determined by
+  <a href="../topics/special_variables.html#%matching">%{matching}</a>.  This
+  <a href="../topics/variables.html">variable</a> is examined when the
+  <a href="../topics/hooks.html">hook</a> is defined, not when it is executed.
+
+<p>
+  Defining a <a href="../topics/hooks.html">hook</a> will not replace an
+  existing <a href="../topics/hooks.html">hook</a> on the same event, but
+  rather creates an additional <a href="../topics/hooks.html">hook</a>
+  <a href="../topics/macros.html">macro</a> on the event.  The
+  <a href="../topics/macros.html">macro</a> or
+  <a href="../topics/macros.html">macros</a> to be executed are chosen by
+  the normal <a href="../topics/priority.html">priority</a> rules.
+
+<p>
+  See the section "<a href="../topics/hooks.html">hooks</a>" for details on
+  <a href="../topics/hooks.html">hook</a> operation, a list of event names,
+  and examples.
+
+<p>
+  If <a href="../commands/hook.html">/hook</a> does not create a new
+  <a href="../topics/macros.html">macro</a>, it returns 0.  Otherwise, it
+  returns the number of the new <a href="../topics/macros.html">macro</a>
+  (useful in <a href="../commands/undefn.html">/undefn</a> and
+  <a href="../commands/edit.html">/edit</a>).
+
+<p>
+  <code><a href="../commands/hook.html">/hook</a>
+  <i>event</i>[ <i>pattern</i>] [=<i>response</i>]</code><br>
+  is equivalent to<br>
+  <code><a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-h">-h</a>"<i>event</i>[ <i>pattern</i>]"
+  [=<i>response</i>]</code>.<br>
+
+<p>
+  Example:
+<pre>
+  <a href="../commands/hook.html">/hook</a> MAIL = <a href="../commands/sh.html">/sh</a> mutt
+</pre>
+  will automatically invoke "mutt" to read mail when it arrives.
+
+<p>
+  See: <a href="../topics/hooks.html">hooks</a>,
+  <a href="../topics/macros.html">macros</a>,
+  <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../topics/patterns.html">patterns</a>,
+  <a href="../commands/def.html">/def</a>,
+  <a href="../commands/unhook.html">/unhook</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

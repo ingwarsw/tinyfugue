@@ -1,0 +1,100 @@
+<title>TinyFugue: /return and /result</title>
+<!--"@/result"-->
+<!--"@/return"-->
+<h1>/return and /result</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/return.html">/RETURN</a>
+  [<i><a href="../topics/expressions.html">expression</a></i>]<br>
+  <a href="../commands/return.html">/RESULT</a>
+  [<i><a href="../topics/expressions.html">expression</a></i>]<br>
+<hr>
+
+<p>
+  <a href="../commands/return.html">/return</a> stops execution of the
+  <a href="../topics/macros.html">macro</a> 
+  body that called it, and causes the macro to return the string value
+  of <i><a href="../topics/expressions.html">expression</a></i>.
+  If the <i><a href="../topics/expressions.html">expression</a></i>
+  is omitted, the return value of the
+  <a href="../topics/macros.html">macro</a> is the empty string.
+
+<p>
+  When a macro that calls <a href="../commands/return.html">/result</a>
+  was called as a <a href="../topics/function.html">function</a>,
+  <a href="../commands/return.html">/result</a> is identical to
+  <a href="../commands/return.html">/return</a>.
+
+  When a macro that calls <a href="../commands/return.html">/result</a>
+  was called as a <a href="../topics/evaluation.html">command</a>,
+  <a href="../commands/return.html">/result</a> has the additional effect
+  of echoing the value of
+  <i><a href="../topics/expressions.html">expression</a></i> to
+  the <a href="../topics/tfio.html">tfout stream</a>.
+
+  <a href="../commands/result.html">/Result</a> thus allows the same macro to
+  be called usefully as either
+  a <a href="../topics/evaluation.html">command</a> or
+  a <a href="../topics/function.html">function</a>.
+
+<p>
+  Note that <a href="../commands/return.html">/return</a> and
+  <a href="../commands/return.html">/result</a> take the <em>string</em>
+  value of <i>expression</i>.  This is not a problem for integer- or
+  float-valued expressions, since they convert freely to strings and back
+  without loss of information.  But if the expression is an
+  <a href="../topics/special_variables.html">enumerated special variable</a>
+  (e.g., <code>borg</code>),
+  the value returned will be its string value (e.g., <code>"on"</code>),
+  not its integer value (e.g., <code>1</code>).
+  To force it to use the integer value, you can use the unary plus operator
+  (e.g., <code>+borg</code>).
+
+<p>
+  The return value of the last command (builtin or macro) is stored in
+  <a href="../topics/substitution.html#%?">%{?}</a>.  The return value of
+  a function (builtin or macro) is just the value of the function.
+
+<p>
+  These examples define several <a href="../topics/macros.html">macros</a>
+  intended to be called as a <a href="../topics/functions.html">functions</a>:
+<pre>
+  <a href="../commands/def.html">/def</a> square = <a href="../commands/return.html">/return</a> <a href="../topics/functions.html#pow">pow</a>({1}, 2)
+
+  <a href="../commands/def.html">/def</a> hypot = <a href="../commands/return.html">/return</a> <a href="../topics/functions.html#sqrt">sqrt</a>(square({1}) + square({2}))
+
+  <a href="../commands/def.html">/def</a> strrev = \
+      /let len=$[<a href="../topics/functions.html#strlen">strlen</a>({*})]%; \
+      <a href="../commands/return.html">/return</a> (len &lt;= 1) ? {*} : \
+          <a href="../topics/functions.html#strcat">strcat</a>(strrev(<a href="../topics/functions.html#substr">substr</a>({*},len/2)), strrev(<a href="../topics/functions.html#substr">substr</a>({*},0,len/2)))
+</pre>
+
+  If those examples had used <a href="../commands/return.html">/result</a>
+  instead of <a href="../commands/return.html">/return</a>, they could also
+  be used as commands when echoing is more convenient.
+  For example,
+
+<pre>
+    <a href="../commands/eval.html">/eval</a> say My name backwards is <a href="../topics/substitution.html#$(">$(</a>/strrev ${world_character}).
+</pre>
+
+<p>
+  See: <a href="../commands/if.html">/if</a>,
+  <a href="../commands/while.html">/while</a>,
+  <a href="../commands/test.html">/test</a>,
+  <a href="../commands/break.html">/break</a>,
+  <a href="../commands/exit.html">/exit</a>,
+  <a href="../topics/expressions.html">expressions</a>,
+  <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../topics/variables.html">variables</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

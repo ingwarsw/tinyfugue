@@ -1,0 +1,116 @@
+<title>TinyFugue: mode</title>
+<!--"@visual"-->
+<!--"@visual mode"-->
+<!--"@nonvisual"-->
+<!--"@non-visual"-->
+<!--"@screen"-->
+<!--"@mode"-->
+<h1>mode</h1>
+
+<p>
+  TinyFugue has two main interface modes: Visual and non-visual.
+  Visual mode will be enabled by default, unless your
+  <a href="../topics/special_variables.html#%TERM">%{TERM}</a> does not
+  support it, or
+  <a href="../topics/special_variables.html#%visual">%{visual}</a>
+  is explicitly turned off in <a href="../topics/tfrc.html">.tfrc</a>,
+  or <a href="../topics/tf.html">tf</a> is started with the -v option.
+  Visual mode can be turned off or on with the
+  "<a href="../topics/mode.html">/visual</a>" command.
+
+<p>
+<a name="visual">
+<h2>Visual mode</h2>
+  The Visual interface has two windows: the bottom window is for input, the
+  top for output.
+  TF maintains a separate
+  <a href="../topics/scrollback.html">virtual window</a> for each
+  open <a href="../topics/sockets.html">socket</a>; only the 
+  <a href="../topics/sockets.html#foreground">foreground</a> world's window
+  is displayed.
+  If your terminal can scroll in a region, output will
+  <a href="../topics/special_variables.html#%scroll">scroll</a>;
+  otherwise if your terminal can delete and insert lines, TF will
+  simulate <a href="../topics/special_variables.html#%scroll">scrolling</a>;
+  otherwise it will wrap from bottom to top, clearing two
+  lines ahead.  The
+  <a href="../topics/special_variables.html#%scroll">%{scroll}</a>
+  <a href="../topics/variables.html">variable</a>
+  can be set to explicitly choose
+  <a href="../topics/special_variables.html#%scroll">scrolling</a>
+  or wrapping.  The
+  <a href="../topics/special_variables.html#%isize">%{isize}</a>,
+  <a href="../topics/special_variables.html#%cleardone">%{cleardone}</a>, and
+  <a href="../topics/special_variables.html#%clearfull">%{clearfull}</a>
+  <a href="../topics/variables.html">variables</a>
+  can be used to customize the visual display.  See:
+  <a href="../topics/special_variables.html#%isize">%isize</a>,
+  <a href="../topics/special_variables.html#%cleardone">%cleardone</a>,
+  <a href="../topics/special_variables.html#%clearfull">%clearfull</a>.
+
+<p>
+  The two windows are separated by a
+  <a href="../topics/status_line.html">status line</a>, which can be
+  formatted by the user as described under
+  <a href="../topics/status_line.html">status line</a>.
+
+<p>
+  If you are using a terminal emulator that emulates different terminal types,
+  the recommended type to use is vt220, vt100, or ansi (in that order), with
+  <a href="../topics/special_variables.html#%TERM">%{TERM}</a> set to the same
+  value.  Scrolling may appear jumpy under ansi, but will be smooth under
+  vt220 and vt100.  vt220 also provides some additional features that may
+  make command line editing smoother (especially over a slow modem).
+
+<p>
+<a name="nonvisual">
+<h2>Non-visual mode</h2>
+  In the non-visual interface, input and output are both displayed on the
+  bottom line.  If you are typing and output appears, your input is cleared,
+  the output is displayed and everything above it scrolls,
+  and your input is redisplayed on the last line.
+  If your input has wrapped around to a second or third line, only the last
+  line will be cleared and redisplayed.
+
+<p>
+<a name="">
+<hr>
+<p>
+  In both modes, the output window is redrawn whenever necessary:  when its
+  size changes, when the mode changes, when
+  <a href="../topics/special_variables.html#%wrap">%wrap</a>,
+  <a href="../topics/special_variables.html#%wrapsize">%wrapsize</a>, or
+  <a href="../topics/special_variables.html#%wrapspace">%wrapspace</a>
+  change, or when TF resumes after
+  <a href="../commands/suspend.html">/suspend</a> or
+  <a href="../commands/sh.html">/sh</a>.
+
+<p>
+  In both modes, output text is wrapped around at a right margin of one less
+  than the number of columns on your screen (typically 79) unless
+  <a href="../topics/special_variables.html#%wrap">wrapping</a> has
+  been turned off.  In addition, when text is wrapped, all wrapped lines
+  after the first will be indented 4 spaces to help distinguish them from
+  the beginning of an original line
+  (configurable by setting
+  <a href="../topics/special_variables.html#%wrapspace">%wrapspace</a>).
+  See:
+  <a href="../topics/functions.html#columns">columns()</a>,
+  <a href="../topics/special_variables.html#%wrap">%wrap</a>,
+  <a href="../topics/special_variables.html#%wrapsize">%wrapsize</a>,
+  <a href="../topics/special_variables.html#%wrappunct">%wrappunct</a>,
+  <a href="../topics/special_variables.html#%wrapspace">%wrapspace</a>.
+
+<p>
+  If the <a href="../topics/special_variables.html#%more">%{more}</a> flag is
+  on, output is suspended when the screen is full, and you can use the TAB
+  key to continue.  See: <a href="../commands/more.html">/more</a>,
+  <a href="../commands/dokey.html">/dokey</a>.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

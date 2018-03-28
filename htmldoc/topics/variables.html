@@ -1,0 +1,80 @@
+<title>TinyFugue: variables</title>
+<!--"@variables"-->
+<!--"@variable"-->
+<h1>variables</h1>
+
+<p>
+  Associated commands:
+  <dl>
+  <dt><a href="../commands/listvar.html">/listvar</a>
+          <dd>list values of <a href="../topics/variables.html">variables</a>.
+  <dt><a href="../commands/set.html">/set</a>
+          <dd>set the value of a global
+          <a href="../topics/variables.html">variable</a>
+  <dt><a href="../commands/let.html">/let</a>
+          <dd>set the value of a local
+          <a href="../topics/variables.html">variable</a>
+  <dt><a href="../commands/setenv.html">/setenv</a>
+          <dd>set the value of an environment
+          <a href="../topics/variables.html">variable</a>
+  <dt><a href="../commands/unset.html">/unset</a>
+          <dd>unset a <a href="../topics/variables.html">variable</a>
+  <dt><a href="../commands/export.html">/export</a>
+          <dd>move an global
+          <a href="../topics/variables.html">variable</a> to the environment
+  <dt><a href="../topics/tools.html">/edvar</a>
+          <dd>edit a <a href="../topics/variables.html">variable</a>'s value
+  <dt><a href="../topics/expressions.html#operators">:= operator</a>
+          <dd>assign a value of any type to a
+          <a href="../topics/variables.html">variable</a>.
+  </dl>
+
+<p>
+  A TinyFugue <a href="../topics/variables.html">variable</a>
+  has a name and a value.  Names are case sensitive, and
+  should start with a letter and contain only letters, numbers, and
+  underscores.  A value can be a text string (including
+  <a href="../topics/attributes.html">display attributes</a>),
+  integer, or real number,
+  but some <a href="../topics/special_variables.html">special variables</a>
+  will automatically convert an assigned value to a particular type.
+
+<p>
+  <a href="../topics/variables.html">Variables</a> may either be local,
+  global, or exported.  Global <a href="../topics/variables.html">variables</a>
+  are visible to all tf commands;
+  they are defined with <a href="../commands/set.html">/set</a>
+  or <a href="../commands/set.html">/setenv</a>,
+  or imported from the environment when tf starts.
+  Local <a href="../topics/variables.html">variables</a> are
+  created with <a href="../commands/let.html">/let</a> or assignment
+  <a href="../topics/expressions.html">expressions</a>, and only exist in the
+  scope in which they were created.
+  Exported <a href="../topics/variables.html">variables</a> are global
+  <a href="../topics/variables.html">variables</a>
+  which are also visible to subshells, so they can be used by commands
+  <a href="../commands/sh.html">/sh</a>, the '!' option of
+  <a href="../commands/quote.html">/quote</a>, and file uncompression.
+  <a href="../topics/variables.html">Variables</a> are exported if they were
+  defined with <a href="../commands/set.html">/setenv</a>, explicitly exported
+  with <a href="../commands/export.html">/export</a>, or imported from tf's
+  parent environment.
+
+<p>
+  The value of a <a href="../topics/variables.html">variable</a> can be
+  obtained using a '%' substitution (see
+  "<a href="../topics/substitution.html">substitution</a>"), or by simply
+  using its name in an <a href="../topics/expressions.html">expression</a>
+  (see "<a href="../topics/expressions.html">expressions</a>").
+
+<p>
+  See "<a href="../topics/special_variables.html">special variables</a>" for
+  a list of special variables.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

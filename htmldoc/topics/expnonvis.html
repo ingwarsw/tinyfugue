@@ -1,0 +1,59 @@
+<title>TinyFugue: experimental non-visual mode</title>
+<!--"@expnonvis"-->
+<!--"@expnonvisusal"-->
+<!--"@experimental non-visual mode"-->
+<h1>experimental non-visual mode</h1>
+
+<p>
+  TF 5.0 beta 5 has a new experimental non-visual mode ("expnonvis") that
+  fixes design flaws in traditional
+  <a href="../topics/nonvisual.html">non-visual</a> mode.
+  I may get rid of traditional non-visual mode in the future, so if
+  you use it, I suggest you try expnonvis mode now and let me know
+  if you don't like it.
+  To enable expnonvis mode,
+  "<code><a href="../commands/set.html">/set</a> expnonvis=on</code>" and
+  "<code><a href="../commands/set.html">/set</a> visual=off</code>".
+  You may also want to
+  "<code><a href="../commands/set.html">/set</a> <a href="../topics/special_variables.html#kecho">kecho</a>=on</code>"
+  (see below).
+
+<p>
+  In the new expnonvis mode, input is only ever visible on the bottom line.
+  It scrolls your input buffer left and right as needed to display the part
+  of the input buffer in the neighborhood of the cursor.  The part of the line
+  that is "off the left edge" of the screen is simply not visible.
+  In traditional non-visual mode, that part of the line would scroll up,
+  polluting the output region with partial input lines.
+
+<p>
+  The "only on bottom line" rule applies even when you hit return to execute
+  the input line.  Your input is erased, and the command is executed; it does
+  not scroll up.  If you want to see the input text scroll up, you can
+  "<code><a href="../commands/set.html">/set</a> <a href="../topics/special_variables.html#kecho">kecho</a>=on</code>";
+  this will print the entire input, not just the last segment of it that fit
+  within the screen width.  You may also want to set
+  <a href="../topics/special_variables.html#kecho_attr">%kecho_attr</a>
+  so that the echoed input is easily distinguishable from regular output.
+
+<p>
+  The minimum amount of scrolling is determined by the %sidescroll variable,
+  which defaults to 1.  For slow terminals, you may wish to increase this.
+  Any movement that would exceed half the screen width does not use the
+  terminal's scrolling, but instead redraws the line.
+
+<p>
+  The current implementation probably has a few bugs; if the screen display
+  ever appears incorrect, use ^R or ^L to redraw it.
+  I don't think there are any fatal bugs, but it is possible that some
+  remain, so don't try expnonvis unless you don't mind crashing tf.
+  Terminals without the delete character capability are not yet supported,
+  but will be in the future.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

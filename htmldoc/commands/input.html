@@ -1,0 +1,40 @@
+<title>TinyFugue: /input</title>
+<!--"@/input"-->
+<h1>/input</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/input.html">/INPUT</a> <i>text</i><br>
+<hr>
+
+<p>
+  Enters <i>text</i> into the input buffer as if it had been typed at the
+  keyboard, without deleting the current contents of the input buffer.
+
+<p>
+  <a href="../commands/input.html">/Input</a> is perhaps most useful in
+  combination with <a href="../commands/bind.html">/bind</a>, to create short
+  key sequences that expand to longer text.  For example, if you have this
+  binding:
+
+<p>
+  <a href="../commands/bind.html">/bind</a> ^[oj =
+  <a href="../commands/input.html">/input</a> OliverJones
+
+<p>
+  and then type "page ^[oj = snausages!" at the keyboard, it will appear in
+  the input window as "page OliverJones = snausages!".
+
+<p>
+  See: <a href="../commands/bind.html">/bind</a>,
+  <a href="../commands/grab.html">/grab</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>
