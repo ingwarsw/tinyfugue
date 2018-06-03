@@ -81,8 +81,9 @@ enum enum_attr {
     F_DIM         = 0x0000,   /* zero - not implemented */
     F_BOLD        = 0x0004,
     F_HILITE      = 0x0008,
-    F_NONE        = 0x0010,
-    F_EXCLUSIVE   = 0x0020,
+    F_ITALIC      = 0x0010,
+    F_NONE        = 0x0020,
+    F_EXCLUSIVE   = 0x0040,
 
 #if NCOLORS == 256 /* XXX ??? */
 # define FGCOLORSHIFT 8
@@ -114,7 +115,7 @@ enum enum_attr {
     F_FGCOLORS    = (F_FGCOLOR | F_FGCOLORMASK),
     F_BGCOLORS    = (F_BGCOLOR | F_BGCOLORMASK),
     F_COLORS      = (F_FGCOLORS | F_BGCOLORS),
-    F_SIMPLE      = (F_UNDERLINE | F_REVERSE | F_FLASH | F_DIM | F_BOLD),
+    F_SIMPLE      = (F_UNDERLINE | F_REVERSE | F_FLASH | F_DIM | F_BOLD | F_ITALIC),
     F_HWRITE      = (F_SIMPLE | F_HILITE | F_COLORS),
     F_ENCODE      = (F_SIMPLE | F_HILITE | F_FGCOLOR | F_BGCOLOR),
     F_ATTR        = (F_HWRITE | F_GAG | F_NOHISTORY | F_NOACTIVITY | F_NONE |
