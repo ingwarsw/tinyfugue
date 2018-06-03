@@ -2769,14 +2769,13 @@ static void attributes_on(attr_t attrs)
     if (attr_on) {
         /* standout, underline, reverse, blink, dim, bold, blank, prot., ACS */
         tp(tparm(attr_on, 
-            (have_attr & attrs & F_ITALIC && !italic),
             (have_attr & attrs & F_BOLD && !bold),
             (have_attr & attrs & F_UNDERLINE),
             (have_attr & attrs & F_REVERSE),
             (have_attr & attrs & F_FLASH),
             (have_attr & attrs & F_DIM),
-            (have_attr & attrs & F_ITALIC && italic),
             (have_attr & attrs & F_BOLD && bold),
+            (have_attr & attrs & F_ITALIC),
 
             0, 0, 0));
         } else

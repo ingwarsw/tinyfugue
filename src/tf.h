@@ -88,18 +88,18 @@ enum enum_attr {
 #if NCOLORS == 256 /* XXX ??? */
 # define FGCOLORSHIFT 8
     F_FGCOLORMASK = 0x0000ff00,   /* 8 bits, interpreted as an integer */
-    F_FGCOLOR     = 0x00000040,   /* flag */
+    F_FGCOLOR     = 0x00000080,   /* flag */
 # define BGCOLORSHIFT 16
     F_BGCOLORMASK = 0x00ff0000,   /* 8 bits, interpreted as an integer */
-    F_BGCOLOR     = 0x00000080,   /* flag */
+    F_BGCOLOR     = 0x00000100,   /* flag */
 #else
     /* inside the 16 low bits */
 # define FGCOLORSHIFT 8
     F_FGCOLORMASK = 0x0f00,   /* 4 bits, interpreted as an integer */
-    F_FGCOLOR     = 0x0040,   /* flag */
+    F_FGCOLOR     = 0x0080,   /* flag */
 # define BGCOLORSHIFT 12
     F_BGCOLORMASK = 0x7000,   /* 3 bits, interpreted as an integer */
-    F_BGCOLOR     = 0x0080,   /* flag */
+    F_BGCOLOR     = 0x0100,   /* flag */
 #endif
 
     /* outside the 16 low bits */
