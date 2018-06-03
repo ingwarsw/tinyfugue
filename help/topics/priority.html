@@ -1,0 +1,93 @@
+<title>TinyFugue: priority</title>
+<!--"@priorities"-->
+<!--"@fallthru"-->
+<!--"@fall-thru"-->
+<!--"@selection"-->
+<!--"@priority"-->
+<!--"@priority rules"-->
+<h1>priority</h1>
+
+<p>
+  When more than one <a href="../topics/macros.html">macro</a> is matched by
+  a <a href="../topics/triggers.html">trigger</a> or
+  <a href="../topics/hooks.html">hook</a>ed event, the following rules are
+  used to select which of the <a href="../topics/macros.html">macros</a> will
+  be applied (i.e., have its attributes applied to the text, and
+  its body executed):
+
+<ul>
+<li>
+  <a href="../topics/macros.html">Macros</a> are compared in order of
+  decreasing <a href="../topics/priority.html">priority</a>.
+
+<li>
+  <a href="../topics/priority.html">Fall-thrus</a> of a
+  given <a href="../topics/priority.html">priority</a> are compared before
+  <a href="../topics/priority.html">non-fall-thrus</a> of the same
+  <a href="../topics/priority.html">priority</a>.
+
+<li>
+  Each matching <a href="../topics/priority.html">fall-thru</a>
+  <a href="../topics/macros.html">macro</a> is applied immediately when it
+  is found.
+
+<li>
+  When the first matching
+  <a href="../topics/priority.html">non-fall-thru</a>
+  <a href="../topics/macros.html">macro</a> is found, all the
+  <a href="../topics/priority.html">non-fall-thrus</a> of equal
+  <a href="../topics/priority.html">priority</a> are
+  collected, and the search ends.  One of the
+  <a href="../topics/priority.html">non-fall-thrus</a> is chosen at random
+  and applied.
+</ul>
+
+<p>
+  So, in the simple case when there are no
+  <a href="../topics/priority.html">fall-thrus</a>, the highest
+  <a href="../topics/priority.html">priority</a> match
+  is chosen.  If there is more than one of the highest
+  <a href="../topics/priority.html">priority</a>, one of those
+  is chosen at random.
+
+<p>
+  These <a href="../topics/priority.html">priority</a> rules apply even to
+  <a href="../topics/macros.html">macros</a> defined or undefined by a
+  <a href="../topics/macros.html">macro</a> found during the search.
+  For example, if a mud line triggers a
+  <a href="../topics/priority.html">fall-thru</a>
+  <a href="../topics/macros.html">macro</a> /foo, and /foo defines a new
+  <a href="../topics/triggers.html">trigger</a>
+  <a href="../topics/macros.html">macro</a> /bar which also matches
+  the line, then /bar may be triggered if it has lower
+  <a href="../topics/priority.html">priority</a> than /foo.
+
+<p>
+  A <a href="../topics/macros.html">macro's</a>
+  <a href="../topics/priority.html">priority</a> is set with
+  <a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-p">-p</a>;
+  its <a href="../topics/priority.html">fall-thru</a> option is set with
+  <a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-F">-F</a>.
+
+<p>
+  Use the <code><a href="../commands/trigger.html">/trigger</a> -n</code>
+  command to display a list of the triggers
+  <a href="../topics/triggers.html">triggers</a> or
+  <a href="../topics/hooks.html">hooks</a>
+  will match a given string.
+
+<p>
+  See: <a href="../topics/triggers.html">triggers</a>,
+  <a href="../topics/hooks.html">hooks</a>,
+  <a href="../topics/macros.html">macros</a>,
+  <a href="../commands/def.html">/def</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

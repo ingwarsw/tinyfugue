@@ -1,0 +1,65 @@
+<title>TinyFugue: /send</title>
+<!--"@send()"-->
+<!--"@/send"-->
+<h1>/send</h1>
+
+<p>
+  Function usage:
+
+<p>
+  <a href="../commands/send.html">SEND</a>(<i>text</i>[, <i>world</i>[, <i>flags</i>]])<br>
+
+<p>
+  Command Usage:
+
+<p>
+  <a href="../commands/send.html">/SEND</a> [-W] [-T<i>type</i>]
+  [-w[<i>world</i>]] [-n] <i>text</i><br>
+<hr>
+
+<p>
+  Sends <i>text</i> to a world.
+  If no world is specified, the current world is used.
+  By default, <a href="../commands/send.html">send</a> does not execute SEND
+  <a href="../topics/hooks.html">hooks</a>.
+
+<p>
+  In the function form, the optional <i>flags</i> is a string containing
+  letters that modify the function's behavior:
+  <dl>
+  <dt>"h"		<dd>test for and invoke matching SEND 
+			<a href="../topics/hooks.html">hooks</a>.
+  <dt>"u"		<dd>send <i>text</i> unterminaed (i.e., without a
+			CR LF end-of-line marker).
+  </dl>
+  For backwards compatibility, the flags "o", "n", and "1" are ignored,
+  and the flags "0" and "f" are equivalent to "u".
+
+<p>
+  Command <a href="../topics/options.html">options:</a>
+  <dl>
+  <dt>-w<i>world</i>	<dd>sends <i>text</i> to <i>world</i>.
+  <dt>-T<i>type</i>	<dd>sends <i>text</i> to all connected worlds
+			with a type that matches the pattern <i>type</i>.
+  <dt>-W		<dd>sends <i>text</i> to all connected worlds.
+  <dt>-n		<dd>send <i>text</i> without an end-of-line
+			marker (CR LF).
+  <dt>-h		<dd>test for and invoke matching SEND 
+			<a href="../topics/hooks.html">hooks</a>.
+  </dl>
+
+<p>
+  The return value of <a href="../commands/send.html">send</a>
+  is 0 if the text is not successfully sent, nonzero if it is.
+
+<p>
+  See: 
+  <a href="../topics/functions.html">functions</a>.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

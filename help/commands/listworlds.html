@@ -1,0 +1,54 @@
+<title>TinyFugue: /listworlds</title>
+<!--"@/listworlds"-->
+<h1>/listworlds</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/listworlds.html">/LISTWORLDS</a> [-cus]
+  [-m<i>style</i>] [-S<i>field</i>] [-T<i>type</i>] [<i>name</i>]<br>
+<hr>
+
+<p>
+  Lists world definitions.
+
+<p>
+  <a href="../topics/options.html">Options</a> and arguments:
+  <dl>
+  <dt>-m<i>style</i>	<dd>Use <i>style</i> for
+			<a href="../topics/patterns.html">pattern matching</a>
+			of <i>type</i> and <i>name</i> patterns.
+			(default: <a href="../topics/special_variables.html#%matching">%{matching}</a>).
+  <dt>-s		<dd>Display short format (world names only).
+  <dt>-c		<dd>Display command format (including passwords).
+  <dt>-S<i>field</i>	<dd>Sort worlds by <i>field</i>.  <i>Field</i>
+  			may be "name" (the default), "type", "character",
+			"host", "port", or "-" (don't sort).
+			Only the first character is necessary.
+  <dt>-u		<dd>Include unnamed temporary worlds in the listing.
+  <dt>-T<i>type</i>	<dd>List only worlds with a type matching the
+  			<a href="../topics/patterns.html">pattern</a>
+  			<i>type</i>.
+  <dt><i>name</i>	<dd>List only worlds with a name matching the
+  			<a href="../topics/patterns.html">pattern</a>
+  			<i>name</i>.
+  </dl>
+
+<p>
+  If neither -s nor -c are given, a table format is used,
+  and passwords are not shown.
+  The return value of <a href="../commands/listworlds.html">/listworlds</a>
+  is the number of worlds listed.
+
+<p>
+  See: <a href="../topics/worlds.html">worlds</a>,
+  <a href="../topics/patterns.html">patterns</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

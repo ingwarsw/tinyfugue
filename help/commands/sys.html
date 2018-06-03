@@ -1,0 +1,49 @@
+<title>TinyFugue: /sys</title>
+<!--"@/sys"-->
+<h1>/sys</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/sys.html">/SYS</a> <i>shell-command</i><br>
+<hr>
+
+<p>
+  Executes <i>shell-command</i>.  The command is executed without a tty, so
+  it should have no input, and its output, if any, should be plain text.  The
+  command's stdout and stderr are echoed to tf's output window.
+  <a href="../commands/sys.html">/sys</a> differs from
+  <a href="../commands/sh.html">/sh</a> in that
+  <a href="../commands/sys.html">/sys</a> can not do an interactive shell
+  command, but does not redraw the screen or produce any extra messages.
+
+<p>
+  Note: calling <a href="../commands/sys.html">/sys</a> with arguments from a
+  <a href="../topics/triggers.html">trigger</a> is dangerous.  If not
+  written carefully, such a <a href="../topics/triggers.html">trigger</a>
+  could allow anyone with access to the server to gain access to your shell
+  account.
+
+<p>
+  The return value of <a href="../commands/sys.html">/sys</a> is the exit
+  status of the shell if it exited normally, -1 otherwise.  Note that UNIX
+  shell commands usually return 0 for success and nonzero for failure,
+  which is the opposite of the TF convention.
+
+<p>
+  <a href="../commands/sys.html">/sys</a> executes synchronously.  To execute
+  a command asynchronously (in the background), use
+  <a href="../commands/quote.html">/quote</a> without the -S option.
+  
+<p>
+  See: <a href="../commands/sh.html">/sh</a>,
+  <a href="../commands/quote.html">/quote</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

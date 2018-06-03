@@ -1,0 +1,67 @@
+<title>TinyFugue: /ps</title>
+<!--"@/ps"-->
+<h1>/ps</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/ps.html">/PS</a> [-srq] [-w<i>world</i>] [<i>pid</i>]<br>
+<hr>
+
+<p>
+  <a href="../topics/options.html">Options</a>:
+  <dl compact>
+  <dt>-s	<dd>short form, lists only PIDs.
+  <dt>-r	<dd>list /repeats only.
+  <dt>-q	<dd>list /quotes only.
+  <dt>-w[<i>world</i>]	<dd>list only processes for <i>world</i>.
+  </dl>
+
+<p>
+  Lists information about
+  <a href="../topics/processes.html">process</a> <i>pid</i>,
+  or all currently running <a href="../commands/quote.html">/quote</a> and
+  <a href="../commands/repeat.html">/repeat</a>
+  <a href="../topics/processes.html">processes</a>:
+
+<p>
+  <dl>
+  <dt>PID
+          <dd>unique <a href="../topics/processes.html">process</a>
+          identification number.
+  <dt>NEXT
+          <dd>time remaining until next execution of
+          <a href="../topics/processes.html">process</a>, or "pending" if
+          <a href="../topics/processes.html">process</a>
+          is waiting for output from a shell command.
+  <dt>T
+	  <dd>the type of the command:
+          "q" for <dd><a href="../commands/quote.html">quote</a> or
+          "r" for <a href="../commands/repeat.html">repeat</a>.
+  <dt>D
+          <dd>disposition of
+          <a href="../commands/quote.html">/quote</a> lines:
+	  "e" for echo, "s" for send, or "x" for exec.
+  <dt>WORLD
+          <dd>world to which output is sent, if not the
+          <a href="../topics/sockets.html#current">current</a> world.
+  <dt>PTIME
+          <dd>delay between executions.
+  <dt>COUNT
+          <dd>number of <a href="../commands/repeat.html">/repeat</a>
+          executions remaining.
+  <dt>COMMAND
+          <dd>the command to be executed.
+  </dl>
+
+<p>
+  See: <a href="../topics/processes.html">processes</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,48 @@
+<title>TinyFugue: /shift</title>
+<!--"@/shift"-->
+<h1>/shift</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/shift.html">/SHIFT</a> [<var>n</var>]<br>
+<hr>
+
+<p>
+  Shifts the positional parameters left by <i>n</i>.  That is, the positional
+  parameters %(<var>n</var>+1) ...
+  <a href="../topics/special_variables.html##">%#</a> are renamed to
+  <a href="../topics/substitution.html#%n">%1</a> ...  %(#-<var>n</var>).  If
+  <i>n</i> is omitted, 1 is assumed.
+
+<p>
+  <a href="../commands/shift.html">/shift</a> is useful only during
+  <a href="../topics/macros.html">macro</a>
+  <a href="../topics/evaluation.html">expansion</a>.
+
+<p>
+  Example:
+<pre>
+  <a href="../commands/def.html">/def</a> worlds = <a href="../commands/while.html">/while</a> ({#}) <a href="../commands/world.html">/world</a> <a href="../topics/substitution.html#%n">%1</a>%; <a href="../commands/shift.html">/shift</a>%; <a href="../commands/while.html">/done</a>
+</pre>
+
+<p>
+  Then, the command "<code><a href="../commands/worlds.html">/worlds</a> foo
+  bar baz</code>" would execute the commands
+  "<code><a href="../commands/world.html">/world</a> foo</code>",
+  "<code><a href="../commands/world.html">/world</a> bar</code>", and
+  "<code><a href="../commands/world.html">/world</a> baz</code>".
+
+<p>
+  See: <a href="../topics/variables.html">variables</a>,
+  <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../commands/list_commands.html">list commands</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

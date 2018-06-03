@@ -1,0 +1,141 @@
+<title>TinyFugue: text utility commands</title>
+<!--"@/fgrep"-->
+<!--"@/grep"-->
+<!--"@/egrep"-->
+<!--"@/readfile"-->
+<!--"@/writefile"-->
+<!--"@/head"-->
+<!--"@/wc"-->
+<!--"@/tee"-->
+<!--"@/copyio"-->
+<!--"@/fmt"-->
+<!--"@/uniq"-->
+<!--"@/randline"-->
+<!--"@textutil"-->
+<!--"@textutil.tf"-->
+<h1>Text Utilities</h1>
+<p>
+  <a href="../commands/require.html">/REQUIRE</a> textutil.tf<br>
+<hr>
+
+<p>
+  The library file <a href="../commands/textutil.html">textutil.tf</a>
+  defines several unix-like commands that are particularly convenient when
+  used with the <a href="../topics/substitution.html#%|">%|</a> pipe to
+  redirect their input or output.
+
+<p>
+  In the descriptions below, <i>filename</i> is the name of a file, and
+  <i>in</i> and <i>out</i> are handles of
+  <a href="../topics/tfio.html">tfio streams</a>.
+  When <i>in</i> is optional, its default is
+  <a href="../topics/tfio.html">tfin</a>.
+
+<p>
+<dl>
+<p>
+<dt><a href="../commands/textutil.html">/fgrep</a> [-cvi] <i>pattern</i>
+<dt><a href="../commands/textutil.html">/grep</a> [-cv] <i>pattern</i>
+<dt><a href="../commands/textutil.html">/egrep</a> [-cvi] <i>pattern</i>
+<dd>These commands search <a href="../topics/tfio.html">tfin</a> for lines
+    that match the given pattern, and by default prints those lines.
+    For <a href="../commands/textutil.html">/fgrep</a>,
+    a line must contain <i>pattern</i> to match;
+    for <a href="../commands/textutil.html">/grep</a>,
+    the <em>entire</em> line must match the
+    <a href="../topics/patterns.html#glob">glob</a> pattern <i>pattern</i>;
+    for <a href="../commands/textutil.html">/egrep</a>, it must match the
+    <a href="../topics/patterns.html#glob">regexp</a> pattern <i>pattern</i>.
+    <br><a href="../topics/options.html">Options</a>:
+    <dl compact>
+    <dt>-c	<dd>print only the count of matching lines.
+    <dt>-v	<dd>select only non-matching lines.
+    <dt>-i	<dd>ignore case (for /fgrep and /egrep only;
+                /grep always ignores case).
+    </dl>
+    Note: these commands are not compatible with those defined in the old
+    library file <a href="../topics/oldgrep.html">grep.tf</a>.
+
+<p>
+<dt><a href="../commands/textutil.html">/readfile</a> <i>filename</i>
+<dd>Reads lines from <i>filename</i> and writes them to
+    <a href="../topics/tfio.html">tfout</a>.
+
+<p>
+<dt><a href="../commands/textutil.html">/writefile</a> [-a] <i>filename</i>
+<dd>Reads lines from <a href="../topics/tfio.html">tfin</a> and writes them
+    to file <i>filename</i>.
+    <br><a href="../topics/options.html">Options</a>:
+    <dl compact>
+    <dt>-a	<dd>append to file instead of overwriting.
+    </dl>
+
+<p>
+<dt><a href="../commands/textutil.html">/head</a> [-n<i>count</i>] [<i>in</i>]
+<dd>Reads the first <i>count</i> (default 10) lines from
+    <i>in</i> or <a href="../topics/tfio.html">tfin</a>
+    and writes them to <a href="../topics/tfio.html">tfout</a>.
+
+<p>
+<dt><a href="../commands/textutil.html">/wc</a> [-lwc] [<i>in</i>]
+<dd>Reads lines from <i>in</i> or <a href="../topics/tfio.html">tfin</a>
+    and prints the count of lines, space-separated words, and characters
+    that were read.
+    <br><a href="../topics/options.html">Options</a>:
+    <dl compact>
+    <dt>-l	<dd>Print the count of lines only.
+    <dt>-w	<dd>Print the count of words only.
+    <dt>-c	<dd>Print the count of characters only.
+    </dl>
+
+<p>
+<dt><a href="../commands/textutil.html">/tee</a> <i>out</i>
+<dd>Reads lines from <a href="../topics/tfio.html">tfin</a> and echoes them
+    to <i>out</i> and <a href="../topics/tfio.html">tfout</a>.
+
+<p>
+<dt><a href="../commands/textutil.html">/copyio</a> <i>in</i> <i>out</i>
+<dd>Reads lines from <i>in</i> and writes them to <i>out</i>.
+    This can be useful, for example, when you want to send text from a
+    <a href="../topics/tfio.html">tfio</a> stream to a
+    command that reads only <a href="../topics/tfio.html">tfin</a>:
+    <pre>
+    /copyio <i>in</i> o %| /<i>command</i>
+    </pre>
+
+<p>
+<dt><a href="../commands/textutil.html">/fmt</a>
+<dd>Copies <a href="../topics/tfio.html">tfin</a> to
+    <a href="../topics/tfio.html">tfout</a>, with adjacent non-blank lines
+    joined.
+
+<p>
+<dt><a href="../commands/textutil.html">/uniq</a>
+<dd>Copies <a href="../topics/tfio.html">tfin</a> to
+    <a href="../topics/tfio.html">tfout</a>, with adjacent duplicate lines
+    removed.
+
+<p>
+<dt><a href="../commands/textutil.html">/randline</a> [<i>in</i>]
+<dd>Copies one randomly selected line from
+    <i>in</i> or <a href="../topics/tfio.html">tfin</a>
+    to <a href="../topics/tfio.html">tfout</a>.
+</dl>
+
+<p>
+<hr>
+
+<p>
+  See:
+  <a href="../topics/tfio.html">tfio</a>,
+  <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../topics/substitution.html">substitution</a>,
+  <a href="../topics/oldgrep.html">oldgrep</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

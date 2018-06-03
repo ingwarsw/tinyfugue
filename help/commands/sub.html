@@ -1,0 +1,52 @@
+<title>TinyFugue: /sub</title>
+<!--"@/sub"-->
+<h1>/sub</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/sub.html">/SUB</a> [OFF|ON|FULL]<br>
+<hr>
+
+<p>
+  Sets the flag <a href="../topics/special_variables.html#%sub">%{sub}</a>.
+
+<p>
+  If the flag <a href="../topics/special_variables.html#%sub">%{sub}</a> is
+  OFF (0), all lines except for <a href="../topics/history.html">history</a>
+  substitutions (line beginning with '^') and commands (/) are sent as-is to
+  the <a href="../topics/sockets.html">socket</a>.
+
+<p>
+  If the flag <a href="../topics/special_variables.html#%sub">%{sub}</a> is ON
+  (1), the sequences
+  "<a href="../topics/substitution.html#%;">%;</a>" and "%\" are substituted
+  with newlines, and the
+  sequence "<a href="../topics/substitution.html#%%">%%</a>" is substituted
+  with "%", and the sequence "<a href="../topics/substitution.html#\n">\<i>n</i></a>"
+  is substituted with the character with decimal ASCII code <i>n</i>.
+
+<p>
+  If the flag <a href="../topics/special_variables.html#%sub">%{sub}</a> is
+  FULL, text is processed just as if it were the body of a
+  <a href="../topics/macros.html">macro</a> (see
+  "<a href="../topics/evaluation.html">evaluation</a>") called without any
+  arguments.  This allows you to have in-line
+  <a href="../topics/macros.html">macros</a> in regular input.
+
+<p>
+  The flag <a href="../topics/special_variables.html#%sub">%{sub}</a> defaults
+  to 0 (off).
+
+<p>
+  See: <a href="../topics/general.html">general</a>,
+  <a href="../topics/evaluation.html">evaluation</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

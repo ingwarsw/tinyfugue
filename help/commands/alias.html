@@ -1,0 +1,70 @@
+<title>TinyFugue: /alias</title>
+<!--"@/alias"--> 
+<!--"@/unalias"--> 
+<h1>/alias</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/load.html">/REQUIRE</a> alias.tf<br>
+
+<p>
+  <a href="../commands/alias.html">/ALIAS</a> [<i>name</i> 
+  [<i>command</i>]]<br>
+  <a href="../commands/alias.html">/UNALIAS</a> <i>name</i><br>
+  <a href="../commands/alias.html">/PURGEALIAS</a><br>
+<hr>
+
+<p>
+  With no arguments, <a href="../commands/alias.html">/alias</a> lists all 
+  aliases.  With a <i>name</i> argument, 
+  <a href="../commands/alias.html">/alias</a> lists the alias with names
+  that match the glob pattern
+  <i>name</i>.  Otherwise, <a href="../commands/alias.html">/alias</a> 
+  defines <i>name</i> as an alias for <i>command</i>.  
+
+<p>
+  <a href="../commands/alias.html">/Unalias</a> undefines an alias for 
+  <i>name</i> that was defined with 
+  <a href="../commands/alias.html">/alias</a>.  
+
+<p>
+  <a href="../commands/alias.html">/Purgealias</a> undefines all aliases
+  defined with <a href="../commands/alias.html">/alias</a>.
+  Note that <a href="../commands/alias.html">/purgealias</a> does not take
+  a pattern argument.
+
+<p>
+  To use an alias, just type its name followed by any optional arguments.  
+  Unlike <a href="../topics/macros.html">macros</a> defined with
+  <a href="../commands/def.html">/def</a>, you do 
+  not type '/' before <i>name</i> to execute an alias.
+  <a href="../topics/substitution.html#%n">Argument substitution</a>
+  in aliases works the same as in <a href="../topics/macros.html">macros</a>.  
+
+<p>
+  As of 3.5 alpha 11, aliases can be called from other aliases or
+  <a href="../topics/macros.html">macros</a>.  To 
+  send a line of text to the server without alias calls, use 
+  <a href="../topics/functions.html#send">send()</a>.  If an old alias
+  that used to work now results in "Too many recursions", you need to
+  rewrite the alias to use <a href="../topics/functions.html#send">send()</a>.
+
+<p>
+  Using <a href="../commands/def.html">/def</a> instead of 
+  <a href="../commands/alias.html">/alias</a> is recommended.  
+
+<p>
+  See: <a href="../commands/def.html">/def</a>, 
+  <a href="../topics/macros.html">macros</a>, 
+  <a href="../topics/substitution.html">substitution</a>, 
+  <a href="../topics/tfrc.html">tfrc</a> 
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,54 @@
+<title>TinyFugue: prompt protocol</title>
+<!--"@goahead"-->
+<!--"@eor"-->
+<!--"@end-of-record"-->
+<!--"@prompt protocol"-->
+<h1>prompt protocol</h1>
+
+<p>
+  TF will recognize the TELNET protocol commands GOAHEAD or END-OF-RECORD as
+  the end of a <a href="../topics/prompts.html">prompt</a>.  If you are
+  responsible for a server that has
+  <a href="../topics/prompts.html">prompts</a>,
+  and wish to make it more friendly to TF users, choose one of these options:
+
+<p>
+  GOAHEAD: Send IAC GA (\377 \371) after each
+  <a href="../topics/prompts.html">prompt</a>.  This is the easier of
+  the two options.  In many servers, this can be done at the beginning of the
+  routine that reads user input.  Disadvantage: could possibly cause problems
+  in clients that don't understand TELNET protocol (but usually, they will
+  just pass it through to the terminal, which will usually ignore it).
+
+<p>
+  END-OF-RECORD: Send IAC WILL EOR (\377 \373 \031) when the user connects.
+  If the client responds with IAC DO EOR, then you can send IAC END-OF-RECORD
+  (\377 \357) after each
+  <a href="../topics/prompts.html">prompt</a>; otherwise, do nothing special
+  in <a href="../topics/prompts.html">prompts</a>.
+  Disadvantage: requires extra state per descriptor and more understanding of
+  telnet protocol.  Advantage: minimizes potential problems for clients that
+  do not recognize telnet protocol.
+
+<p>
+  To debug telnet option negotiations, you may find it useful to
+  "<code><a href="../commands/set.html">/set</a>
+  <a href="../topics/special_variables.html#%telopt">telopt</a> on</code>"
+  in TF.
+
+<p>
+  For more information on TELNET protocol, see RFCs 854, 855, 885, and 1123.
+
+<p>
+  See also: <a href="../commands/telnet.html">/telnet</a>,
+  <a href="../topics/special_variables.html#%telopt">telopt</a>,
+  <a href="../topics/prompts.html">prompts</a>,
+  <a href="../topics/protocols.html">protocols</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

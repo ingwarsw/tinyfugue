@@ -1,0 +1,59 @@
+<title>TinyFugue: /histsize</title>
+<!--"@/histsize"-->
+<h1>/histsize</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/histsize.html">/HISTSIZE</a> [-lig] [-w[<i>world</i>]]
+  [<i>size</i>]<br>
+<hr>
+
+<p>
+  <a href="../topics/options.html">Options:</a>
+  <dl compact>
+  <dt>-l
+          <dd>local history
+  <dt>-i
+          <dd>input history
+  <dt>-g
+          <dd>global <a href="../topics/history.html">history</a> (default)
+  <dt>-w<i>world</i>
+          <dd>world history
+  </dl>
+
+<p>
+  If <i>size</i> is not given,
+  <a href="../commands/histsize.html">/histsize</a> reports the maximum
+  number of lines that can be stored in the specified
+  <a href="../topics/history.html">history</a>.
+
+<p>
+  If <i>size</i> is given, <a href="../commands/histsize.html">/histsize</a>
+  changes the maximum size of the specified
+  <a href="../topics/history.html">history</a> to <i>size</i>.  If the new
+  size is less than the old size, the oldest lines will be lost immediately.
+  If the new size is greater than the old size, no more old lines will
+  be lost until enough new lines are added to reach the new size.
+
+<p>
+  <a href="../commands/histsize.html">/histsize</a> returns 0 for failure,
+  and the size of the <a href="../topics/history.html">history</a> otherwise.
+
+<p>
+  The <a href="../topics/special_variables.html#%histsize">%{histsize}</a>
+  <a href="../topics/variables.html">variable</a> can be used to set the
+  default size of world histories before they are created.
+
+<p>
+  See: <a href="../topics/history.html">history</a>,
+  <a href="../topics/special_variables.html#%histsize">%histsize</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

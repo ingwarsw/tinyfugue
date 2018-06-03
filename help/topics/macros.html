@@ -1,0 +1,202 @@
+<title>TinyFugue: macros</title>
+<!--"@macros"-->
+<h1>macros</h1>
+  A <a href="../topics/macros.html">macro</a> is basically a named set of
+  commands.
+  The simplest kind of <a href="../topics/macros.html">macro</a> has a name
+  and a body.  The body is a list of one or more commands, separated by '%;'
+  tokens.  These commands are executed when the
+  <a href="../topics/macros.html">macro</a> is called.  For example, if you
+  define a <a href="../topics/macros.html">macro</a> like
+<pre>
+    <a href="../commands/def.html">/def</a> time_warp = :jumps to the left!%;:steps to the right!
+</pre>
+  and call it by typing
+<pre>
+    /time_warp
+</pre>
+  you will execute the commands
+<pre>
+    :jumps to the left!
+    :steps to the right!
+</pre>
+  A <a href="../topics/macros.html">macro</a> name is the way of calling it
+  from the command line or from another
+  <a href="../topics/macros.html">macro</a>.  You can execute a
+  <a href="../topics/macros.html">macro</a> by typing '/' followed by the
+  name of the <a href="../topics/macros.html">macro</a>.  If a
+  <a href="../topics/macros.html">macro</a> and builtin have the same name,
+  the <a href="../topics/macros.html">macro</a> will be called.  Typing '/@'
+  followed by the name will always call the builtin command.
+
+<p>
+  A <a href="../topics/macros.html">macro</a> body, or execution text, is the
+  commands and/or text executed when the
+  <a href="../topics/macros.html">macro</a> is called.  This text is
+  evaluated according to the rules described under
+  "<a href="../topics/evaluation.html">evaluation</a>".
+
+<p>
+  <a href="../topics/macros.html">Macros</a> actually have many more fields,
+  described below.  All fields (including name and body) are optional.
+  <dl>
+
+<p>
+  <dt>name
+          <dd>The name of the <a href="../topics/macros.html">macro</a>.
+          Names should begin with a letter, and contain letters, numbers, or
+          '_' characters.
+
+<p>
+  <dt>body
+          <dd>One or more commands to be executed when
+          <a href="../topics/macros.html">macro</a> is called.
+	  The body is compiled to an efficient internal format the first
+	  time it is needed, so each future call can execute it more quickly.
+
+<p>
+  <dt>number
+          <dd>All <a href="../topics/macros.html">macros</a> are
+          automatically numbered sequentially.  This field can not be
+          changed.
+
+<p>
+  <dt>trigger
+          <dd>when text matches the
+          <a href="../topics/triggers.html">trigger</a> pattern, the
+          <a href="../topics/macros.html">macro</a> may be called.
+
+<p>
+  <dt>hook
+          <dd>the <a href="../topics/macros.html">macro</a> can be called
+          when a TF <a href="../topics/hooks.html">hook</a> event occurs.
+
+<p>
+  <dt>keybinding
+          <dd>the <a href="../topics/macros.html">macro</a> will be called
+          when its keybinding is typed.
+
+<p>
+  <dt>shots
+          <dd>the <a href="../topics/macros.html">macro</a> will be deleted
+          after it is <a href="../topics/triggers.html">trigger</a>ed or
+          <a href="../topics/hooks.html">hook</a>ed a certain number of
+          times.
+
+<p>
+  <dt><a href="../topics/priority.html">priority</a>
+          <dd>when multiple <a href="../topics/triggers.html">triggers</a>
+          match the same text, the one with the highest
+          <a href="../topics/priority.html">priority</a> is selected
+          (see "<a href="../topics/priority.html">priority</a>").
+
+<p>
+  <dt><a href="../topics/priority.html">fall-thru</a>
+          <dd>on a <a href="../topics/triggers.html">trigger</a> or
+          <a href="../topics/hooks.html">hook</a>, allows additional
+          <a href="../topics/macros.html">macros</a> of lower
+          <a href="../topics/priority.html">priority</a> to be
+          run (see "<a href="../topics/priority.html">priority</a>").
+
+<p>
+  <dt>world
+          <dd>the <a href="../topics/macros.html">macro</a> can only be
+          <a href="../topics/triggers.html">trigger</a>ed/<a href="../topics/hooks.html">hook</a>ed
+          by text/events from a particular world.
+
+<p>
+  <dt>worldtype
+          <dd>the <a href="../topics/macros.html">macro</a> can only be
+          <a href="../topics/triggers.html">trigger</a>ed/hooked
+          by text/events from a particular type of world.
+
+<p>
+  <dt>expression
+          <dd>the <a href="../topics/macros.html">macro</a> can only be
+          <a href="../topics/triggers.html">trigger</a>ed/<a href="../topics/hooks.html">hook</a>ed
+          if <a href="../topics/expressions.html">expression</a> is non-zero.
+
+<p>
+  <dt>attributes
+          <dd>bold, underline, etc.  for displaying
+          <a href="../topics/triggers.html">trigger</a> text.
+
+<p>
+  <dt>probability
+          <dd> when <a href="../topics/triggers.html">trigger</a>ed, the
+          <a href="../topics/macros.html">macro</a> has a certain probability
+          of being executed.
+
+<p>
+  <dt>invisibility
+          <dd>prevents handling of <a href="../topics/macros.html">macro</a>
+          by <a href="../commands/list.html">/list</a>,
+          <a href="../commands/save.html">/save</a>, or
+          <a href="../commands/purge.html">/purge</a>.
+  </dl>
+  <a href="../topics/macros.html">Macros</a> may be called in several ways:
+  <ul>
+  <li>a command of the form "<code>/<var>name</var></code>" or "<code>/#<var>number</var></code>"
+  <li>triggered by text from a <a href="../topics/sockets.html">socket</a>
+  (see "<a href="../topics/triggers.html">triggers</a>")
+  <li>hooked by a tinyfugue event (see
+  "<a href="../topics/hooks.html">hooks</a>")
+  <li>by keybindings
+  </ul>
+
+<p>
+  Associated commands:
+  <dl>
+  <dt><a href="../commands/def.html">/def</a>
+          <dd>define a named <a href="../topics/macros.html">macro</a>, with
+          any fields
+  <dt><a href="../commands/trig.html">/trig</a>
+          <dd>define a <a href="../topics/triggers.html">trigger</a>
+          <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/hilite.html">/hilite</a>
+          <dd>define a <a href="../topics/attributes.html">hilite</a>
+          <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/gag.html">/gag</a>
+          <dd>define a <a href="../topics/attributes.html">gag</a>
+          <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/bind.html">/bind</a>
+          <dd>define a keybinding <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/hook.html">/hook</a>
+          <dd>define a <a href="../topics/hooks.html">hook</a>
+          <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/undef.html">/undef</a>
+          <dd>undefine a named <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/unhook.html">/unhook</a>
+          <dd>undefine a <a href="../topics/hooks.html">hook</a>
+          <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/unbind.html">/unbind</a>
+          <dd>undefine a keybinding <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/undefn.html">/undefn</a>
+          <dd>undefine a <a href="../topics/macros.html">macro</a> by number
+  <dt><a href="../commands/undeft.html">/undeft</a>
+          <dd>undefine a <a href="../topics/macros.html">macro</a> by
+          <a href="../topics/triggers.html">trigger</a>
+  <dt><a href="../commands/purge.html">/purge</a>
+          <dd>undefine a set of <a href="../topics/macros.html">macros</a>
+  <dt><a href="../commands/list.html">/list</a>
+          <dd>display a list of <a href="../topics/macros.html">macros</a>
+  <dt><a href="../commands/load.html">/load</a>
+          <dd>load commands from a file
+  <dt><a href="../commands/save.html">/save</a>
+          <dd>save <a href="../topics/macros.html">macro</a> definitions to a
+          file
+  </dl>
+
+<p>
+  See also: <a href="../topics/triggers.html">triggers</a>,
+  <a href="../topics/gags.html">gags</a>,
+  <a href="../topics/hilites.html">hilites</a>,
+  <a href="../topics/hooks.html">hooks</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

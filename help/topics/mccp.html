@@ -1,0 +1,38 @@
+<title>TinyFugue: Mud Client Compression Protocol</title>
+<!--"@mccpv1"-->
+<!--"@mccpv2"-->
+<!--"@mccp"-->
+<h1>Mud Client Compression Protocol</h1>
+
+<p>
+  TF supports versions 1 and 2 of the Mud Client Compression Protocol (MCCP)
+  described at
+  <a href="http://www.randomly.org/projects/MCCP/">http://www.randomly.org/projects/MCCP/</a>.
+  MCCP allows a server to compress the data stream it sends to the client (TF),
+  which may improve throughput on a poor connection.
+
+<p>
+  MCCP is transparent to the user.  When TF connects to a server that supports
+  MCCP, it will be enabled automatically, unless the
+  <a href="../topics/special_variables.html#%mccp">mccp</a> variable is off.
+  The <a href="../commands/listsockets.html">listsockets</a> command
+  will indicate that MCCP is enabled.
+
+<p>
+  MCCP v1 is broken, and may not be supported in the future if it is found
+  to interfere with valid protocols.
+  If you use a server that has only MCCP v1, you should encourage
+  the owner to upgrade to add support for v2.
+
+<p>
+  See also:
+  <a href="../topics/protocols.html">protocols</a>,
+  <a href="../commands/telnet.html">telnet</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 2000-2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

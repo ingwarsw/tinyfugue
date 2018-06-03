@@ -1,0 +1,51 @@
+<title>TinyFugue: /quit</title>
+<!--"@/quit"-->
+<h1>/quit</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/quit.html">/QUIT</a> [-y]<br>
+<hr>
+
+<p>
+  Exits TF.  If TF is
+  <a href="../topics/special_variables.html#interactive">interactive</a>,
+  and there are any <a href="../topics/worlds.html">worlds</a>
+  with unseen text, /quit first asks you to confirm the exit;
+  if you type anything other than "Y" or "y", TF does not exit.
+
+<p>
+  <a href="../topics/options.html">Options:</a>
+  <dl compact>
+  <dt>-y
+      <dd>exit unconditionally, without prompting.
+  </dl>
+
+  When TF exits, all <a href="../topics/sockets.html">socket</a>
+  connections will be disconnected; all logfiles will be closed;
+  all <a href="../commands/quote.html">/quote</a>s and
+  <a href="../commands/repeat.html">/repeat</a>s will be killed; and all
+  <a href="../topics/history.html">history</a>, unsaved
+  <a href="../topics/macros.html">macros</a>, and 
+  <a href="../topics/variables.html">variables</a> will be lost.
+
+<p>
+  If you prefer to never be prompted by /quit, you can redefine it like this:
+<pre>
+  <a href="../commands/def.html">/def</a> quit = /@quit -y
+</pre>
+
+<p>
+  See also:
+  <a href="../commands/dc.html">/dc</a>,
+  <a href="../topics/special_variables.html#quitdone">%quitdone</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

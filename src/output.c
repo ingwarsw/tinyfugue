@@ -112,7 +112,6 @@ TERMCODE (italic, "\033[3m", "\033[3m", "\033[3m")
 TERMCODE (attr_off,		"\033[m",	"\033[m",	"\033[m")
 TERMCODE (attr_on,		NULL,		NULL,		NULL)
 /* these are only used if others are missing */
-TERMCODE (italic_off, NULL, NULL, NULL)
 TERMCODE (underline_off,	NULL,		NULL,		NULL)
 TERMCODE (standout,		NULL,		NULL,		NULL)
 TERMCODE (standout_off,		NULL,		NULL,		NULL)
@@ -530,7 +529,6 @@ static void init_term(void)
         standout	= tgetstr("so", &area);
         underline_off	= tgetstr("ue", &area);
         standout_off	= tgetstr("se", &area);
-        italic_off = tgetstr("ZR", &area);
         attr_off	= tgetstr("me", &area);
         attr_on		= tgetstr("sa", &area);
 
@@ -539,7 +537,6 @@ static void init_term(void)
             reverse = flash = dim = bold = italic = NULL;
             if (!underline_off) underline = NULL;
             if (!standout_off) standout = NULL;
-            if (!italic_off) italic = NULL;
         }
 
         for (i = 0; i < N_KEYCODES; i++) {
@@ -2756,7 +2753,6 @@ static void attributes_off(attr_t attrs)
         else {
             if (have_attr & attrs & F_UNDERLINE) tp(underline_off);
             if (have_attr & attrs & F_BOLD     ) tp(standout_off);
-            if (have_attr & attrs & F_ITALIC   ) tp(italic_off);
         }
     }
     if ((attrs & F_COLORS) && (ctlseq = getvar("end_color"))) {

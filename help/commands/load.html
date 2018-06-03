@@ -1,0 +1,129 @@
+<title>TinyFugue: /load</title>
+<!--"@/loadbind"-->
+<!--"@/loaddef"-->
+<!--"@/loadgag"-->
+<!--"@/loadhilite"-->
+<!--"@/loadtrig"-->
+<!--"@/loadhook"-->
+<!--"@/loadworld"-->
+<!--"@/require"-->
+<!--"@/loaded"-->
+<!--"@/load"-->
+<h1>/load</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/load.html">/LOAD</a> [-q] <i>file</i><br>
+  <a href="../commands/load.html">/REQUIRE</a> [-q] <i>file</i><br>
+  <br>
+  <a href="../commands/load.html">/LOADED</a> <i>token</i><br>
+<hr>
+
+<p>
+  <a href="../commands/load.html">/Load</a> and
+  <a href="../commands/load.html">/require</a>
+  both read and execute commands from <i>file</i>.
+  They are identical, except that if <i>file</i> calls
+  <a href="../commands/load.html">/loaded</a> and has
+  already been read once, <a href="../commands/load.html">/require</a>
+  will not read it again (but the LOAD
+  message/<a href="../topics/hooks.html">hook</a>
+  will still be displayed/called).
+
+<p>
+  "<code><a href="../commands/load.html">/Loaded</a> <i>token</i></code>"
+  should be the first command in a file that is designed to be loaded only
+  once with <a href="../commands/load.html">/require</a>.
+  <i>Token</i> should be a string that does not contain space or
+  <a href="../topics/patterns.html#glob">glob</a> metacharacters, and
+  is different than the token used by any other 
+  <a href="../commands/load.html">/loaded</a> call.
+  The file's full name is usually a good choice for <i>token</i>.
+
+<p>
+  <a href="../topics/options.html">Options:</a>
+  <dl>
+  <dt>-q
+        <dd>Do not echo the "% Loading commands from <i>file</i>" message
+        in this <a href="../commands/load.html">/load</a> call or any
+        <a href="../commands/load.html">/load</a> calls in <i>file</i>.
+        (but the <a href="../topics/hooks.html#LOAD">LOAD hook</a> will still
+        be called).
+  </dl>
+
+<p>
+  The file may contain any legal TinyFugue commands.  Blank lines and lines
+  beginning with ';' or '#' are ignored.  Any leading whitespace on a line is
+  stripped.  Any line ending in '\' will have the following line joined to
+  it (after leading spaces are stripped).  A '%' preceding a '\' eliminates
+  its special meaning.
+
+<p>
+  The <i>file</i> name is expanded as described under
+  "<a href="../topics/filenames.html">filenames</a>".
+
+<p>
+  If the
+  <a href="../topics/library.html#compression">COMPRESS_SUFFIX</a> and
+  <a href="../topics/library.html#compression">COMPRESS_READ</a>
+  <a href="../topics/macros.html">macros</a> are defined, the file will be
+  automatically uncompressed if needed.
+
+<p>
+  If the expanded filename is not an absolute path name, TF will search first
+  in the current directory (which can be changed with
+  <a href="../commands/lcd.html">/lcd</a>), and then in the list of
+  directories named by
+  <a href="../topics/special_variables.html#%TFPATH">%{TFPATH}</a>.
+  If <a href="../topics/special_variables.html#%TFPATH">%{TFPATH}</a> is
+  blank or unset, the single directory named by
+  <a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a> is used.
+
+<p>
+  A <a href="../commands/load.html">/load</a> may be aborted early with
+  the <a href="../commands/exit.html">/exit</a> command in the file.
+
+<p>
+  Loaded files may be given any name, but names ending in ".tf" are
+  recommended.
+
+<p>
+  <a href="../commands/load.html">/Load</a> and
+  <a href="../commands/load.html">/require</a> return 1 if successful
+  (for <a href="../commands/load.html">/require</a>, this includes not
+  needing to read the file), or 0 if not successful.
+  <a href="../commands/load.html">/Loaded</a> does not return if the file
+  that calls it has already been loaded.
+
+<p>
+  The standard <a href="../topics/macros.html">macro</a> library also defines
+  the commands <a href="../commands/load.html">/loaddef</a>,
+  <a href="../commands/load.html">/loadbind</a>,
+  <a href="../commands/load.html">/loadhilite</a>,
+  <a href="../commands/load.html">/loadgag</a>,
+  <a href="../commands/load.html">/loadtrig</a>,
+  <a href="../commands/load.html">/loadhook</a>, and
+  <a href="../commands/load.html">/loadworld</a>.
+  These <a href="../topics/macros.html">macros</a> will load from a
+  <a href="../topics/library.html#filename macros">default file</a>
+  if no file is specified.
+
+<p>
+  See: <a href="../topics/macros.html">macros</a>,
+  <a href="../topics/library.html">library</a>,
+  <a href="../commands/exit.html">/exit</a>,
+  <a href="../commands/def.html">/def</a>,
+  <a href="../commands/save.html">/save</a>,
+  <a href="../commands/lcd.html">/lcd</a>,
+  <a href="../topics/filenames.html">filenames</a>,
+  <a href="../topics/library.html#compression">compression</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

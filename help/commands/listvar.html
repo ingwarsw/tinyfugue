@@ -1,0 +1,57 @@
+<title>TinyFugue: /listvar</title>
+<!--"@/listvar"-->
+<h1>/listvar</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/listvar.html">/LISTVAR</a> [-m<i>matching</i>] [-gxsv] [<i>name</i> [<i>value</i>]]<br>
+<hr>
+
+<p>
+  <a href="../topics/options.html">Options:</a>
+  <dl>
+  <dt>-m<i>matching</i>
+      <dd>Determines matching style used for comparison of
+      <i>name</i> and <i>value</i>.
+      If omitted, the style is determined by
+      <a href="../topics/special_variables.html#%matching">%{matching}</a>.
+  <dt>-g
+      <dd>List only global (unexported) variables.
+  <dt>-x
+      <dd>List only variables that are exported to the environment.
+  <dt>-s
+      <dd>Short format: list variable names only.
+  <dt>-v
+      <dd>List values only.
+  </dl>
+
+
+<p>
+  <a href="../commands/listvar.html">/Listvar</a> lists values of
+  <a href="../topics/variables.html">variables</a> whose name and value
+  match <i>name</i> and <i>value</i> according to <i>matching</i>,
+  sorted by name.
+  If neither <code>-g</code> nor <code>-x</code> is given, global and
+  environment variables are listed.
+
+<p>
+  The return value of <a href="../commands/listvar.html">/listvar</a>
+  is the number of variables listed.
+
+<p>
+  See: <a href="../topics/variables.html">variables</a>,
+  <a href="../commands/set.html">/set</a>,
+  <a href="../commands/setenv.html">/setenv</a>,
+  <a href="../commands/export.html">/export</a>,
+  <a href="../commands/let.html">/let</a>,
+  <a href="../commands/unset.html">/unset</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

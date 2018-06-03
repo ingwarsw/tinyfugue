@@ -1,0 +1,257 @@
+<title>TinyFugue: tfio</title>
+<!--"@tfout"-->
+<!--"@tferr"-->
+<!--"@alert"-->
+<!--"@streams"-->
+<!--"@tfio"-->
+<h1>tfio</h1>
+
+<p>
+  TF normally does its output through "streams", which are analagous to
+  the streams of C stdio.
+
+<p>
+  Output from most tf commands, including
+  <a href="../commands/echo.html">/echo</a>, are output to the
+  "<a href="../topics/tfio.html">tfout</a>" stream, which is normally attached
+  to the screen.
+  <a href="../topics/tfio.html">tfout</a> may be redirected
+  with a <a href="../commands/quote.html">command /quote</a>,
+  <a href="../topics/substitution.html#$(">$() command substitution</a>,
+  or <a href="../topics/evaluation.html">%| pipe</a>.
+
+<p>
+  Many TF error messages, hook messages, and the output of
+  "<a href="../commands/echo.html">/echo -e</a>" are output to the
+  "<a href="../topics/tfio.html">tferr</a>" stream, which is always attached
+  to the screen, and may not be redirected.
+
+<p>
+  Some TF error messages, hook messages, and the output of
+  "<a href="../commands/echo.html">/echo -A</a>" are output to the
+  "<a href="../topics/tfio.html">alert</a>" stream.
+  In <a href="../topics/mode.html#visual">visual</a> mode,
+  text sent to the alert stream is displayed briefly on the status line
+  <a href="../topics/status_line.html">status line</a>, where it can be
+  seen immediately even if you're at a 
+  <a href="../commands/more.html">more</a> prompt.
+  The duration of the alert display is determined by 
+  <a href="../topics/special_variables.html#%alert_time">%alert_time</a>.
+  In <a href="../topics/mode.html#nonvisual">nonvisual</a> mode,
+  text sent to the alert stream is redirected to the tferr stream.
+
+<p>
+  Text from a world or "<a href="../commands/echo.html">/echo -w</a>"
+  is sent to a <a href="../topics/tfio.html">stream</a> for that world.
+  Text sent to a world <a href="../topics/tfio.html">stream</a>
+  will be stored in the <a href="../topics/history.html">history</a> of
+  that world.  If that world is the
+  <a href="../topics/sockets.html#foreground">foreground</a> world,
+  the text is sent to the screen immediately; otherwise, it will not
+  be displayed until world is brought into the
+  <a href="../topics/sockets.html#foreground">foreground</a>.
+
+<p>
+  Commands that read input
+  (using <a href="../topics/functions.html#tfread">tfread()</a>)
+  read by default from 
+  "<a href="../topics/tfio.html">tfin</a>", which is normally attached
+  to the keyboard.
+  <a href="../topics/tfio.html">tfin</a> may be redirected with
+  a <a href="../topics/evaluation.html">%| pipe</a>.
+
+<p>
+  All <a href="../topics/tfio.html">streams</a> have a handle which can be
+  used as an argument to the <a href="../topics/tfio.html">tfio</a> functions.
+  The handles for 
+  <a href="../topics/tfio.html">tfin</a>,
+  <a href="../topics/tfio.html">tfout</a>, and
+  <a href="../topics/tfio.html">tferr</a>
+  are "i", "o", and "e", respectively.
+  The handles for <a href="../topics/tfio.html">streams</a> opened with
+  <a href="../topics/functions.html#tfopen">tfopen()</a> are integers.
+
+<p>
+<h2>tfopen()</h2>
+  The <a href="../topics/functions.html#tfopen">tfopen</a>(<var>name</var>,
+  <var>mode</var>) function
+  can be used to open arbitrary <a href="../topics/tfio.html">streams</a>.
+  If called with no arguments,
+  <a href="../topics/functions.html#tfopen">tfopen()</a> opens
+  an unnamed "q" mode <a href="../topics/tfio.html">stream</a>.
+  The <i>mode</i> argument describes the usage of the
+  <a href="../topics/tfio.html">stream</a>:
+
+<dl>
+<dt>"w"	<dd>Open a file "<i>name</i>" for writing.
+	Write operations will overwrite existing file contents, if any.
+<dt>"a"	<dd>Open a file "<i>name</i>" for appending.
+	Write operations will occur after existing file contents, if any.
+<dt>"r"	<dd>Open a file "<i>name</i>" for reading.
+	(see also: "<a href="../commands/quote.html">/quote '</a>").
+<dt>"p"	<dd>Execute a shell command "<i>name</i>" and read its output
+	(see also: "<a href="../commands/quote.html">/quote !</a>").
+<dt>"q"	<dd>Open a queue for reading and writing.
+	The <i>name</i> argument will appear in the output of
+	<a href="../commands/liststreams.html">/liststreams</a>, but has
+        no other meaning.
+</dl>
+
+  A "q" mode <a href="../topics/tfio.html">stream</a> may be thought of
+  as a place to hold lines for passing between two or more commands.
+
+<p>
+  If successful,
+  the <a href="../topics/functions.html#tfopen">tfopen()</a> function
+  returns a positive number which is the handle of
+  the new <a href="../topics/tfio.html">stream</a>,
+  which should be used in subsequent calls to
+  <a href="../topics/functions.html#tfread">tfread()</a>,
+  <a href="../topics/functions.html#tfwrite">tfwrite()</a>, and
+  <a href="../topics/functions.html#tfclose">tfclose()</a>.
+  If it fails,
+  the <a href="../topics/functions.html#tfopen">tfopen()</a> function
+  returns -1.
+
+<p>
+  A call to <a href="../topics/functions.html#tfwrite">tfwrite()</a>
+  or <a href="../topics/functions.html#tfread">tfread()</a> on a
+  <a href="../topics/tfio.html">stream</a> opened with a mode that
+  does not allow that operation will return -1.
+
+<p>
+  The <a href="../commands/liststreams.html">/liststreams</a> command will
+  display a list of open <a href="../topics/tfio.html">streams</a>.
+
+<p>
+<h2>tfclose()</h2>
+  When a <a href="../topics/tfio.html">stream</a> opened by
+  <a href="../topics/functions.html#tfopen">tfopen()</a> is no longer needed,
+  it should be closed with
+  <a href="../topics/functions.html#tfclose">tfclose</a>(<var>handle</var>),
+  which will flush the <a href="../topics/tfio.html">stream</a> and release
+  its resources.
+  <a href="../topics/functions.html#tfclose">tfclose()</a> can be
+  used on the <a href="../topics/tfio.html">tfout stream</a> (handle "o")
+  within a <a href="../topics/macro.html">macro</a> body
+  to prevent further output from subsequent commands in that
+  <a href="../topics/macro.html">macro</a> body; closing 
+  the <a href="../topics/tfio.html">tfin stream</a> (handle "i") will
+  prevent further reads; and closing
+  the <a href="../topics/tfio.html">tferr stream</a> (handle "e") is
+  not allowed.
+
+<p>
+<h2>tfwrite()</h2>
+  The <a href="../topics/functions.html#tfwrite">tfwrite</a>(<var>handle</var>,
+  <var>line</var>) function writes a <i>line</i> of text to the
+  <a href="../topics/tfio.html">stream</a> designated by <i>handle</i>.
+  If <i>handle</i> is omitted, the
+  <a href="../topics/tfio.html">tfout stream</a> is used (so
+  <a href="../topics/functions.html#tfwrite">tfwrite</a>(<var>line</var>)
+  is equivalent to
+  <a href="../topics/functions.html#echo">echo</a>(<var>line</var>)).
+  <a href="../topics/attributes.html">Display attributes</a> of <var>line</var>
+  are stripped if it is written outside of tf (i.e., to a file or pipe).
+
+<p>
+  If an OS file (mode "w" or "a") is set to autoflush (the default), then
+  each line written is flushed to the file immediately.  If you are writing
+  a large number of lines, it is more efficient to disable autoflushing with
+  <a href="../topics/functions.html#tfflush">tfflush</a>(<var>handle</var>,
+  "off"), and manually force a flush with
+  <a href="../topics/functions.html#tfflush">tfflush</a>(<var>handle</var>) or
+  <a href="../topics/functions.html#tfclose">tfclose</a>(<var>handle</var>)
+  after writing the large block.
+  <a href="../topics/functions.html#tfflush">tfflush()</a> has no meaning
+  on files of mode "p", "q", or "r".
+  <a href="../topics/tfio.html">Streams</a>
+  are flushed automatically when closed.
+
+<p>
+<h2>tfread()</h2>
+  The <a href="../topics/functions.html#tfread">tfread</a>(<var>handle</var>,
+  <var>variable</var>) function
+  reads a line from the
+  <a href="../topics/tfio.html">stream</a>
+  designated by <i>handle</i>.
+  If <i>handle</i> is omitted, the
+  <a href="../topics/tfio.html">tfin stream</a> is used.
+  If successful, the line is assigned to <i>variable</i>, and 
+  <a href="../topics/functions.html#tfread">tfread()</a> returns the
+  (non-negative) length of the line.
+  If <i>variable</i> did not already exist, it is created at the global level,
+  as if by <a href="../commands/set.html">/set</a>.
+  If there are no lines available to read, or an error occurs,
+  <a href="../topics/functions.html#tfread">tfread()</a> returns -1.
+  For "r" and "p" mode <a href="../topics/tfio.html">streams</a>,
+  a -1 return value indicates end-of-file; the only valid operation on the
+  <a href="../topics/tfio.html">stream</a> after that is
+  <a href="../topics/functions.html#tfclose">tfclose()</a>.
+  But for a "q" mode <a href="../topics/tfio.html">stream</a>, a -1 return
+  value may just mean there are currently no lines in the queue; more lines
+  may be added by <a href="../topics/functions.html#tfwrite">tfwrite()</a>,
+  and then <a href="../topics/functions.html#tfread">tfread()</a> will be
+  able to read them.
+
+<p>
+<h2>Keyboard Reading</h2>
+  <a href="../topics/functions.html#tfread">tfread()</a>
+  from the keyboard is special.  It can only be done from a command line
+  command; trying to do it directly or indirectly from a trigger, hook,
+  keybinding, or process is an error, and will make the
+  <a href="../topics/functions.html#tfread">tfread()</a> return -1.
+  It reads a line of input from the keyboard until the newline key is pressed
+  or "<a href="../commands/dokey.html">/dokey</a> newline" is executed.
+  During the read, all existing
+  <a href="../topics/keybindings.html">keybindings</a>
+  continue to work normally.
+  Any text already in the input buffer is not cleared when the read starts.
+  Text entered after the read starts is appended
+  to the existing text, and when the read ends,
+  its result is the entire input buffer.
+  Lines entered during a read are not saved in the input
+  <a href="../topics/history.html">history</a> (but you can use
+  "<a href="../commands/recordline.html">/recordline</a> -i" to save
+  them explicitly).
+
+<p>
+  A read from the keyboard
+  (and the <a href="../topics/macro.html">macro</a> that called it)
+  can be interrupted with a SIGINT, normally generated by typing CTRL-C.
+
+<p>
+  During a keyboard read, if a <a href="../topics/macros.html">macro</a>
+  calls <a href="../commands/dokey.html">/dokey</a> newline,
+  the newline will not be executed immediately, but will be held until
+  the rest of the commands in the <a href="../topics/macros.html">macro</a>
+  are processed.
+  For example, consider the keybinding
+  "<code><a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-b">-b</a>'^[^M' =
+  /dokey newline%; /send go</code>".  Normally, typing ^[^M would execute
+  the current input buffer, then send "go" to the server.  But during a
+  keyboard read, typing ^[^M would send "go" first, and then do the newline
+  that completes the read.
+
+<p>
+  The library file <a href="../commands/textutil.html">textutil.tf</a> defines
+  several commands that are useful with <a href="../topics/tfio.html">tfio</a>.
+
+<p>
+  See:
+  <a href="../topics/interface.html">interface</a>,
+  <a href="../commands/liststreams.html">/liststreams</a>,
+  <a href="../commands/input.html">/input</a>,
+  <a href="../topics/expressions.html">expressions</a>,
+  <a href="../topics/functions.html#nread">nread()</a>,
+  <a href="../topics/functions.html">functions</a>,
+  <a href="../commands/textutil.html">textutil.tf</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

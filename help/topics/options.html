@@ -1,0 +1,39 @@
+<title>TinyFugue: options</title>
+<!--"@-"-->
+<!--"@--"-->
+<!-- -- -->
+<!--"@options"-->
+<h1>options</h1>
+
+<p>
+  Many commands take options to modify their behavior, following these rules
+  (similar to UNIX conventions, but not identical):
+  <ul>
+  <li> All options must be immediately preceded by '-'.
+  <li> Options may be grouped after a single '-'.
+  <li> Some options may take string, numeric, or time arguments.  There must
+    be no space between the option and the argument.
+  <li> String option-arguments may be delimited by a space, double quotes,
+    single quotes, or backquotes.
+  <li> A literal delimiter character or '\' within a delimited string must
+    be escaped by preceding it with '\'.
+  <li> A numeric option-argument may be given as an
+    <a href="../topics/expression.html">expression</a>
+    that evaluates to a numeric value.  If the expression contains spaces
+    or quotes, they must be quoted or escaped as in a string option-argument.
+  <li> All options must precede normal arguments.
+  <li> A '-' or '--' by itself may be used to mark the end of the options.
+    This is useful when the first regular argument begins with '-'.
+  <li> A '-?' or invalid option will produce a list of valid options.
+  </ul>
+
+<p>
+  See also: <a href="../topics/getopts.html">getopts()</a>.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

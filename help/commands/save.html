@@ -1,0 +1,109 @@
+<title>TinyFugue: /save</title>
+<!--"@/savebind"-->
+<!--"@/savedef"-->
+<!--"@/savegag"-->
+<!--"@/savehilite"-->
+<!--"@/savehook"-->
+<!--"@/savetrig"-->
+<!--"@/save"-->
+<h1>/save</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/save.html">/SAVE</a> [-a] <i>file</i>
+  [<i>list-options</i>]<br>
+<hr>
+
+<p>
+  Saves specified <a href="../topics/macros.html">macros</a> to <i>file</i>.
+  The <a href="../commands/list.html#list options"><i>list-options</i></a>
+  are the same as those in the
+  <a href="../commands/list.html">/list</a> command; see
+  "<a href="../commands/list.html">/list</a>" for details.  Invisible
+  <a href="../topics/macros.html">macros</a> will not be saved unless "-i" is
+  specified.
+
+<p>
+  If "-a" is specified, <a href="../topics/macros.html">macros</a> will be
+  appended to <i>file</i>.  Otherwise, the
+  <a href="../topics/macros.html">macros</a> will overwrite any existing
+  contents of <i>file</i>.
+
+<p>
+  The return value of <a href="../commands/save.html">/save</a> is the number
+  of the last <a href="../topics/macros.html">macro</a> listed, or 0 if no
+  <a href="../topics/macros.html">macros</a> were listed (because of error or
+  none matched the specified options).
+
+<p>
+  The standard <a href="../topics/macros.html">macro</a> library also defines
+  commands that save macros of a particular type:
+  <dl>
+  <dt><a href="../commands/save.html">/savedef</a>
+     <dd>macros with names, but no
+     <a href="../topics/triggers.html">triggers</a>,
+     <a href="../topics/hooks.html">hooks</a>, or
+     <a href="../topics/keybindings.html">keybindings</a>
+  <dt><a href="../commands/save.html">/savebind</a>
+     <dd>macros with <a href="../topics/keybindings.html">keybindings</a>
+  <dt><a href="../commands/save.html">/savehilite</a>
+     <dd>macros with <a href="../topics/triggers.html">triggers</a> and
+     <a href="../topics/attributes.html">attributes</a> other than -ag
+  <dt><a href="../commands/save.html">/savegag</a>
+     <dd>macros with <a href="../topics/triggers.html">triggers</a> and the -ag
+     <a href="../topics/attributes.html">attribute</a>
+  <dt><a href="../commands/save.html">/savetrig</a>
+     <dd>macros with <a href="../topics/triggers.html">triggers</a> and no
+     <a href="../topics/attributes.html">attributes</a>
+  <dt><a href="../commands/save.html">/savehook</a>
+     <dd>macros with hooks
+  </dl>
+  These commands take a filename argument; if it is omitted, a default
+  file name will be used.  No -a (append) option is allowed.
+
+<p>
+  The <a href="../commands/save.html">/save*</a> commands are useful if your
+  <a href="../topics/macros.html">macros</a> are few and simple, but if you
+  have many and/or complex <a href="../topics/macros.html">macros</a>, you
+  will probably find it easier to write them with an editor and then
+  <a href="../commands/load.html">/load</a> them in tf, instead of writing
+  them in tf and <a href="../commands/save.html">/save</a>'ing them to a
+  file.  Avoiding <a href="../commands/save.html">/save</a> allows you to
+  keep the file(s) nicely formatted, use comments, and organize them better.
+  Use whatever works best for you.
+
+<p>
+  Note that when tf starts, it does not automatically read files created with
+  any of the <a href="../commands/save.html">/save</a> commands.  To make it
+  do so, add the corresponding <a href="../commands/load.html">/load</a>
+  command to your <a href="../topics/tfrc.html">.tfrc</a> file.
+
+<p>
+  Except for its return value,<br>
+  <code><a href="../commands/save.html">/save</a> [-a] <i>file</i>
+    [<i>list-options</i>]</code><br>
+  is equivalent to<br>
+  <code><a href="../commands/eval.html">/eval</a> 
+    <a href="../commands/list.html">/list</a> [<i>list-options</i>]
+    <a href="../topics/substitution.html#%|">%|</a>
+    <a href="../commands/textutil.html">/writefile</a> [-a] <i>file</i></code>
+
+<p>
+  See: <a href="../topics/macros.html">macros</a>,
+  <a href="../topics/patterns.html">patterns</a>,
+  <a href="../topics/attributes.html">attributes</a>,
+  <a href="../topics/library.html">library</a>,
+  <a href="../commands/def.html">/def</a>,
+  <a href="../commands/list.html">/list</a>,
+  <a href="../commands/load.html">/load</a>,
+  <a href="../commands/saveworld.html">/saveworld</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

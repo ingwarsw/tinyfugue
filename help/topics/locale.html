@@ -1,0 +1,118 @@
+<title>TinyFugue: locale</title>
+<!--"@8-bit"-->
+<!--"@8 bit"-->
+<!--"@characters"-->
+<!--"@character set"-->
+<!--"@iso-8859-1"-->
+<!--"@iso-8859"-->
+<!--"@iso 8859"-->
+<!--"@latin1"-->
+<!--"@international"-->
+<!--"@i18n"-->
+<!--"@internationalization"-->
+<!--"@internationalisation"-->
+<!--"@locale"-->
+<h1>locale</h1>
+
+<p>
+  <!-- This is what most people are looking for, so put this first. -->
+  On many systems, "<code><a href="../commands/setenv.html">/setenv</a>
+  LC_CTYPE=en_US</code>" will allow you to use characters in the 8-bit ISO 8859
+  character set.  If this does not work on your system, or you want to use a
+  non-English locale, or you just want to learn more, keep reading.
+
+<p>
+  A locale defines a set of rules for a language and culture.  If the
+  platform on which TF runs supports locales, TF will support the following
+  categories of locale rules:
+
+  <dl>
+  <dt>LC_CTYPE	<dd>determines what characters are allowed, and whether
+		they should be treated as letters, digits, puctuation, or
+		control characters.  When using a locale with an 8-bit
+		character set, make sure that 
+		<a href="../topics/special_variables.html#%istrip">%istrip</a>
+		is <code>off</code> and
+		<a href="../topics/special_variables.html#%meta">%meta_esc</a>
+		is <code>off</code> or <code>nonprint</code>,
+		so you can type 8-bit characters with the meta key.
+  <dt>LC_TIME	<dd>determines the names and formats used in displaying
+		dates and times with
+		<a href="../commands/time.html">/time</a>,
+		<a href="../commands/ftime.html">ftime()</a>, etc.
+  </dl>
+
+<p>
+  The user can set the locale either by having special variables defined in
+  the environment before starting TF (preferred), or by setting them
+  while TF is running (they will automatically be exported to the environment
+  even if <a href="../commands/set.html">/set</a> is used).
+  The exact rules for setting locale depend on the platform, and should be
+  found your system's documentation for setlocale().
+  The rules are usually something like this:
+
+  <ol>
+  <li>If the variable
+	<a href="../topics/special_variables.html#%LC_ALL">LC_ALL</a> is set,
+	its value is used as the locale for all supported categories.
+  <li>Otherwise, if the variable with the name of a category (e.g., LC_CTYPE)
+	is set, its value is used as the locale for that category.
+  <li>Otherwise, if the variable
+	<a href="../topics/special_variables.html#%LANG">LANG</a> is set,
+	its value is used as the locale for any supported categories
+	that were not covered by the first two rules.
+  <li>If none of those are set for a category, the default "C" locale is
+	used for that category, which allows the 7-bit ASCII character
+	set and US English date and time formats.
+  </ol>
+
+<p>
+  The valid values for the locale variables depend on your system.
+  On a POSIX system, the valid values can be listed with the shell command
+  "<code>locale -a</code>".
+
+<p>
+  Bugs:
+  <ul>
+  <li>LC_COLLATE and LC_MESSAGES categories are not supported.
+  <li>In glob <a href="../topics/patterns.html">patterns</a>,
+      there is no way to specify a range of all letters that works in
+      all locales.  E.g., "[A-Za-z]" works in the standard "C" locale,
+      but not necessarily in others.
+      (However, in regexp <a href="../topics/patterns.html">patterns</a>,
+      locale information <b>is</b> used to define character type operators
+      like "\w" and "\W", case insensitivity, etc.)
+  <li>TF will convert character 0x80 to the character 0x00.  This is not
+      usually an issue, since character 0x80 is not a printable character in
+      the character sets of most locales (including all ISO character sets).
+  </ul>
+
+<p>
+  If your system has locale support, but does not have any locales installed,
+  you can get the POSIX 1003.2 WG15-collection locale definitions from
+  <a href="ftp://dkuug.dk/i18n/">ftp://dkuug.dk/i18n/</a> or
+  <a href="ftp://i44ftp.info.uni-karlsruhe.de/pub/linux/ctype/">ftp://i44ftp.info.uni-karlsruhe.de/pub/linux/ctype/</a>.
+
+<p>
+  Note that even though TF supports locales with non-ASCII character sets,
+  not all MUD servers support non-ASCII character sets.  Many servers simply
+  discard characters that are not printable ASCII.  Among servers that do
+  support non-ASCII characters, the most commonly used set is ISO-8859-1
+  (Latin1).  When choosing a locale for TF, you should choose one that
+  uses the same character set as the servers you use.
+
+<p>
+  Note to linux users and other users of GNU libc:
+  at least some versions of GNU localedef generate invalid LC_TIME
+  information from the WG15-collection sources, and the GNU libc causes
+  any program that tries to use the invalid LC_TIME information to crash.  
+  Workarounds:  delete the LC_TIME data; or, do not set any of the
+  LC_ALL, LC_TIME, or LANG variables.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

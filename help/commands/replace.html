@@ -1,0 +1,46 @@
+<title>TinyFugue: /replace</title>
+<!--"@/replace"-->
+<h1>/replace</h1>
+
+<p>
+  <a href="../topics/functions.html">Function</a> usage:
+<p>
+  <a href="../commands/replace.html">REPLACE</a>(<i>old</i>, <i>new</i>,
+  <i>string</i>)<br>
+
+<p>
+  Command usage:
+<p>
+  <a href="../commands/replace.html">/REPLACE</a> <i>old</i> <i>new</i>
+  <i>string</i><br>
+<hr>
+
+<p>
+  Echoes (in command form) or returns (in
+  <a href="../topics/functions.html">function</a> form) <i>string</i>,
+  with any occurrences of <i>old</i> in <i>string</i>
+  replaced by <i>new</i>.
+
+<p>
+<a name="replace-ex"><!-- referred to by "../commands/substitute.html" -->
+  Example:
+
+<p>
+  This example replaces "TF" with "TinyFugue" in every line sent by the
+  server.
+<pre>
+  <a href="../commands/def.html">/def</a> <a href="../commands/def.html#-m">-m</a>regexp <a href="../commands/def.html#-t">-t</a>"TF" replace_tf = \
+      <a href="../commands/test.html">/test</a> <a href="../commands/substitute.html">substitute</a>(<a href="../commands/replace.html">replace</a>("TF", "TinyFugue", {P0}))
+</pre>
+
+<p>
+  See: <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../commands/def.html">/tr</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

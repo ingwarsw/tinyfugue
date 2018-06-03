@@ -1,0 +1,92 @@
+<title>TinyFugue: /paste</title>
+<!--"@paste_prefix"-->
+<!--"@%paste_prefix"-->
+<!--"@/endpaste"-->
+<!--"@/paste"-->
+<h1>/paste</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/paste.html">/PASTE</a> [-pnx] [<i>prefix</i>]<br>
+  <a href="../commands/paste.html">/ENDPASTE</a><br>
+<hr>
+
+<p>
+  After executing <a href="../commands/paste.html">/paste</a>, every line of
+  input (including lines that begin with "/") will have <i>prefix</i>
+  prepended to it and then get sent to the
+  <a href="../topics/sockets.html#current">current socket</a>.
+  If <i>prefix</i> is omitted and <code>-n</code> is not specified, the
+  prefix defaults to the value of <code>%paste_prefix</code>;
+  if <code>%paste_prefix</code> is empty or unset, it defaults to
+  "<code>:|</code>".
+  Typing "<a href="../commands/paste.html">/endpaste</a>" or "." on a line
+  by itself ends the pasting; "/abort" on a line by itself aborts the pasting.
+  <a href="../commands/paste.html">/Paste</a> can be very useful when
+  using the cut-and-paste mechanism of many windowing systems.
+
+<p>
+  <a href="../topics/options.html">Options:</a>
+  <dl>
+  <dt>-p
+	<dd>"paragraph mode":  adjacent non-blank lines are joined,
+	and leading spaces are stripped (this is particularly useful
+	when pasting text cut from a web browser or a window of different
+	width).
+  <dt>-n
+	<dd>Don't prepend any prefix.
+  <dt>-x
+	<dd>After prepending the prefix (if any), execute the resulting
+	line as a command
+	(without <a href="../topics/substitution.html">substitution</a>)
+	instead of sending it.
+  <dt>-w<i>world</i>
+	<dd>Send the text to <i>world</i>.
+  <dt>-e<i>end</i>
+	<dd>End when the user types <i>end</i> (default: "/endpaste").
+	With or without this option, "." will always work.
+  <dt>-a<i>abort</i>
+	<dd>Abort when the user types <i>abort</i> (default: "/abort").
+	With or without this option, interrupt (^C) will always work.
+  <dt>-q
+	<dd>quiet: do not print "Entering paste mode" message.
+  <dt>-s
+	<dd>strip trailing spaces from each pasted line
+  <dt>-h
+	<dd>invoke matching <a href="../topics/hooks.html#SEND">SEND hooks</a>
+	for each line sent by <a href="../commands/paste.html">/paste</a>.
+  </dl>
+
+<p>
+  Note that <a href="../commands/paste.html">/endpaste</a> is not actually
+  a command, but a "magic cookie" recognized by 
+  <a href="../commands/paste.html">/paste</a>.  
+  "<a href="../commands/paste.html">/Endpaste</a>", ".", and SIGINT (^C)
+  are the only ways to end <a href="../commands/paste.html">/paste</a>.  
+
+<p>
+  Lines sent by <a href="../commands/paste.html">/paste</a> will
+  invoke matching <a href="../topics/hooks.html#SEND">SEND hooks</a>.
+
+<p>
+  Examples:
+  <dl>
+  <dt>Prepare to paste text from a web page to a mud:
+      <dd><code><a href="../commands/paste.html">/paste</a> -p</code>
+  <dt>Prepare to paste a bunch of lines to be recorded in your input
+  <a href="../topics/history.html">history</a>:
+      <dd><code><a href="../commands/paste.html">/paste</a> -x
+      <a href="../commands/recordline.html">/recordline</a> -i -</code>
+  </dl>
+<p>
+  See: <a href="../commands/quote.html">/quote</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

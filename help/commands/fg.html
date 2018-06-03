@@ -1,0 +1,82 @@
+<title>TinyFugue: /fg</title>
+<!--"@/bg"-->
+<!--"@/fg"-->
+<h1>/fg</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/fg.html">/FG</a> [-nsq&lt;&gt;l] [-c<i>N</i>] [<i>world</i>]<br>
+  <a href="../commands/fg.html">/BG</a><br>
+<hr>
+
+<p>
+  Bring the <a href="../topics/sockets.html">socket</a> associated with
+  <i>world</i> into the
+  <a href="../topics/sockets.html#foreground">foreground</a>.
+  The <i>world</i> must already be
+  connected with the <a href="../commands/connect.html">/connect</a> command.
+  Any lines that arrived while the <a href="../topics/sockets.html">socket</a>
+  was in the background will be displayed or counted in the
+  <a href="../commands/more.html">more</a> prompt,
+  unless the -q option is given.
+
+<p>
+  /fg <a href="../topics/options.html">Options:</a>
+  <dl compact>
+  <dt>-n
+          <dd>no <a href="../topics/sockets.html">socket</a>: put all
+          <a href="../topics/sockets.html">sockets</a> in the
+          <a href="../topics/sockets.html#background">background</a>.
+  <dt>-s
+          <dd>suppress error messages.
+  <dt>-&lt;
+          <dd>previous <a href="../topics/sockets.html">socket</a> in cycle.
+  <dt>-&gt;
+          <dd>next <a href="../topics/sockets.html">socket</a> in cycle.
+  <dt>-c<i>N</i>
+          <dd>Repeat the -&lt; or -&gt; option <i>N</i> times.
+  <dt>-l
+          <dd>ignored.
+  <dt>-q
+          <dd>quiet: jump to the last screenful of text, instead of starting
+	  at the same location you were at the last time the
+          <a href="../topics/sockets.html">socket</a> was in the
+	  <a href="../topics/sockets.html#foreground">foreground</a>.
+  </dl>
+
+<p>
+  If successful, <a href="../commands/fg.html">/fg</a> returns nonzero and
+  invokes the WORLD <a href="../topics/hooks.html">hook</a>;
+  otherwise, it returns 0.
+
+<p>
+  By default, <a href="../commands/fg.html">/fg</a> draws
+  a dividing line between old and new text.
+  If you would prefer no dividing line, or clearing old text,
+  this can be configured with
+  <a href="../topics/special_variables.html#%textdiv">%textdiv</a>.
+
+<p>
+  <a href="../commands/fg.html">/bg</a> puts all
+  <a href="../topics/sockets.html">sockets</a> in the
+  <a href="../topics/sockets.html#background">background</a>, and is
+  equivalent to <a href="../commands/fg.html">/fg</a> -n.
+  By default, <a href="../commands/fg.html">/bg</a> is bound to the ^]
+  <a href="../topics/keybindings.html">key</a> (not ESC, which is ^[)
+
+<p>
+  See: <a href="../commands/connect.html">/connect</a>,
+  <a href="../topics/worlds.html">worlds</a>,
+  <a href="../topics/sockets.html">sockets</a>,
+  <a href="../topics/special_variables.html#%textdiv">%textdiv</a>,
+  <a href="../topics/special_variables.html#%textdiv_str">%textdiv_str</a>.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

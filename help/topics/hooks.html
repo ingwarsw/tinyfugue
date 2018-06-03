@@ -1,0 +1,296 @@
+<title>TinyFugue: hooks</title>
+<!--"@hook"-->
+<!--"@hooks"-->
+<h1>hooks</h1>
+
+<p>
+  Associated topics:
+  <dl>
+  <dt><a href="../commands/def.html">/def</a>
+          <dd>define a <a href="../topics/macros.html">macro</a> with any
+          fields
+  <dt><a href="../commands/hook.html">/hook</a>
+          <dd>define a <a href="../topics/hooks.html">hook</a>
+          <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/unhook.html">/unhook</a>
+          <dd>undefine a <a href="../topics/hooks.html">hook</a>
+          <a href="../topics/macros.html">macro</a>
+  <dt><a href="../commands/trigger.html">/trigger -h</a>
+          <dd>call a <a href="../topics/hooks.html">hook</a>
+          <a href="../topics/macros.html">macro</a>
+  <dt><a href="../topics/special_variables.html#%hook">%hook</a>
+	  <dd>enable <a href="../topics/hooks.html">hooks</a>
+  <dt><a href="../topics/special_variables.html#%max_hook">%max_hook</a>
+	  <dd>maximum <a href="../topics/hooks.html">hook</a> rate
+  </dl>
+
+<p>
+  <a href="../topics/hooks.html">Hooks</a> are a method of calling a
+  <a href="../topics/macros.html">macro</a> based on special events within
+  TF, in much the same way as <a href="../topics/triggers.html">triggers</a>
+  call <a href="../topics/macros.html">macros</a> based on text received
+  from a <a href="../topics/sockets.html">socket</a>.
+  <a href="../topics/hooks.html">Hooks</a> allow the user to customize the
+  behavior of TinyFugue and automate special functions.
+
+<p>
+  A <a href="../topics/hooks.html">hook</a> definition has two parts: an
+  <i>event</i> and a <i>pattern</i>.  When the event occurs, the
+  <a href="../topics/macros.html">macro</a> will be executed if the arguments
+  supplied by the event match the <a href="../topics/macros.html">macro</a>'s
+  <i>pattern</i> (see the section on
+  "<a href="../topics/patterns.html">patterns</a>").
+
+<p>
+  If multiple <a href="../topics/hooks.html">hooks</a> match the same event
+  and pattern, one or more are selected as described under
+  "<a href="../topics/priority.html">priority</a>".
+
+<p>
+  Most <a href="../topics/hooks.html">hooks</a> have a default message
+  associated with them, which will be displayed 
+  with the
+  <a href="../topics/attributes.html">attributes</a> of the
+  <a href="../topics/hooks.html">hook</a> if one is defined.  Thus a
+  <a href="../topics/hooks.html">hook</a> with a
+  <a href="../topics/attributes.html">gag</a>
+  <a href="../topics/attributes.html">attribute</a> will suppress the display
+  of the message.
+
+<p>
+  <a href="../topics/hooks.html">Hook</a> may have
+  <a href="../topics/priority.html">multi-shots</a>, in which case it and the
+  <a href="../topics/macros.html">macro</a> it is associated with is removed
+  after executing a specified number of times.
+
+<p>
+  In the table below, 'A' or 'W' in the message column indicates the location
+  of the message display:
+  <dl compact>
+  <dt>A <dd>the message is printed to the
+      the <a href="../topics/tfio.html">alert stream</a>
+      (i.e., the status line).
+  <dt>W <dd>the message is printed to the
+      appropriate <a href="../topics/tfio.html">world's stream</a>;
+      if that world is not the foreground world, the message is also printed
+      to the <a href="../topics/tfio.html">alert stream</a>.
+  <dt>Otherwise, the message is sent to the the
+      <a href="../topics/tfio.html">tferr stream</a> (i.e., the screen).
+      <dd>
+  </dl>
+<pre>
+  Event Name  Arguments       Default Message or Action
+  ----------  ---------       -------------------------
+<a name="ACTIVITY"></a><!--
+------->  ACTIVITY    world           A '% Activity in world <i>world</i>'
+                                (called only the first time activity
+                                occurs on a given <a href="../topics/sockets.html">socket</a>.)
+<a name="BAMF"></a><!--
+---- -->  BAMF        world           W '% <a href="../commands/bamf.html">Bamfing</a> to <i>world</i>'
+<a name="BGTEXT"></a><!--
+---- -->  BGTEXT      world             Text was printed in background world <i>world</i>
+<a name="BACKGROUND"></a><a name="BGTRIG"></a><!--
+---- -->  BGTRIG      world           A '% <a href="../topics/triggers.html">Trigger</a> in world <i>world</i>'
+<a name="CONFAIL"></a><!--
+---- -->  CONFAIL     world, reason   W '% <a href="../commands/connect.html">Connection</a> to <i>world</i> failed: <i>reason</i>'
+<a name="CONFAIL"></a><!--
+---- -->  CONFAIL     world, reason   W '% Unable to <a href="../commands/connect.html">connect</a> to <i>world</i>: <i>reason</i>'
+<a name="CONFLICT"></a><!--
+---- -->  CONFLICT    <a href="../topics/macros.html">macro</a>             '% <i>macro</i> conflicts with builtin command.'
+<a name="CONNECT"></a><!--
+---- -->  CONNECT     world, cipher   W '% <a href="../commands/connect.html">Connected</a> to <i>world</i>[ using <i>cipher</i>].'
+<a name="ICONFAIL"></a><!--
+---- -->  ICONFAIL    world, reason   W '% <a href="../commands/connect.html">Intermediate connection</a> to <i>world</i>
+                                failed: <i>reason</i>'
+<a name="DISCONNECT"></a><!--
+---- -->  DISCONNECT  world, reason   W '% <a href="../commands/connect.html">Connection</a> to <i>world</i> closed: <i>reason</i>.'
+                                (Called if you send the server's disconnect
+                                command (e.g., "QUIT") or <a href="../topics/sockets.html">socket</a> closes, but
+                                not if you use <a href="../commands/dc.html">/dc</a>.)
+<a name="KILL"></a><!--
+---- -->  KILL        pid               (<a href="../topics/processes.html">process</a> ends)
+<a name="LOAD"></a><!--
+---- -->  LOAD        file              '% <a href="../commands/load.html">Loading</a> commands from file <i>file</i>'
+<a name="LOADFAIL"></a><!--
+---- -->  LOADFAIL    file, reason      '% <i>file</i>: <i>reason</i>'
+<a name="LOG"></a><!--
+---- -->  LOG         file              '% <a href="../commands/log.html">Logging</a> to file <i>file</i>'
+<a name="LOGIN"></a><!--
+---- -->  LOGIN       world             (<a href="../topics/login.html">automatic login</a>)
+<a name="MAIL"></a><!--
+---- -->  MAIL        file            A '% You have new mail in <i>file</i>.'
+                                (See: <a href="../topics/mail.html">mail</a>).
+<a name="MORE"></a><!--
+---- -->  MORE                          '<a href="../commands/more.html">--More--</a>' (reverse bold)
+<a name="NOMACRO"></a><!--
+---- -->  NOMACRO     name              '% <i>name</i>: No such command or macro'
+<a name="PENDING"></a><!--
+---- -->  PENDING     world           W '% Hostname lookup for <i>world</i> in progress'
+  PENDING     world, address  A '% Trying to <a href="../commands/connect.html">connect</a> to <i>world</i>: <i>address</i>'
+<a name="PREACTIVITY"></a><!--
+---- -->  PREACTIVITY world             (Activity in world <i>world</i>)
+                                (called only the first time activity
+                                occurs on a given <a href="../topics/sockets.html">socket</a>.)
+<a name="PROCESS"></a><!--
+---- -->  PROCESS     pid               <a href="../topics/processes.html">process</a> starts
+<a name="PROMPT"></a><!--
+---- -->  PROMPT      text              <i>text</i> is a partial (unterminated) line
+                                from the server.  See "<a href="../topics/prompts.html">prompts</a>"
+<a name="PROXY"></a><!--
+---- -->  PROXY       world             (<a href="../topics/proxy.html">proxy</a> connection to <i>world</i> has completed)
+<a name="REDEF"></a><!--
+---- -->  REDEF       obj_type, name    '% Redefined <i>obj_type</i> <i>name</i>'
+<a name="RESIZE"></a><!--
+---- -->  RESIZE      columns, lines    (window was resized)
+                                (see also: <a href="../topics/functions.html#columns">columns()</a>, <a href="../topics/functions.html#lines">lines()</a>)
+<a name="SEND"></a><!--
+---- -->  SEND        text              (text sent to <a href="../topics/sockets.html#current">current</a> <a href="../topics/sockets.html">socket</a>)
+                                (see note below ("<a href="../topics/hooks.html">hooks</a>"))
+<a name="SHADOW"></a><!--
+---- -->  SHADOW      var_name          '% Variable <i>var_name</i> overshadows global'
+<a name="SHELL"></a><!--
+---- -->  SHELL       type, command     '% Executing <i>type</i>: <i>command</i>'
+<a name="SIGHUP"></a><!--
+---- -->  SIGHUP                        (SIGHUP <a href="../topics/signals.html">signal</a> caught; tf may terminate)
+<a name="SIGTERM"></a><!--
+---- -->  SIGTERM                       (SIGTERM <a href="../topics/signals.html">signal</a> caught; tf terminates)
+<a name="SIGUSR1"></a><!--
+---- -->  SIGUSR1                       (SIGUSR1 <a href="../topics/signals.html">signal</a> caught; no effect)
+<a name="SIGUSR2"></a><!--
+---- -->  SIGUSR2                       (SIGUSR2 <a href="../topics/signals.html">signal</a> caught; no effect)
+<a name="WORLD"></a><!--
+---- -->  WORLD       world           W (<a href="../topics/sockets.html#foreground">foreground socket</a> changes)
+</pre>
+<a name=""></a>
+  Notes:
+
+<p>
+  The -w and -T options to <a href="../commands/def.html">/def</a> can be
+  used to restrict <a href="../topics/hooks.html">hooks</a> to matching
+  only when the <a href="../topics/sockets.html#current">current</a>
+  world matches the world or world type.
+
+<p>
+  When a <a href="../topics/macros.html">macro</a> is defined with the same
+  name as an existing <a href="../topics/macros.html">macro</a>, the
+  REDEF <a href="../topics/hooks.html">hook</a> will be called,
+  <em>unless</em> the new <a href="../topics/macros.html">macro</a>
+  is identical to the original.
+
+<p>
+  BGTRIG used to be called BACKGROUND, and the old name still works.
+  Its "% Trigger in world <world>" message can be quieted for
+  individual triggers by defining them with
+  <a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-q">-q</a>,
+  or for all triggers with "/def -ag -hBGTRIG".
+
+<p>
+  The SEND <a href="../topics/hooks.html">hook</a> is called whenever text
+  would be sent to the <a href="../topics/sockets.html#current">current</a>
+  <a href="../topics/sockets.html">socket</a>.
+  If a SEND <a href="../topics/hooks.html">hook</a> matches the text that
+  would be sent, the text is not sent (unless the hook was defined with
+  <a href="../commands/def.html#-q">/def -q</a>),
+  and the <a href="../topics/hooks.html">hook</a> is executed instead.
+  By default, SEND <a href="../topics/hooks.html">hooks</a> are not invoked
+  from <a href="../commands/send.html">send()</a>
+  or <a href="../commands/send.html">/send</a>,
+  but there is an option to do so;
+  SEND <a href="../topics/hooks.html">hooks</a> are invoked
+  from any <a href="../topics/macros.html">macro</a> or command line that
+  sends plain text.
+
+<p>
+  When successfully connected to a new
+  <a href="../topics/sockets.html">socket</a>, these events occur:
+  1) If this is a <a href="../topics/proxy.html">proxy</a> connection,
+     the PROXY <a href="../topics/hooks.html">hook</a> is called;
+  2) If there is a file associated with the world, the file will be
+     loaded (and the LOAD <a href="../topics/hooks.html">hook</a> will be
+     called).
+  3) If this is not a <a href="../topics/proxy.html">proxy</a> connection,
+     the CONNECT <a href="../topics/hooks.html">hook</a> is called;
+  4) If <a href="../topics/special_variables.html#%login">%{login}</a> is on,
+     a character and password are defined, and this is not a
+     <a href="../topics/proxy.html">proxy</a> connection,
+     the <a href="../topics/login.html">LOGIN</a>
+     <a href="../topics/hooks.html">hook</a> is called.
+
+<p>
+  When a (non-<a href="../topics/attributes.html">gag</a>ged)
+  line is displayed in a background world, the
+  PREACTIVITY hook is called immediately before the line is displayed, and 
+  the ACTIVITY hook is called immediately after.
+  Thus, functions like
+  <a href="../topics/functions.html#moresize">moresize()</a> and
+  <a href="../topics/functions.html#nactive">nactive()</a>
+  will give different results in the two hooks.
+  Any activity generated by a PREACTIVITY hook will not recursively
+  cause another PREACTIVITY or ACTIVITY event.
+
+<p>
+  The SIGHUP, SIGTERM, SIGUSR1, and SIGUSR2
+  <a href="../topics/hooks.html">hooks</a> are called when the corresponding
+  <a href="../topics/signals.html">signal</a> is received.
+  If SIGHUP is received and SIGHUP was not ignored when tf was started,
+  or SIGTERM was received, TF will terminate immediately
+  after executing the <a href="../topics/hooks.html">hook</a>; if the
+  <a href="../topics/hooks.html">hook</a> calls any commands with delayed
+  effects (a <a href="../commands/repeat.html">/repeat</a> or
+  <a href="../commands/quote.html">/quote</a> without -S, a nonblocking
+  <a href="../commands/connect.html">/connect</a>, etc), those effects will
+  not occur before termination.
+
+<p>
+  A hook's message, if any, is displayed (with its
+  <a href="../topics/attributes.html">attributes</a>)
+  before any of the hooked <a href="../topics/macros.html">macros</a>
+  are executed.  Prior to version 5.0, the message was displayed
+  after executing hooked <a href="../topics/macros.html">macros</a>,
+  which may have generated their own output, which was sometimes
+  confusing.
+
+<p>
+  Examples:
+
+<p>
+<pre>
+    <a href="../commands/hook.html">/hook</a> ACTIVITY|DISCONNECT {TT|SM}* = <a href="../commands/world.html">/world</a> <a href="../topics/substitution.html#%n">%1</a>
+</pre>
+  will cause TF to automatically switch to TT or SM if either becomes active
+  or disconnected.
+<pre>
+    <a href="../commands/def.html">/def</a> -T'tiny.mush' -hSEND mush_escape = <a href="../commands/send.html">/send</a> - $(<a href="../commands/escape.html">/escape</a> \%[ <a href="../topics/substitution.html#%*">%*</a>)
+</pre>
+  will catch any line sent to a world of type 'tiny.mush', escape all
+  occurrences of '%', '[' and '\' within that line, and send the new line
+  instead of the original.  This is useful for avoiding unwanted
+  interpretation of '%', '[', and '\' on TinyMUSH servers.
+<pre>
+    <a href="../commands/hook.html">/hook</a> SIGHUP = <a href="../commands/log.html">/log</a> on%; <a href="../commands/recall.html">/recall</a> /10
+</pre>
+  will <a href="../commands/log.html">log</a> the last 10 lines of output if
+  you are unexpectedly disconnected from your tf session.
+
+<p>
+<a name="CONNETFAIL"></a>
+  The CONNETFAIL hook, which existed in versions 5.0 alpha 13 through
+  5.0 beta 6,
+  has been replaced with the <a href="#ICONFAIL">ICONFAIL</a> hook.
+<a name=""></a>
+
+<p>
+  See also: <a href="../topics/macros.html">macros</a>,
+  <a href="../topics/triggers.html">triggers</a>,
+  <a href="../topics/patterns.html">patterns</a>,
+  <a href="../topics/priority.html">priority</a>,
+  <a href="../topics/signals.html">signals</a>.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

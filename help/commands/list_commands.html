@@ -1,0 +1,90 @@
+<title>TinyFugue: list commands</title>
+<!--"@/car"-->
+<!--"@/cdr"-->
+<!--"@/cadr"-->
+<!--"@/cddr"-->
+<!--"@/caddr"-->
+<!--"@/cdddr"-->
+<!--"@/length"-->
+<!--"@/reverse"-->
+<!--"@/mapcar"-->
+<!--"@/maplist"-->
+<!--"@/remove"-->
+<!--"@/unique"-->
+<!--"@lisp"-->
+<!--"@lisp.tf"-->
+<!--"@list"-->
+<!--"@list commands"-->
+<h1>list commands</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/load.html">/REQUIRE</a> lisp.tf<br>
+<hr>
+
+<p>
+  These commands operate on lists of words, and are similar to those in lisp.
+  They all give their results with <a href="../commands/echo.html">/echo</a>,
+  and are intended to be used in
+  <a href="../topics/substitution.html#$()">$(...) command substitution</a>
+  to capture the result.
+  <dl>
+
+<p>
+  <dt><a href="../commands/list_commands.html">/car</a> <i>list</i>
+          <dd> Echo first word.  (Same as
+          <a href="../commands/nth.html">/first</a>).
+  <dt><a href="../commands/list_commands.html">/cdr</a> <i>list</i>
+          <dd> Echo all words after first.  (Same as
+          <a href="../commands/nth.html">/rest</a>).
+  <dt><a href="../commands/list_commands.html">/cadr</a> <i>list</i>
+          <dd> Echo second word.
+  <dt><a href="../commands/list_commands.html">/cddr</a> <i>list</i>
+          <dd> Echo all words after second.
+  <dt><a href="../commands/list_commands.html">/caddr</a> <i>list</i>
+          <dd> Echo third word.
+  <dt><a href="../commands/list_commands.html">/cdddr</a> <i>list</i>
+          <dd> Echo all words after third.
+        
+<p>
+  <dt><a href="../commands/list_commands.html">/length</a> <i>list</i>
+          <dd> Echo number of words in <i>list</i>.
+        
+<p>
+  <dt><a href="../commands/list_commands.html">/reverse</a> <i>list</i>
+          <dd> Reverse the order of the words in <i>list</i>.
+        
+<p>
+  <dt><a href="../commands/list_commands.html">/mapcar</a> <i>cmd</i>
+  <i>list</i>
+          <dd> Execute "<i>cmd</i> <i>word</i>" for each word in
+          <i>list</i>.
+  <dt><a href="../commands/list_commands.html">/maplist</a> <i>cmd</i>
+  <i>list</i>
+          <dd> Execute "<i>cmd</i> <i>list</i>" repeatedly, removing the
+          first word from <i>list</i> each time, until <i>list</i> is empty.
+        
+<p>
+  <dt><a href="../commands/list_commands.html">/remove</a> <i>word</i>
+  <i>list</i>
+          <dd> Echo <i>list</i> with all occurrences of <i>word</i> removed.
+        
+<p>
+  <dt><a href="../commands/list_commands.html">/unique</a> <i>list</i>
+          <dd> Remove all duplicate words from <i>list</i>.  Note:
+          <a href="../commands/list_commands.html">/unique</a> is very slow
+          on long lists.
+  </dl>
+
+<p>
+  See: <a href="../commands/nth.html">/nth</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

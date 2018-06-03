@@ -1,0 +1,64 @@
+<title>TinyFugue: /partial</title>
+<!--"@/partial"-->
+<h1>/partial</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/partial.html">/PARTIAL</a> <i>regexp</i><br>
+<hr>
+
+<p>
+  Creates a <a href="../topics/macros.html">macro</a> which will
+  <a href="../topics/attributes.html">hilite</a> the part of a line
+  containing text matched by the
+  <a href="../topics/patterns.html#regexp">regular expression</a>
+  <i>regexp</i>.  Remember that
+  <a href="../topics/patterns.html#regexp">regular expressions</a>
+  are case sensitive.  The new
+  <a href="../topics/macros.html">macro</a> is a
+  <a href="../topics/priority.html">fall-thru</a>, so multiple
+  <a href="../commands/partial.html">/partial</a>s (and other
+  <a href="../topics/triggers.html">triggers</a>) can match the same text.
+
+<p>
+  The <a href="../topics/attributes.html">attribute</a>(s) for
+  <a href="../topics/attributes.html">hilited</a> text are determined by the
+  <a href="../topics/special_variables.html#%hiliteattr">%{hiliteattr}</a>
+  <a href="../topics/variables.html">variable</a>.  The default is bold
+  (<a href="../topics/special_variables.html#%hiliteattr">hiliteattr</a>=B).
+  <a href="../topics/colors.html">Colors</a> are also available.
+
+<p>
+  For example, "<code><a href="../commands/partial.html">/partial</a>
+  [Hh]awkeye</code>" will <a href="../topics/attributes.html">hilite</a> any
+  occurrence of "Hawkeye" or "hawkeye".
+
+<p>
+  Unlike version 3.2, a partial
+  <a href="../topics/attributes.html">hilite</a> will be applied to every
+  match on a line, not just the first match.
+
+<p>
+  <code><a href="../commands/partial.html">/partial</a>
+  <i>regexp</i></code><br>
+  is equivalent to<br>
+  <code><a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-P">-Ph</a>
+  <a href="../commands/def.html#-F">-F</a>
+  <a href="../commands/def.html#-t">-t</a><i>regexp</i></code><br>
+
+<p>
+  See: <a href="../topics/attributes.html">attributes</a>,
+  <a href="../topics/patterns.html">patterns</a>,
+  <a href="../commands/hilite.html">/hilite</a>,
+  <a href="../commands/def.html">/def</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -80,8 +80,8 @@ enum enum_attr {
     F_FLASH       = 0x0000,   /* zero - not implemented */
     F_DIM         = 0x0000,   /* zero - not implemented */
     F_BOLD        = 0x0004,
-    F_HILITE      = 0x0008,
-    F_ITALIC      = 0x0010,
+    F_ITALIC      = 0x0008,
+    F_HILITE      = 0x0010,
     F_NONE        = 0x0020,
     F_EXCLUSIVE   = 0x0040,
 

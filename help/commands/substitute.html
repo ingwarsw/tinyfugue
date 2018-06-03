@@ -1,0 +1,79 @@
+<title>TinyFugue: /substitute</title>
+<!--"@/substitute"-->
+<!--"@substitute()"-->
+<h1>/substitute</h1>
+
+<p>
+  <a href="../topics/functions.html">Function</a> usage:
+<p>
+  <a href="../commands/substitute.html">SUBSTITUTE</a>(<i>text</i> [,
+      <i>attrs</i> [, <i>inline</i>]])<br>
+
+<p>
+  Command usage:
+<p>
+  <a href="../commands/substitute.html">/SUBSTITUTE</a> [-a<i>attrs</i>] [-p]
+      <i>text</i><br>
+<hr>
+
+<p>
+  When called from a <a href="../topics/triggers.html">trigger</a> (directly
+  or indirectly), the entire <a href="../topics/triggers.html">trigger</a>ing line
+  is replaced with <i>text</i>.  After a
+  <a href="../commands/substitute.html">/substitute</a>, it will appear as if
+  <i>text</i> is what caused the <a href="../topics/triggers.html">trigger</a>;
+  the original line is lost.  In particular, this means when
+  <a href="../commands/substitute.html">/substitute</a> is called from a
+  <a href="../topics/priority.html">fall-thru</a>
+  <a href="../topics/triggers.html">trigger</a>,
+  <a href="../topics/triggers.html">triggers</a> of lower
+  <a href="../topics/priority.html">priority</a> will be
+  compared against <i>text</i> instead of the original line.
+
+<p>
+  <a href="../topics/options.html">Options</a> and arguments:
+  <dl>
+  <dt>command: <code>-a<i>attrs</i></code>
+  <dt>function: <code><i>attrs</i></code>
+        <dd>Give <i>text</i> the
+        <a href="../topics/attributes.html">attributes</a> described by
+        <i>attrs</i>.  These are added to the original line's
+        <a href="../topics/attributes.html">attributes</a> unless <i>attrs</i>
+        include the "x" <a href="../topics/attributes.html">attribute</a>.
+
+  <dt>command: <code>-p</code>
+  <dt>function: <i>inline</i> = <code>"on"</code> or <code>1</code>
+        <dd>Interpet <code>@{<i>attr</i>}</code> strings as commands to
+        set <a href="../topics/attributes.html">attributes</a> inline, as
+        in <a href="../commands/echo.html">/echo</a>.  (See
+        <a href="../commands/echo.html">/echo</a>).
+  </dl>
+
+<p>
+  Example:
+
+<p>
+  On a mud that uses MUFpage, you could set your #prepend string to
+  "##page&gt;", and define a <a href="../topics/triggers.html">trigger</a> like:
+<pre>
+  <a href="../commands/def.html">/def</a> <a href="../commands/def.html#-a">-ah</a> <a href="../commands/def.html#-t">-t</a>"##page&gt; *" <a href="../topics/attributes.html">hilite</a>_mufpage = <a href="../commands/substitute.html">/substitute</a> <a href="../topics/substitution.html#%n">%-1</a>
+</pre>
+
+<p>
+  This will match no matter what page format the sender uses, and strip off
+  the "##page&gt;" so you never see it.
+
+<p>
+  For another example, see
+  <a href="../commands/replace.html#replace-ex">/replace</a>.
+
+<p>
+  See: <a href="../topics/triggers.html">triggers</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

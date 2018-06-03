@@ -1,0 +1,74 @@
+<title>TinyFugue: /gag</title>
+<!--"@/gag"-->
+<h1>/gag</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/gag.html">/GAG</a> [<i>pattern</i>
+  [=<i>response</i>]]<br>
+<hr>
+
+<p>
+  Creates a <a href="../topics/macros.html">macro</a> which will
+  <a href="../topics/triggers.html">trigger</a> on text matching
+  <i><a href="../topics/patterns.html">pattern</a></i> and prevent it from
+  being displayed, optionally executing <i>response</i>.
+
+<p>
+  With no arguments, <a href="../commands/gag.html">/gag</a> sets the flag
+  <a href="../topics/special_variables.html#%gag">%{gag}</a> to 1 (on).  This
+  flag enables the <a href="../topics/attributes.html">gag</a>
+  <a href="../topics/attributes.html">attribute</a> on
+  <a href="../topics/triggers.html">triggers</a>.  It is on by default.
+
+<p>
+  The matching style of the <a href="../topics/attributes.html">gag</a>
+  <a href="../topics/patterns.html">pattern</a> is determined by
+  <a href="../topics/special_variables.html#%matching">%{matching}</a>.  The
+  <a href="../topics/priority.html">priority</a> of the
+  <a href="../topics/attributes.html">gag</a> is determined
+  by <a href="../topics/special_variables.html#%gpri">%{gpri}</a>.  These
+  variables are examined when the <a href="../topics/attributes.html">gag</a>
+  is defined, not when it is executed.
+
+<p>
+  <a href="../topics/attributes.html">Gagged</a> lines from
+  <a href="../topics/sockets.html#background">background</a> worlds
+  will not set the activity indicator on the
+  <a href="../topics/status_line.html">status line</a>
+  or call the activity
+  <a href="../topics/hooks.html">hook</a>.
+
+<p>
+  If <a href="../commands/gag.html">/gag</a> does not create a new
+  <a href="../topics/macros.html">macro</a>, it returns 0.  Otherwise, it
+  returns the number of the new <a href="../topics/macros.html">macro</a>
+  (useful in <a href="../commands/undefn.html">/undefn</a> and
+  <a href="../commands/edit.html">/edit</a>).
+
+<p>
+  <code><a href="../commands/gag.html">/gag</a> <i>pattern</i> [=
+  <i>response</i>]</code><br>
+  is equivalent to<br>
+  <code><a href="../commands/def.html">/def</a>
+  <a href="../commands/def.html#-a">-ag</a>
+  <a href="../commands/def.html#-t">-t</a>"<i>pattern</i>"
+  [= <i>response</i>]</code>.<br>
+
+<p>
+  See: <a href="../topics/triggers.html">triggers</a>,
+  <a href="../topics/patterns.html">patterns</a>,
+  <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../topics/special_variables.html#%gag">%gag</a>,
+  <a href="../commands/def.html">/def</a>,
+  <a href="../commands/nogag.html">/nogag</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

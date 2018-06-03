@@ -1,0 +1,43 @@
+<title>TinyFugue: /watchdog</title>
+<!--"@/watchdog"-->
+<h1>/watchdog</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/watchdog.html">/WATCHDOG</a> [OFF|ON]<br>
+  <a href="../commands/watchdog.html">/WATCHDOG</a> <i>n1</i> [<i>n2</i>]<br>
+<hr>
+
+<p>
+  Sets the flag
+  <a href="../topics/special_variables.html#%watchdog">%{watchdog}</a>.  This
+  flag determines whether Fugue will watch for identical lines and suppress
+  them.  Fugue looks for lines which have occurred <i>n1</i> times out of
+  <i>n2</i> (<i>n1</i> defaults to 2 and <i>n2</i> to 5) and suppress them,
+  so with the default settings Fugue will suppress any lines that have
+  occurred 2 times out of the last 5.
+
+<p>
+  The <i>n1</i> and <i>n2</i> settings for
+  <a href="../commands/watchdog.html">/watchdog</a> are distinct from the
+  <i>n1</i> and <i>n2</i> settings for
+  <a href="../commands/watchname.html">/watchname</a>.
+
+<p>
+  The flag
+  <a href="../topics/special_variables.html#%watchdog">%{watchdog}</a>
+  defaults to 0 (off).
+
+<p>
+  See: <a href="../topics/special_variables.html#%watchdog">%watchdog</a>,
+  <a href="../commands/watchname.html">/watchname</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

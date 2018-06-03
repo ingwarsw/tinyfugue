@@ -1,0 +1,77 @@
+<title>TinyFugue: /help</title>
+<!--"@/man"-->
+<!--"@/help"-->
+<h1>/help</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/help.html">/HELP</a> [<i>topic</i>]<br>
+<hr>
+
+<p>
+  Displays help on the topic specified, or displays a quick summary of
+  available topics if no topic is given.
+
+<p>
+  In the documentation,
+  words or phrases in <a href="#">this format</a> are references to other
+  topics.  That is, a hyperlink in HTML, or something that can be used
+  as an argument to <a href="../commands/def.html">/help</a> in <b>tf</b>.
+
+<p>
+  Commands are described with the format "/COMMAND arguments".
+  Words in all caps must be spelled exactly as shown
+  (but do not need to be capitalized).
+  Arguments in <i>this format</i>
+  (underlined angle brackets in /help, or italics in HTML)
+  can be given any value.
+  Arguments in [square brackets] may be omitted.
+  The character | means "or".
+  For example, "[OFF|ON]" means you may type "off", "on", or nothing.
+
+<p>
+  Some help topics have punctuation in their names:  variables begin with
+  "%", commands begin with "/", and functions end with "()".  A name with
+  omitted punctuation will usually match the same topic (e.g.,
+  "<a href="../commands/def.html">/def</a>" and
+  "<a href="../commands/def.html">def</a>"
+  both match the /def command topic), but sometime will
+  match a different topic (e.g.,
+  "<a href="../topics/special_variables.html#%MAIL">%MAIL</a>"
+  matches the MAIL variable topic, but
+  "<a href="../topics/hooks.html#MAIL">MAIL</a>"
+  matches the MAIL hook topic).
+  There are also (sub)topics for various tf syntax constructions such as
+  "<a href="../topics/substitution.html#%{}">%{}</a>" and
+  "<a href="../topics/substitution.html#$()">$()</a>".
+
+<p>
+  For <a href="../commands/def.html">/help</a> to work,
+  the <a href="../topics/variables.html">variable</a>
+  <a href="../topics/special_variables.html#%TFHELP">%TFHELP</a>
+  must contain the name of the helpfile.  It is set when TF is installed, and
+  should not normally be changed.  If the helpfile or the help index is not
+  found, <a href="../commands/help.html">/help</a> will not function.
+  The help file is in ASCII with embedded ANSI display codes, so can be
+  read or printed by any program that can handle ANSI codes.
+
+<p>
+<a name="html"></a>
+  The help documents are also available on the web at
+  <a href="http://tinyfugue.sourceforge.net/help/">http://tinyfugue.sourceforge.net/help/</a>.
+<a name=""></a>
+
+<p>
+  See: <a href="../topics/index.html">index</a>,
+  <a href="../topics/intro.html">intro</a>,
+  <a href="../topics/options.html">options</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

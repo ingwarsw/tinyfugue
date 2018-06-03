@@ -1,0 +1,211 @@
+<title>TinyFugue: standard library</title>
+<!--"@stdlib.tf"-->
+<!--"@local.tf"-->
+<!--"@lib"-->
+<!--"@library"-->
+<!--"@library"-->
+<!--"@standard library"-->
+<h1>standard library</h1>
+
+<p>
+  When <a href="../topics/tf.html">TF</a> is started, commands are loaded
+  from the standard library
+  (<a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>/stdlib.tf).
+  If the installer has created an optional local library
+  (<a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>/local.tf),
+  that will also be loaded.  <a href="../topics/macros.html">Macros</a>
+  defined in the standard library are marked with the invisible option
+  ("<a href="../commands/def.html#-i">-i</a>")
+  so they will not be processed by
+  <a href="../commands/list.html">/list</a>,
+  <a href="../commands/save.html">/save</a> and
+  <a href="../commands/purge.html">/purge</a> unless forced.  Redefining or
+  undefining such a <a href="../topics/macros.html">macro</a> will clear the
+  <a href="../commands/def.html#-i">-i</a>
+  option, so customized <a href="../topics/macros.html">macros</a> with
+  the same names as library <a href="../topics/macros.html">macros</a> can be
+  created, listed, saved, and purged.
+
+<p>
+  See also: <a href="../topics/utilities.html">utilities</a>
+
+<p>
+<a name="filename macros">
+<h2>Filenames:</h2>
+
+<p>
+  These <a href="../topics/macros.html">macros</a> may be redefined to any
+  filename.  LOGFILE contains the default filename used by
+  <a href="../commands/log.html">/log</a>.  MACROFILE, HILITEFILE, GAGFILE,
+  TRIGFILE, BINDFILE, HOOKFILE, and WORLDFILE contain the default filenames
+  used by the <a href="../commands/load.html">/load</a>* and
+  <a href="../commands/save.html">/save</a>* families of commands.
+<a name="">
+
+<p>
+<a name="list*"></a>
+<h2>List commands:</h2>
+  <dl>
+  <dt><a href="../commands/list.html">/listdef</a> <i>spec</i>
+          <dd>equivalent to '<a href="../commands/list.html">/list</a>
+          <i>spec</i>'.
+  <dt><a href="../commands/list.html">/listhilite</a> <i>spec</i>
+          <dd>lists <a href="../topics/attributes.html">hilite</a>s on
+          <i>spec</i>.
+  <dt><a href="../commands/list.html">/listgag</a> <i>spec</i>
+          <dd>lists <a href="../topics/attributes.html">gag</a>s on
+          <i>spec</i>.
+  <dt><a href="../commands/list.html">/listtrig</a> <i>spec</i>
+          <dd>lists <a href="../topics/triggers.html">triggers</a> on
+          <i>spec</i>.
+  <dt><a href="../commands/list.html">/listbind</a> <i>spec</i>
+          <dd>lists key bindings matching <i>spec</i>
+  <dt><a href="../commands/list.html">/listhook</a> <i>spec</i>
+          <dd>lists <a href="../topics/hooks.html">hooks</a> matching
+          <i>spec</i>.
+  </dl>
+
+<p>
+  See: <a href="../commands/list.html">/list</a>
+
+<p>
+<a name="purge*"></a>
+<h2>Purge commands:</h2>
+
+<p>
+  <dl>
+  <dt><a href="../commands/purge.html">/purgedef</a> <i>spec</i>
+          <dd>purges <a href="../topics/macros.html">macros</a> whose name
+          matches <i>spec</i>
+  <dt><a href="../commands/purge.html">/purgehilite</a> <i>spec</i>
+          <dd>purges <a href="../topics/macros.html">macros</a> with
+          <a href="../topics/attributes.html">hilite</a>s on <i>spec</i>
+  <dt><a href="../commands/purge.html">/purgegag</a> <i>spec</i>
+          <dd>purges <a href="../topics/macros.html">macros</a> with
+          <a href="../topics/attributes.html">gag</a>s on <i>spec</i>
+  <dt><a href="../commands/purge.html">/purgetrig</a> <i>spec</i>
+          <dd>purges <a href="../topics/macros.html">macros</a> with
+          <a href="../topics/triggers.html">triggers</a> on <i>spec</i>
+  <dt><a href="../commands/purge.html">/purgedeft</a> <i>spec</i>
+          <dd>purges named <a href="../topics/macros.html">macros</a> with
+          <a href="../topics/triggers.html">triggers</a> on <i>spec</i>
+  <dt><a href="../commands/purge.html">/purgebind</a> <i>spec</i>
+          <dd>purges key bindings matching <i>spec</i>.
+  <dt><a href="../commands/purge.html">/purgehook</a> <i>spec</i>
+          <dd>purges <a href="../topics/hooks.html">hooks</a> matching
+          <i>spec</i>.
+  </dl>
+
+<p>
+  See: <a href="../commands/purge.html">/purge</a>
+
+<p>
+<a name="load*"></a>
+<h2>Load commands:</h2>
+
+<p>
+  <a href="../commands/load.html">/loaddef</a>,
+  <a href="../commands/load.html">/loadhilite</a>,
+  <a href="../commands/load.html">/loadgag</a>,
+  <a href="../commands/load.html">/loadtrig</a>,
+  <a href="../commands/load.html">/loadbind</a>,
+  <a href="../commands/load.html">/loadhook</a>,
+  <a href="../commands/load.html">/loadworld</a>.  All take a
+  <i>file</i> argument; if the argument is omitted, the appropriate default
+  <a href="../topics/library.html#filename macros">filename macro</a> is used.
+
+<p>
+  See: <a href="../commands/load.html">/load</a>
+
+<p>
+<a name="save*"></a>
+<h2>Save commands:</h2>
+
+<p>
+  <a href="../commands/savedef.html">/savedef</a>,
+  <a href="../commands/savehilite.html">/savehilite</a>,
+  <a href="../commands/savegag.html">/savegag</a>,
+  <a href="../commands/savetrig.html">/savetrig</a>,
+  <a href="../commands/savebind.html">/savebind</a>,
+  <a href="../commands/savehook.html">/savehook</a>,
+  <a href="../commands/saveworld.html">/saveworld</a>.  All take a
+  <i>file</i> argument.  If <i>file</i> is omitted, the appropriate default
+  <a href="../topics/library.html#filename macros">filename macro</a> is used.
+
+<p>
+  See: <a href="../commands/save.html">/save</a>
+
+<p>
+<a name="compress"></a>
+<a name="COMPRESS_READ"></a>
+<a name="$COMPRESS_READ"></a>
+<a name="COMPRESS_SUFFIX"></a>
+<a name="$COMPRESS_SUFFIX"></a>
+<a name="compression"></a>
+<h2>File compression:</h2>
+
+<p>
+  The helpfile, personal config file, and files read with
+  <a href="../commands/load.html">/load</a> may be stored compressed on disk.
+  If TF can not find a file with the specified name, it will add
+  ${COMPRESS_SUFFIX} to the filename and try to read it by piping it through
+  ${COMPRESS_READ}.  ${COMPRESS_READ} should contain the name of a shell
+  command that takes a filename as an argument, and prints its output on
+  standard output.  The default values for ${COMPRESS_SUFFIX} and
+  ${COMPRESS_READ} defined in the library are ".Z" and "zcat" for unix,
+  ".zip" and "unzip -p" for os/2.  Undefining ${COMPRESS_SUFFIX} will disable
+  this feature.  Note: <a href="../commands/save.html">/save</a>,
+  <a href="../commands/saveworld.html">/saveworld</a>, and
+  <a href="../commands/log.html">/log</a> do not write compressed files.
+
+<p>
+<a name="retry"></a>
+<a name="retry_off"></a>
+<h2>World connection commands:</h2>
+
+<p>
+  <dl>
+  <dt><a href="../topics/library.html#retry">/retry</a> <i>world</i> [<i>delay</i>]
+          <dd>Try to connect to <i>world</i>; repeat every <i>delay</i>
+          seconds until successful.
+  <dt><a href="../topics/library.html#retry">/retry_off</a> [<i>world</i>]
+          <dd>Cancels "<a href="../topics/library.html#retry">/retry</a>
+          <i>world</i>" (default: all worlds)
+  </dl>
+
+<p>
+<a name="hilite_whisper"></a>
+<a name="hilite whisper"></a>
+<a name="hilite_page"></a>
+<a name="hilite page"></a>
+<h2>Hilite commands:</h2>
+
+<p>
+  <a href="../topics/library.html#hilite_whisper">/hilite_whisper</a>,
+  <a href="../topics/library.html#hilite_page">/hilite_page</a>,
+  <a href="../topics/library.html#nohilite_whisper">/nohilite_whisper</a>, and
+  <a href="../topics/library.html#nohilite_page">/nohilite_page</a> turn on or
+  off <a href="../topics/attributes.html">hiliting</a> several different page
+  and whisper formats.
+
+<p>
+<a name=""></a>
+<h2>Backward compatible commands:</h2>
+
+<p>
+  <a href="../topics/special_variables.html#%borg">/reply</a>,
+  <a href="../commands/act.html">/act</a>,
+  <a href="../commands/nolog.html">/nolog</a>,
+  <a href="../commands/nologin.html">/nologin</a>,
+  <a href="../commands/nologme.html">/nologme</a>,
+  <a href="../commands/noquiet.html">/noquiet</a>, and
+  <a href="../commands/nowrap.html">/nowrap</a> are provided for
+  compatibility.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

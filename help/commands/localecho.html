@@ -1,0 +1,68 @@
+<title>TinyFugue: /localecho</title>
+<!--"@%always_echo"-->
+<!--"@always_echo"-->
+<!--"@/localecho"-->
+<h1>/localecho</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/localecho.html">/LOCALECHO</a> [ON|OFF]<br>
+<hr>
+
+<p>
+  <a href="../commands/localecho.html">/Localecho</a> with no arguments
+  returns 1 if local echoing is enabled for the
+  <a href="../topics/sockets.html#current">current socket</a>, 0 otherwise.
+  TF echoes its input by default, unless the server has negotiated otherwise.
+
+<p>
+  <a href="../commands/localecho.html">/Localecho</a> with an argument
+  attempts to enable or disable echoing for the
+  <a href="../topics/sockets.html#current">current socket</a>.
+  If the server is not known to support TELNET protocol,
+  "<a href="../commands/localecho.html">/localecho</a> [ON|OFF]" does nothing,
+  and returns 0.
+  ON tells the server DONT ECHO; if the server acknowledges (as it must
+  according to TELNET protocol), tf will echo its own input.
+  OFF tells the server to DO ECHO; if the server acknowledges,
+  tf will not echo its own input, expecting the server to do it.
+  The actual change of state takes place after the server agrees, which
+  may be delayed by network latency ("netlag").
+
+<p>
+  Note that tf does not transmit input until a newline is pressed, and
+  the server can not echo it until it is received; so, with
+  <a href="../commands/localecho.html">/localecho</a> off,
+  your typing will not be visible until you hit return, at which
+  time the server may echo back the entire line.
+
+<p>
+  Some mud servers use the ECHO option to disable local echo during password
+  entry.  Telnet servers, however, try to disable local echo for the entire
+  session, which would interfere with many useful tf features.  Hooks
+  defined in the <a href="../topics/library.html">standard library</a> use
+  <a href="../commands/localecho.html">/localecho</a> to
+  override the telnet server automatically.
+
+<p>
+  <a href="../commands/localecho.html">/Localecho</a> is intended to be
+  called by library macros, and should not need to be called by the user.
+  <a href="../commands/localecho.html">/Localecho</a> obsoletes %{always_echo}.
+
+<p>
+  The TELNET ECHO option is defined in RFC 857.
+
+<p>
+  See: <a href="../topics/prompts.html">prompts</a>,
+  <a href="../topics/special_variables.html#%prompts">%telopt</a>,
+  <a href="../commands/telnet.html">/telnet</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

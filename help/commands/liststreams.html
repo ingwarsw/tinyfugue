@@ -1,0 +1,53 @@
+<title>TinyFugue: /liststreams</title>
+<!--"@/liststreams"-->
+<h1>/liststreams</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/liststreams.html">/LISTSTREAMS</a><br>
+<hr>
+
+  Lists <a href="../topics/tfio.html">tfio streams</a> opened by
+  <a href="../topics/functions.html#tfopen">tfopen()</a>.
+  The <a href="../topics/tfio.html">tfin</a>,
+  <a href="../topics/tfio.html">tfout</a>, and
+  <a href="../topics/tfio.html">tferr</a>
+  <a href="../topics/tfio.html">streams</a>
+  are not included.
+
+<p>
+  The columns and their meanings are:
+  <dl>
+  <dt>HANDLE
+	<dd>The handle returned by
+	<a href="../topics/functions.html#tfopen">tfopen()</a>.
+  <dt>MODE
+	<dd>The mode argument given to
+	<a href="../topics/functions.html#tfopen">tfopen()</a>.
+  <dt>FLUSH
+	<dd>Whether automatic flushing is enabled.
+	See <a href="../topics/functions.html#tfflush">tfflush()</a>.
+  <dt>NAME
+	<dd>The name argument, if any, given to
+	<a href="../topics/functions.html#tfopen">tfopen()</a>.
+	Files of mode "q" do not need a name, but you may wish to give
+	them one anyway so it appears here.
+  </dl>
+
+<p>
+  The return value of 
+  <a href="../commands/liststreams.html">/liststreams</a>
+  is the number of open streams listed.
+
+<p>
+  See: <a href="../topics/tfio.html">tfio</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

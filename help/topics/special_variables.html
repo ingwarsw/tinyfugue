@@ -1,0 +1,1482 @@
+<title>TinyFugue: special variables</title>
+<!--"@flags"-->
+<!--"@globals"-->
+<!--"@global variables"-->
+<!--"@environment"-->
+<!--"@enumerated variable"-->
+<!--"@enumerated variables"-->
+<!--"@special"-->
+<!--"@special variable"-->
+<!--"@special variables"-->
+<h1>special variables</h1>
+
+<p>
+  Many options in TF can be controlled by setting special global
+  <a href="../topics/variables.html">variables</a>.
+  Many <a href="../topics/variables.html">variables</a> have a limited
+  number of permitted values, with
+  corresponding integer values; these are called enumerated 
+  <a href="../topics/variables.html">variables</a>.
+  All flags are enumerated <a href="../topics/variables.html">variables</a>
+  which can have the values "off" (0)
+  or "on" (1).  Numeric <a href="../topics/variables.html">variables</a>
+  can have any integer value (within the
+  range allowed by your system).  Attempting to unset numeric
+  <a href="../topics/variables.html">variable</a> or
+  give it a string value will force its value to 0.
+  Dtime <a href="../topics/variables.html">variables</a> represent a time
+  duration or period; their values can be written as a number of seconds
+  or in <var>hours</var>:<var>minutes</var>[:<var>seconds</var>]
+  format, with up to 6 decimal places (microseconds).
+  A variable's type (enumerated, numeric, dtime, or string) affects its behavior
+  in <a href="../topics/expressions.html">expressions</a>.
+
+<p>
+<h2>Special substitute-only variables</h2>
+  The following special <a href="../topics/variables.html">variables</a>
+  may be used only in <a href="../topics/substitution.html">substitutions</a>,
+  never as a variable
+  <a href="../topics/expressions.html#operands">reference</a> in an
+  <a href="../topics/expressions.html">expression</a>.
+<p>
+  <dl>
+<a name="#"></a>
+<a name="%#"></a>
+  <dt><b>#</b>
+      <dd> The number of words in a
+      <a href="../topics/macros.html">macro</a>'s argument text.
+
+<p>
+<a name="?"></a>
+<a name="%?"></a>
+  <dt><b>?</b>
+      <dd> The string return value of the most recently executed
+      <a href="../topics/evaluation.html">command</a>
+      (builtin or <a href="../topics/macros.html">macro</a>).
+      (<a href="../topics/macros.html">Macros</a>) called as functions
+      return their value and do <em>not</em> set %?.)
+
+<p>
+<a name=""></a>
+  <dt><b>1,2...</b>
+  <br><b>L1,L2...</b>
+  <br><b>*</b>
+  <br><b>R</b>
+      <dd>Positional parameters.  See
+      "<a href="../topics/substitution.html">substitution</a>".
+      (As of 5.0 beta 7, these are case sensitive.)
+
+<p>
+<a name=""></a>
+  <dt><b>P<i>n</i></b>
+  <br><b>PL</b>
+  <br><b>PR</b>
+      <dd> The text matched by the <i>n</i>th parenthesized subexpression,
+      or the text to the left or right of the matched text,
+      in the last successful
+      <a href="../topics/patterns.html#regexp">regexp</a>
+      comparison.  See
+      <a href="../topics/substitution.html#%Pn">%Pn</a> for more details.
+      (As of 5.0 beta 7, these are case sensitive.)
+  </dl>
+<p>
+
+<p>
+<a name=""></a>
+<h2>Special global variables</h2>
+  The following special global <a href="../topics/variables.html">variables</a>
+  can be examined and set.  In the
+  following list, a '=' following a
+  <a href="../topics/variables.html">variable</a> name indicates its default
+  value.  For <a href="../topics/variables.html">variables</a> that do not
+  have defaults listed, the default is
+  dependent on your system or configuration.
+<p>
+  <dl>
+
+<a name="COLUMNS"></a>
+<a name="%COLUMNS"></a>
+  <dt><b>COLUMNS</b>
+      <dd> If this variable is set in the environment when TF starts,
+      TF will use its value instead of the value from the terminal driver.
+      See <a href="../topics/special_variables.html#%LINES">%LINES</a>,
+      <a href="../topics/functions.html#columns()">columns()</a>.
+
+<p>
+<a name="HOME"></a>
+<a name="%HOME"></a>
+  <dt><b>HOME</b>
+      <dd> Your home directory, used by
+      <a href="../commands/lcd.html">/cd</a> and
+      <a href="../topics/filenames.html">filename expansion</a>.
+      This is usually inherited from the environment when TF starts.
+
+<p>
+<a name="LANG"></a>
+<a name="%LANG"></a>
+  <dt><b>LANG</b>
+      <dd> The current locale.
+      See <a href="../topics/locale.html">locale</a>.
+      Automatically exported to the environment when set.
+
+<p>
+<a name="LC_ALL"></a>
+<a name="%LC_ALL"></a>
+  <dt><b>LC_ALL</b>
+      <dd> The current locale.
+      See <a href="../topics/locale.html">locale</a>.
+      Automatically exported to the environment when set.
+
+<p>
+<a name="LC_CTYPE"></a>
+<a name="%LC_CTYPE"></a>
+  <dt><b>LC_CTYPE</b>
+      <dd> The current locale for character classification.
+      See <a href="../topics/locale.html">locale</a>.
+      Automatically exported to the environment when set.
+
+<p>
+<a name="LC_TIME"></a>
+<a name="%LC_TIME"></a>
+  <dt><b>LC_TIME</b>
+      <dd> The current locale for time formatting.
+      See <a href="../topics/locale.html">locale</a>.
+      Automatically exported to the environment when set.
+
+<p>
+<a name="LINES"></a>
+<a name="%LINES"></a>
+  <dt><b>LINES</b>
+      <dd> If this variable is set in the environment when TF starts,
+      TF will use its value instead of the value from the terminal driver.
+      See <a href="../topics/special_variables.html#%COLUMNS">%COLUMNS</a>,
+      <a href="../topics/functions.html#lines()">lines()</a>.
+
+<p>
+<!-- the "MAIL" tag is used in hooks.html -->
+<a name="%MAIL"></a>
+  <dt><b>MAIL</b>
+      <dd> The name of a file which TF may check for mail.
+      See: <a href="../topics/mail.html">mail</a>.
+
+<p>
+<a name="SHELL"></a>
+<a name="%SHELL"></a>
+  <dt><b>SHELL</b>
+      <dd> Shell used by
+      <code><a href="../commands/sh.html">/sh</a></code> and
+      <code><a href="../commands/quote.html">/quote</a> !</code>.
+      This is usually inherited from the environment when TF starts.
+
+<p>
+<a name="terminal"></a>
+<a name="term"></a>
+<a name="TERM"></a>
+<a name="%TERM"></a>
+  <dt><b>TERM</b>
+      <dd> Terminal type.  Changing the value of
+      <a href="../topics/special_variables.html#%TERM">%TERM</a> at any
+      time will cause TF to re-initialize its display functions to use
+      the new value.
+      The value of <a href="../topics/special_variables.html#%TERM">%TERM</a>
+      should agree with your actual terminal or emulator.
+      If your emulator supports multiple terminal types, the recommended
+      type to use is vt220, vt100, or ansi (in that order).
+      <a href="../topics/special_variables.html#%TERM">%TERM</a>
+      is usually inherited from the environment when TF starts.
+      See also: <a href="../topics/mode.html">mode</a>.
+
+<p>
+<a name="TFHELP"></a>
+<a name="%TFHELP"></a>
+  <dt>
+  <b>TFHELP</b>=<a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>/tf-help
+      <dd> The name of the file used by
+      <a href="../commands/help.html">/help</a>.
+
+<p>
+<a name="TFLIBDIR"></a>
+<a name="%TFLIBDIR"></a>
+  <dt><b>TFLIBDIR</b>
+      <dd>The name of the TF library directory, which should contain the
+      help file (tf-help), the standard library (stdlib.tf), the local
+      library (local.tf), and many useful utility files.
+      The default value of 
+      <a href="../topics/special_variables.html#%TFLIBDIR">TFLIBDIR</a>
+      is set when TF is installed, but can be overridden by setting it
+      in the environment before starting TF.
+      This directory will be searched by
+      <a href="../commands/load.html">/load</a> if
+      <a href="../topics/special_variables.html#%TFPATH">TFPATH</a> is
+      blank or not set.
+      See also: <a href="../commands/load.html">/load</a>.
+
+<p>
+<a name="TFLIBRARY"></a>
+<a name="%TFLIBRARY"></a>
+  <dt>
+  <b>TFLIBRARY</b>=<a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>/stdlib.tf
+      <dd> The name of the library file loaded at
+      <a href="../topics/tf.html">startup</a>.  This can be
+      set in the environment before starting TF, to load from an
+      alternate library file.
+
+<p>
+<a name="MAILPATH"></a>
+<a name="TFMAILPATH"></a>
+<a name="%TFMAILPATH"></a>
+  <dt><b>TFMAILPATH</b>
+      <dd> A space-separated list of files which TF may check for mail.
+      Literal spaces in a filename must be preceded by "\".
+      See: <a href="../topics/mail.html">mail</a>.
+
+<p>
+<a name="TFPATH"></a>
+<a name="%TFPATH"></a>
+  <dt><b>TFPATH</b>=
+      <dd>A space-separated list of directories that will be searched
+      by <a href="../commands/load.html">/load</a>.
+      Literal spaces in a directory name must be preceded by "\".
+      If this is set,
+      <a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>
+      will be ignored by <a href="../commands/load.html">/load</a>, so be
+      sure to include the value of 
+      <a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a> in
+      <a href="../topics/special_variables.html#%TFPATH">%{TFPATH}</a>
+      if you want to be able to <a href="../commands/load.html">/load</a>
+      files with relative names from the standard library directory.
+      See also: <a href="../commands/load.html">/load</a>.
+
+<p>
+<a name="timezone"></a>
+<a name="time zone"></a>
+<a name="TZ"></a>
+<a name="%TZ"></a>
+  <dt><b>TZ</b>
+      <dd> On most systems, the timezone used to display formatted times.
+      In the United States,
+      the value is usually the local timezone name, followed by the
+      difference in hours from GMT, followed by an optional daylight
+      saving timezone name; for example, "PST8PDT".  For details, see
+      your system documentation for tzset(3) or environ(5).
+      This is usually inherited from the environment when TF starts,
+      and is automatically exported to the environment when set.
+
+<p>
+<a name="alert_attr"></a>
+<a name="%alert_attr"></a>
+  <dt><b>alert_attr</b>=Br
+      <dd>The 
+      <a href="../topics/attributes.html">attributes</a> used to display
+      <a href="../topics/tfio.html">alert</a> text on the
+      <a href="../topics/status_line.html">status line</a>.
+
+<p>
+<a name="alert_time"></a>
+<a name="%alert_time"></a>
+  <dt><b>alert_time</b>=5.0
+      <dd> (dtime) The number of seconds that <a href="../topics/tfio.html">alert</a>
+      text is displayed on the
+      <a href="../topics/status_line.html">status line</a>.
+      See <a href="../topics/tfio.html">tfio</a>.
+
+<!--
+<p>
+<a name="auto_fg"></a>
+<a name="%auto_fg"></a>
+  <dt><b>auto_fg</b>=on
+      <dd> (flag) If on when the
+      <a href="../topics/sockets.html#foreground">foreground</a>
+      <a href="../topics/sockets.html">socket</a> disconnects,
+      TF will automatically bring another
+      <a href="../topics/sockets.html">socket</a> into the
+      <a href="../topics/sockets.html#foreground">foreground</a>.
+-->
+
+<p>
+<a name="background"></a>
+<a name="%background"></a>
+  <dt><b>background</b>=on
+      <dd> (flag) If on, text from
+      <a href="../topics/sockets.html#background">background</a>
+      worlds is processed and
+      recorded immediately upon receipt.  Otherwise, the text is ignored
+      until the <a href="../topics/sockets.html">socket</a> is brought
+      into the <a href="../topics/sockets.html#foreground">foreground</a>.
+      In either case, the text is not displayed
+      until the <a href="../topics/sockets.html">socket</a> is brought
+      into the <a href="../topics/sockets.html#foreground">foreground</a>
+      (but see
+      <a href="../topics/special_variables.html#%bg_output">%{bg_output}</a>).
+
+<p>
+<a name="backslash"></a>
+<a name="%backslash"></a>
+  <dt><b>backslash</b>=on
+      <dd> (flag) Enables use of '\' to quote the following character
+      literally during <a href="../topics/macros.html">macro</a>
+      <a href="../topics/evaluation.html">expansion</a>.  Generally, this
+      should only be turned off if you are having problems with '\' in
+      <a href="../topics/macros.html">macros</a> written before version
+      3.0.
+
+<p>
+<a name="bamf"></a>
+<a name="%bamf"></a>
+  <dt><b>bamf</b>=off
+      <dd>(enumerated)
+      <dl compact>
+      <dt>off
+              <dd>(0): server "<a href="../commands/bamf.html">portals</a>"
+              are ignored.
+      <dt>on
+              <dd>(1): Unter-style
+              <a href="../commands/bamf.html">bamfing</a> is enabled
+              (disconnect).
+      <dt>old
+              <dd>(2): Old-style
+              <a href="../commands/bamf.html">bamfing</a>
+              is enabled (no disconnect).
+      </dl>
+      See <a href="../commands/bamf.html">/bamf</a>.
+
+<p>
+<a name="bg_output"></a>
+<a name="%bg_output"></a>
+  <dt><b>bg_output</b>=on
+      <dd> (flag)
+      When a <a href="../topics/worlds.html">world</a>
+      is brought into the
+      <a href="../topics/sockets.html#foreground">foreground</a>,
+      <a href="../topics/special_variables.html#%bg_output">%bg_output</a>
+      determines how to display output that was produced while the
+      <a href="../topics/worlds.html">world</a> was in the
+      <a href="../topics/sockets.html#background">background</a>:
+      If on, the window display resumes where it left off;
+      if off, the window display jumps to the end, showing only the last
+      screenful.  Turning
+      <a href="../topics/special_variables.html#%bg_output">%bg_output</a>
+      off is equivalent to always using the -q option with 
+      <a href="../commands/fg.html">/fg</a>.
+      The <a href="../topics/special_variables.html#%bg_output">%bg_output</a>
+      flag has no effect on other processing, including
+      <a href="../topics/triggers.html">triggers</a> and
+      <a href="../topics/history.html">history</a>.  This flag is
+      ignored if the
+      <a href="../topics/special_variables.html#%background">%{background}</a>
+      flag is off.
+      <a href="../topics/special_variables.html#%background">%{background}</a>
+      is tested when the <a href="../topics/worlds.html">world</a> is
+      <a href="../topics/sockets.html#foreground">foreground</a>ed (in versions
+      before 5.0, it was tested when the text was received).
+      (See also: <a href="../commands/fg.html">/fg</a> -q)
+
+<p>
+<a name="binary_eol"></a>
+<a name="%binary_eol"></a>
+  <dt><b>binary_eol</b>=LF
+      <dd> Determines what to send as end-of-line marker in
+      <a href="../commands/telnet.html">TELNET</a> BINARY mode.
+      Valid values are "LF", "CR", and "CRLF".
+      (See: <a href="../commands/telnet.html">/telnet</a>)
+
+<p>
+<a name="borg"></a>
+<a name="%borg"></a>
+  <dt><b>borg</b>=on
+      <dd> (flag) Enables <a href="../topics/triggers.html">trigger</a>
+      bodies (<a href="../topics/attributes.html">attributes</a> are
+      unaffected).  (See: <a href="../topics/triggers.html">triggers</a>,
+      <a href="../topics/special_variables.html#%max_trig">%max_trig</a>)
+
+<p>
+<a name="clearfull"></a>
+<a name="%clearfull"></a>
+  <dt><b>clearfull</b>=off
+      <dd> (flag) In <a href="../topics/mode.html">visual</a> mode, clear
+      input window rather than scroll when full.  Always on if terminal
+      can not scroll.
+
+<p>
+<a name="cleardone"></a>
+<a name="%cleardone"></a>
+  <dt><b>cleardone</b>=off
+      <dd> (flag) In <a href="../topics/mode.html">visual</a> mode,
+      enables clearing of input window when return is pressed.
+
+<p>
+<a name="%clock"></a>
+  <dt><b>clock</b>
+      <dd>This variable is no longer supported.  To disable the status bar
+      clock, use
+      "<code><a href="../topics/status_line.html#/clock">/clock</a> off</code>".
+      To make the clock display in 12-hour format, do
+      "<code><a href="../topics/status_line.html#/clock">/clock</a>
+      %I:%M</code>".
+      See <a href="../topics/status_line.html#/clock">/clock</a>.
+
+<p>
+<a name="clock_format"></a>
+<a name="%clock_format"></a>
+  <dt><b>clock_format</b>=%H:%M
+      <dd>The format of the clock displayed on the
+      <a href="../topics/status_line.html">status line</a>.
+      To make the clock display in 12-hour format, "<code>/set
+      <a href="../topics/clock_format.html">clock_format</a>=%I:%M</code>".
+      See also: <a href="../topics/status_line.html#/clock">/clock</a>,
+      <a href="../topics/special_variables.html#%time_format">%time_format</a>.
+
+<p>
+<a name="connect"></a>
+<a name="%connect"></a>
+  <dt><b>connect</b>=nonblocking
+      <dd> Set to "blocking" or "nonblocking" to determine how
+      <a href="../commands/connect.html">/connect</a> works.
+      Default is "nonblocking" on platforms that support it.
+      Nonblocking allows you to continue doing other things while TF
+      tries to establish a new connection.
+      See also <a href="#gethostbyname">%gethostbyname</a>.
+
+<p>
+<a name="defcompile"></a>
+<a name="%defcompile"></a>
+  <dt><b>defcompile</b>=off
+      <dd> (flag) If off, <a href="../topics/macros.html">macro</a> bodies are
+      compiled the first time they are executed; if on,
+      <a href="../topics/macros.html">macro</a> bodies are compiled immediately
+      when they are defined.  Since syntax checking is performed during
+      compilation, setting <a href="#defcompile">defcompile</a>=on will
+      allow you to see the syntax errors in a macro when you define it
+      instead of waiting until execution.
+
+<p>
+<a name="%e"></a>
+  <dt><b>e</b>=2.718281828...
+      <dd> Euler's number.
+
+<p>
+<a name="expand_tabs"></a>
+<a name="%expand_tabs"></a>
+  <dt><b>expand_tabs</b>=on
+      <dd> (flag) If on (and
+      <a href="../topics/special_variables.html#%emulation">%emulation</a>
+      is "print", "ansi_strip", or "ansi_attr"),
+      tabs received from a server are expanded to spaces (according to 
+      <a href="../topics/special_variables.html#%tabsize">%tabsize</a>)
+      immediately, before any <a href="../topics/triggers.html">trigger</a>
+      processing.  If off, tab characters are left in received lines.
+
+<p>
+<a name="raw"></a>
+<a name="canon"></a>
+<a name="print"></a>
+<a name="ansi"></a>
+<a name="ansi_strip"></a>
+<a name="ansi_attr"></a>
+<a name="emulation"></a>
+<a name="%emulation"></a>
+  <dt><b>emulation</b>=ansi_attr
+      <dd> Determines how special codes sent by the server should be
+      interpreted by TF.
+      The set of printable characters is determined by the current
+      <a href="../topics/locale.html">locale</a>.  Valid values for
+      <a href="../topics/special_variables.html#%emulation">%emulation</a> are:
+      <dl>
+      <dt>raw:
+              <dd> No conversion is done; lines are not wrapped; all
+              nonprintable characters are displayed, and their effect is
+              undefined (depending mainly on your terminal).  TF's input
+              display is not guaranteed correct; use at your own risk.
+              This mode allows the
+              server to have most of the control over the screen, but is
+              not guaranteed to give the desired effect, and will interfere with
+	      <a href="../topics/triggers.html">trigger</a> matching.
+	      For best results,
+              <a href="../topics/special_variables.html#%visual">%visual</a>
+              should be "off", and TF
+              <a href="../topics/attributes.html">attributes</a> should
+              not be used.
+	      "Raw" is not recommended unless you know what you're doing.
+      <dt>print:
+              <dd> Tabs are expanded (if
+              <a href="../topics/special_variables.html#%expand_tabs">%expand_tabs</a>
+	      is on);
+	      backspaces are interpreted; lines are wrapped;
+              nonprintable characters removed.
+      <dt>ansi_strip:
+              <dd> Like "print", but ANSI display codes are also removed.
+      <dt>ansi_attr:
+              <dd> Like "ansi_strip", but ANSI
+              <a href="../topics/attributes.html">display attribute</a> codes 
+              will be converted to TF's internal format and
+              displayed correctly (on any terminal).  Other ANSI display
+              codes (e.g., cursor motion) will be removed.  Recommended,
+	      especially for servers that send vt100/ansi display
+              <a href="../topics/attributes.html">attribute</a> codes.
+      <dt>debug:
+              <dd> converts nonprinting characters to a printable form.
+              See also:
+              <a href="../topics/special_variables.html#%telopt">%telopt</a>.
+      </dl>
+      See also:
+      <a href="../topics/special_variables.html#%istrip">%istrip</a>,
+      <a href="../topics/special_variables.html#%meta_esc">%meta_esc</a>,
+      <a href="../topics/special_variables.html#%tabsize">%tabsize</a>,
+      <a href="../topics/special_variables.html#%expand_tabs">%expand_tabs</a>,
+      <a href="../topics/locale.html">locale</a>,
+      <a href="../topics/attributes.html">attributes</a>,
+      <a href="../topics/debugging.html">debugging</a>.
+
+<p>
+<a name="end_color"></a>
+<a name="%end_color"></a>
+  <dt><b>end_color</b>
+      <dd>The code that should be sent to your terminal to return to
+      normal <a href="../topics/colors.html">color</a> after a
+      <a href="../topics/special_variables.html#%start_color_*">%{start_color_*}</a>
+      code.  See: <a href="../topics/colors.html">color</a>.
+
+<p>
+<a name="error_attr"></a>
+<a name="%error_attr"></a>
+  <dt><b>error_attr</b>
+      <dd> Defines the <a href="../topics/attributes.html">attributes</a>
+      used by the "E" <a href="../topics/attributes.html">attribute</a>.
+      Can be any combination of
+      <a href="../topics/attributes.html">attributes</a>, including color
+      names.
+      See: <a href="../topics/attributes.html">attributes</a>.
+
+<p>
+<a name="gag"></a>
+<a name="%gag"></a>
+  <dt><b>gag</b>=on
+      <dd> (flag) Enable the <a href="../topics/attributes.html">gag</a>
+      <a href="../topics/attributes.html">attribute</a>.
+      (See: <a href="../commands/gag.html">/gag</a>,
+      <a href="../commands/nogag.html">/nogag</a>)
+
+<p>
+<a name="gethostbyname"></a>
+<a name="%gethostbyname"></a>
+  <dt><b>gethostbyname</b>=nonblocking
+      <dd> Set to "blocking" or "nonblocking" to determine how
+      <a href="../commands/connect.html">/connect</a> does hostname
+      resolution.
+      See also <a href="#connect">%connect</a>.
+
+<p>
+<a name="gpri"></a>
+<a name="%gpri"></a>
+  <dt><b>gpri</b>=0
+      <dd> Priority of subsequent
+      <a href="../commands/gag.html">/gag</a>s.  (See:
+      <a href="../commands/gag.html">/gag</a>)
+
+<p>
+<a name="hook"></a>
+<a name="%hook"></a>
+  <dt><b>hook</b>=on
+      <dd> (flag) Enable <a href="../topics/hooks.html">hooks</a>.  (See:
+      <a href="../topics/hooks.html">hooks</a>,
+      <a href="../commands/hook.html">/hook</a>,
+      <a href="../topics/special_variables.html#%max_hook">%max_hook</a>.)
+      Note that
+      <a href="../topics/login.html">autologin</a> and
+      automatic <a href="../topics/special_variables.html#%lp">%{lp}</a>
+      setting will not work if
+      <a href="../topics/special_variables.html#%hook">%{hook}</a>
+      is 0.
+
+<p>
+<a name="hilite"></a>
+<a name="%hilite"></a>
+  <dt><b>hilite</b>=on
+      <dd> (flag) Enable display
+      <a href="../topics/attributes.html">attributes</a>,
+      whether from a <a href="../topics/triggers.html">trigger</a>, the
+      server, or whatever.
+      (See: <a href="../commands/hilite.html">/hilite</a>,
+      <a href="../commands/nohilite.html">/nohilite</a>)
+
+<p>
+<a name="hiliteattr"></a>
+<a name="%hiliteattr"></a>
+  <dt><b>hiliteattr</b>=B
+      <dd> Defines the <a href="../topics/attributes.html">attributes</a>
+      used by <a href="../topics/attributes.html">hilite</a>s.  Can be
+      any combination of
+      <a href="../topics/attributes.html">attributes</a>, including color
+      names.  (See: <a href="../topics/attributes.html">attributes</a>,
+      <a href="../commands/hilite.html">/hilite</a>)
+
+<p>
+<a name="histsize"></a>
+<a name="%histsize"></a>
+  <dt><b>histsize</b>=1000
+      <dd>When a new world <a href="../topics/history.html">history</a>
+      is created, it will have space for
+      <a href="../topics/special_variables.html#%histsize">%{histsize}</a>
+      lines.  A world <a href="../topics/history.html">history</a> is
+      created the first time text is sent to it.  (See also:
+      <a href="../commands/histsize.html">/histsize</a>)
+
+<p>
+<a name="hpri"></a>
+<a name="%hpri"></a>
+  <dt><b>hpri</b>=0
+      <dd> Priority of subsequent
+      <a href="../commands/hilite.html">/hilite</a>s.
+
+<p>
+<a name="insert"></a>
+<a name="typeover"></a>
+<a name="%insert"></a>
+  <dt><b>insert</b>=on
+      <dd> (flag) If on, keyboard input is inserted; if off, input
+      overstrikes existing text.
+
+<p>
+<a name="interactive"></a>
+<a name="%interactive"></a>
+  <dt><b>interactive</b>
+      <dd> (flag) If off, TF will not prompt for
+      <a href="../commands/quit.html">/quit</a>,
+      returning from <a href="../commands/sh.html">/sh</a>,
+      <a href="../topics/signals.html">SIGINT</a> (^C),
+      or <a href="../topics/signals.html">SIGQUIT</a> (^\).
+      Defaults to on if standard input and output are attatched
+      to a terminal, off otherwise.
+
+<p>
+<a name="isize"></a>
+<a name="%isize"></a>
+  <dt><b>isize</b>=3
+      <dd> Size of input window in
+      <a href="../topics/mode.html">visual</a> mode.
+      The output window will be redrawn when this is changed.
+      See also: <a href="../topics/functions.html#lines">lines()</a>,
+      <a href="../topics/functions.html#winlines">winlines()</a>.
+
+<p>
+
+<a name="istrip"></a>
+<a name="%istrip"></a>
+  <dt><b>istrip</b>=off
+      <dd> (flag) If on, the meta (high) bit will be stripped from all input
+      characters.  Note that this will prevent 
+      <a href="../topics/special_variables.html#%meta_esc">%meta_esc</a>
+      and <a href="../topics/locale.html">locales</a> with 8-bit characters
+      from working correctly.
+
+<p>
+<!-- "kbnum" has its own entry in keybindings.html -->
+<a name="%kbnum"></a>
+  <dt><b>kbnum</b>=
+      <dd> A value that can be set by typing ESC followed by digits,
+      to be used as an argument (repeat count) for a subsequent keybinding.
+      See: <a href="../topics/keybindings.html#kbnum">keybindings</a>.
+
+<p>
+<a name="kecho"></a>
+<a name="%kecho"></a>
+  <dt><b>kecho</b>=off
+      <dd> (flag) Enables echoing of keyboard input, preceded by
+      <a href="../topics/special_variables.html#%kprefix">%{kprefix}</a>.
+      See also:
+      <a href="../topics/special_variables.html#%kecho_attr">%{kecho_attr}</a>.
+      <a href="../topics/special_variables.html#%secho">%{secho}</a>.
+      <a href="../commands/localecho.html">/localecho</a>,
+      <a href="../commands/addworld.html">/addworld</a> -e.
+
+<p>
+<a name="kecho_attr"></a>
+<a name="%kecho_attr"></a>
+  <dt><b>kecho_attr</b>
+      <dd> Attributes used for lines echoed by 
+      <a href="../topics/special_variables.html#%kecho">%{kecho}</a>.
+
+<p>
+<a name="keepalive"></a>
+<a name="%keepalive"></a>
+  <dt><b>keepalive</b>=on
+      <dd> (flag) Enable periodic "pings" (TCP keepalive) of servers,
+      to prevent network timeouts and detect dropped connections.
+      Note:  the timing of keepalive messages is a system parameter
+      that can not be changed from tf.
+
+<p>
+<!-- "keypad" has its own entry in keybindings.html -->
+<a name="%keypad"></a>
+  <dt><b>keypad</b>=on
+      <dd> (flag) Enable application keypad mode, if supported by the terminal.
+      Application keypad mode makes the numeric keypad generate characters
+      different than the usual digit characters, so they may be distinguished
+      from the digit keys across the top of the keyboard.
+      See: <a href="../topics/keybindings.html#keypad">keybindings</a>.
+
+<p>
+<a name="kprefix"></a>
+<a name="%kprefix"></a>
+  <dt><b>kprefix</b>=
+      <dd> Prefix prepended to lines echoed by
+      <a href="../topics/special_variables.html#%kecho">%{kecho}</a>.
+
+<p>
+<!-- "login" is a separate topic -->
+<a name="%login"></a>
+  <dt><b>login</b>=on
+      <dd> (flag) Enable <a href="../topics/login.html">automatic login</a>
+      <a href="../topics/hooks.html">hook</a>.  (See:
+      <a href="../topics/login.html">automatic login</a>,
+      <a href="../topics/hooks.html">hooks</a>,
+      <a href="../commands/world.html">/world</a>)
+
+<p>
+<a name="lp"></a>
+<a name="%lp"></a>
+  <dt><b>lp</b>=off
+      <dd> (flag) Displays partial lines as
+      <a href="../topics/prompts.html">prompts</a>, after a short
+      timeout.  Useful for LP and Diku MUDs.  (See:
+      <a href="../topics/prompts.html">prompts</a>)
+
+<p>
+<a name="lpquote"></a>
+<a name="%lpquote"></a>
+  <dt><b>lpquote</b>=off
+      <dd> (flag) If on, all
+      <a href="../commands/quote.html">/quote</a> and
+      <a href="../commands/repeat.html">/repeat</a> processes
+      run when an LP <a href="../topics/prompts.html">prompt</a> is
+      received instead of when a timer expires.  The -P option of
+      <a href="../commands/quote.html">/quote</a> and
+      <a href="../commands/repeat.html">/repeat</a> provides the same
+      feature on a per-process basis.
+      (See: <a href="../topics/processes.html">processes</a>)
+
+<p>
+<a name="maildelay"></a>
+<a name="%maildelay"></a>
+  <dt><b>maildelay</b>=0:01:00.0 (60 seconds)
+      <dd> (dtime) Delay between mail checks.  Setting this to 0
+      disables mail checking.  The file to be checked is named by the
+      <a href="../topics/special_variables.html#%MAIL">%{MAIL}</a>
+      <a href="../topics/variables.html">variable</a>.
+
+<p>
+<a name="matching"></a>
+<a name="%matching"></a>
+  <dt><b>matching</b>=glob
+      <dd>(enumerated) Determines the default
+      <a href="../topics/patterns.html">pattern matching</a> style.
+      <dl compact>
+      <dt>"<a href="../topics/patterns.html#simple">simple</a>":
+              <dd> straightforward string comparison.
+      <dt>"<a href="../topics/patterns.html#glob">glob</a>":
+              <dd> shell-like matching (as before version 3.2).
+      <dt>"<a href="../topics/patterns.html#regexp">regexp</a>":
+              <dd> regular expression.
+      </dl>
+      See also: <a href="../topics/patterns.html">patterns</a>,
+      <a href="../topics/functions.html#regmatch">regmatch()</a>,
+      <a href="../topics/substitution.html#%Pn">%Pn</a>.
+
+<p>
+<a name="max_hook"></a>
+<a name="%max_hook"></a>
+  <dt><b>max_hook</b>=1000
+      <dd> Maximum number of <a href="../topics/hooks.html">hooks</a>
+      allowed in a 10 second period.  When this value is exceeded,
+      a message is printed and
+      <a href="../topics/special_variables.html#%hook">%hook</a> is
+      automatically turned off to disable hooks.
+      This helps prevent infinite hook loops.
+      A value of 0 will allow unlimited hooks.
+
+<p>
+<a name="max_instr"></a>
+<a name="iteration"></a>
+<a name="iterations"></a>
+<a name="instruction"></a>
+<a name="instructions"></a>
+<a name="%max_instr"></a>
+  <dt><b>max_instr</b>=1000000
+      <dd>Maximum number of instructions in a
+      <a href="../topics/macros.html">macro</a> execution.  A value of 0
+      will allow unlimited instructions.  An "instruction" is a basic
+      internal tf operation, such as addition, testing an /if or /while
+      condition, a substitution, sending a line of text to a server, or
+      joining two commands with a "%|" pipe.
+
+<p>
+<a name="max_kbnum"></a>
+<a name="%max_kbnum"></a>
+  <dt><b>max_kbnum</b>=999
+      <dd> The maximum value of
+      <a href="../topics/special_variables.html#%kbnum">kbnum</a>
+      that can be set via the keyboard.
+      See: <a href="../topics/keybindings.html">keybindings</a>.
+
+<p>
+<a name="max_recur"></a>
+<a name="recursion"></a>
+<a name="recursions"></a>
+<a name="%max_recur"></a>
+  <dt><b>max_recur</b>=100
+      <dd> Maximum depth of recursive
+      <a href="../topics/macros.html">macro</a> calls or
+      <a href="../topics/triggers.html">triggers</a>.
+      This helps prevent infinite macro loops.
+      A value of 0 will allow unlimited recursion.
+
+<p>
+<a name="max_trig"></a>
+<a name="%max_trig"></a>
+  <dt><b>max_trig</b>=1000
+      <dd> Maximum number of <a href="../topics/triggers.html">triggers</a>
+      allowed in a 10 second period.  When this value is exceeded,
+      a message is printed and
+      <a href="../topics/special_variables.html#%borg">%borg</a> is
+      automatically turned off to disable triggers.
+      This helps prevent infinite trigger loops.
+      A value of 0 will allow unlimited triggers.
+
+<p>
+<!-- "mccp" has its own page -->
+<a name="%mccp"></a>
+  <dt><b>mccp</b>=on (if tf was compiled with MCCP support)
+      <dd> (flag) If on, MCCPv2 is allowed on new connections.
+      See <a href="../topics/mccp.html">mccp</a>.
+
+<p>
+<a name="mecho"></a>
+<a name="%mecho"></a>
+  <dt><b>mecho</b>=off
+      <dd>(enumerated)
+      <dl compact>
+      <dt>"off" (0):
+              <dd> do not echo <a href="../topics/macros.html">macro</a>
+              <a href="../topics/evaluation.html">expansions</a>.
+      <dt>"on" (1):
+              <dd> echo
+              <a href="../topics/evaluation.html">expansions</a> of
+              non-invisible <a href="../topics/macros.html">macros</a>.
+      <dt>"all" (2):
+              <dd> echo
+              <a href="../topics/evaluation.html">expansions</a> of all
+              <a href="../topics/macros.html">macros</a>.
+      </dl>
+      <a href="../topics/special_variables.html#%mprefix">%{mprefix}</a>
+      will be prepended once for each recursion level when
+      <a href="../topics/macros.html">macro</a>
+      <a href="../topics/evaluation.html">expansion</a> echoing is
+      enabled.
+      See also:
+      <a href="../topics/special_variables.html#%mecho_attr">%{mecho_attr}</a>,
+      <a href="../topics/debugging.html">debugging</a>.
+
+<p>
+<a name="mecho_attr"></a>
+<a name="%mecho_attr"></a>
+  <dt><b>mecho_attr</b>
+      <dd> Attributes used for lines echoed by 
+      <a href="../topics/special_variables.html#%mecho">%{mecho}</a>.
+
+<p>
+<a name="meta_esc"></a>
+<a name="meta"></a>
+<a name="%meta_esc"></a>
+  <dt><b>meta_esc</b>=nonprint
+      <dd> (enumerated) If
+      <a href="../topics/special_variables.html#%istrip">%istrip</a> is off,
+      typed characters with their meta (high) bit set may have the meta bit
+      stripped and be prefixed with an ESC character.
+      This allows META-x and ESC x to invoke the same keybinding.
+      Possible values of 
+      <a href="../topics/special_variables.html#%meta_esc">%meta_esc</a>:
+      <dl compact>
+      <dt>"off" (0):
+		<dd>Never convert a meta bit to ESC.
+      <dt>"on" (1):
+		<dd>Always convert a meta bit to ESC.
+      <dt>"nonprint" (2):
+		<dd>Convert a meta bit to ESC only if the meta bit makes
+		the character unprintable in the current
+		<a href="../topics/locale.html">locale</a>.
+      </dl>
+      Meta bit conversion can be prevented for a single keystroke by preceeding
+      it with the <a href="../commands/dokey.html#lnext">LNEXT</a> key (^V),
+      regardless of the state of
+      <a href="../topics/special_variables.html#%meta_esc">%meta_esc</a>.
+
+<p>
+<a name="more"></a>
+<a name="%more"></a>
+  <dt><b>more</b>=off
+      <dd> (flag) Displays output one screenfull at a time.  (See:
+      <a href="../commands/more.html">/more</a>)
+
+<p>
+<a name="mprefix"></a>
+<a name="%mprefix"></a>
+  <dt><b>mprefix</b>=+
+      <dd> Prefix prepended to lines echoed by 
+      <a href="../topics/special_variables.html#%mecho">%{mecho}</a>.
+
+<p>
+<a name="oldslash"></a>
+<a name="%oldslash"></a>
+  <dt><b>oldslash</b>=on
+      <dd> (flag) If on, sequences of more than one '/' in a
+      <a href="../topics/macros.html">macro</a> body will be compressed
+      by one during <a href="../topics/macros.html">macro</a>
+      <a href="../topics/evaluation.html">expansion</a>.  This allows
+      <a href="../topics/macros.html">macros</a> written before version
+      3.0 to work properly.
+      With oldslash=off, only slashes at the beginning of a body are
+      handled specially.
+      You are encouraged to turn this off.  (See:
+      <a href="../topics/evaluation.html">evaluation</a>)
+
+<p>
+<a name="%pi"></a>
+  <dt><b>pi</b>=3.141592654...
+      <dd> The ratio of a circle's circumference to its diameter.
+
+<p>
+<a name="pedantic"></a>
+<a name="%pedantic"></a>
+  <dt><b>pedantic</b>=off
+      <dd> (flag) If on, TF will generate warnings about some potential
+      problems in your macro code.  Often the warnings indicate code that
+      is technically valid but may not do what you intended.
+      See also <a href="../topics/debugging.html">debugging</a>.
+
+<p>
+<a name="prompt_sec"></a>
+<a name="%prompt_sec"></a>
+<a name="prompt_usec"></a>
+<a name="%prompt_usec"></a>
+  <dt><b>prompt_sec</b>
+  <dt><b>prompt_usec</b>
+      <dd> Obsolete.  Use
+      <a href="../topics/special_variables.html#%prompt_wait">%{prompt_wait}</a>
+      instead.
+
+<a name="prompt_wait"></a>
+<a name="%prompt_wait"></a>
+  <dt><b>prompt_wait</b>=0.25
+      <dd> (dtime) The delay (in seconds) used to recognize
+      unterminated <a href="../topics/prompts.html">prompts</a>.  (See:
+      <a href="../topics/prompts.html">prompts</a>).
+
+<p>
+<a name="proxy_host"></a>
+<a name="%proxy_host"></a>
+<a name="proxy_port"></a>
+<a name="%proxy_port"></a>
+  <dt><b>proxy_host</b>=
+  <br><b>proxy_port</b>=23
+      <dd>These two <a href="../topics/variables.html">variables</a>
+      describe the <a href="../topics/proxy.html">proxy</a>
+      server used for opening connections.
+      (See: <a href="../topics/proxy.html">proxy</a>).
+
+<p>
+<a name="ptime"></a>
+<a name="%ptime"></a>
+  <dt><b>ptime</b>=1.0
+      <dd> (dtime) Default delay (in seconds) between
+      <a href="../commands/quote.html">/quote</a> and
+      <a href="../commands/repeat.html">/repeat</a>
+      <a href="../topics/processes.html">process</a> runs.
+
+<p>
+<a name="qecho"></a>
+<a name="%qecho"></a>
+  <dt><b>qecho</b>=off
+      <dd> (flag) Echoing of <a href="../commands/quote.html">/quote</a>
+      text.
+      See also:
+      <a href="../topics/special_variables.html#%qprefix">%{qprefix}</a>,
+      <a href="../topics/special_variables.html#%qecho_attr">%{qecho_attr}</a>,
+      <a href="../topics/debugging.html">debugging</a>.
+
+<p>
+<a name="qecho_attr"></a>
+<a name="%qecho_attr"></a>
+  <dt><b>qecho_attr</b>
+      <dd> Attributes used for lines echoed by 
+      <a href="../topics/special_variables.html#%qecho">%{qecho}</a>.
+
+<p>
+<a name="qprefix"></a>
+<a name="%qprefix"></a>
+  <dt><b>qprefix</b>=
+      <dd> Prefix prepended to lines echoed by
+      <a href="../topics/special_variables.html#%qecho">%{qecho}</a>.
+
+<p>
+<a name="quiet login"></a>
+<a name="quiet"></a>
+<a name="%quiet"></a>
+  <dt><b>quiet</b>=off
+      <dd> (flag) <a href="../topics/attributes.html">Gag</a> text after
+      <a href="../topics/login.html">login</a> until the mud sends
+      "Use the WHO command", "### end of messages ###", or 25 lines.
+      Note: This will not function correctly
+      on MUDs which don't send those strings or 25 lines in the
+      introductory text.
+
+<p>
+<a name="quitdone"></a>
+<a name="%quitdone"></a>
+  <dt><b>quitdone</b>=off
+      <dd> (flag) Quit upon disconnection from last
+      <a href="../topics/sockets.html">socket</a>.
+
+<p>
+<a name="redef"></a>
+<a name="%redef"></a>
+  <dt><b>redef</b>=on
+      <dd> (flag) Allows redefinition of existing worlds, keybindings,
+      and named <a href="../topics/macros.html">macros</a>.
+
+<p>
+<a name="refreshtime"></a>
+<a name="%refreshtime"></a>
+  <dt><b>refreshtime</b>=100000
+      <dd> (int) The delay (in microseconds) for redisplaying your keyboard
+      input after it is overwritten by incoming text
+      in <a href="../topics/mode.html">non-visual</a> mode.
+      If you have a slow connection between you and tf, you may wish to
+      increase this delay.
+      The default is 100000 (1/10 second).
+
+<p>
+<a name="scroll"></a>
+<a name="%scroll"></a>
+  <dt><b>scroll</b>=on
+      <dd> (flag) In <a href="../topics/mode.html">visual</a> mode,
+      scroll output instead of wrapping from bottom to top.
+
+<p>
+<a name="secho"></a>
+<a name="%secho"></a>
+  <dt><b>secho</b>=off
+      <dd> (flag) Echoing of text before sending it to the server
+      (above the TELNET layer).
+      See also:
+      <a href="../topics/special_variables.html#%sprefix">%{sprefix}</a>,
+      <a href="../topics/special_variables.html#%secho_attr">%{secho_attr}</a>,
+      <a href="../topics/special_variables.html#%kecho">%{kecho}</a>.
+      <a href="../topics/special_variables.html#%telopt">%{telopt}</a>,
+      <a href="../topics/debugging.html">debugging</a>.
+
+<p>
+<a name="secho_attr"></a>
+<a name="%secho_attr"></a>
+  <dt><b>secho_attr</b>
+      <dd> Attributes used for lines echoed by 
+      <a href="../topics/special_variables.html#%secho">%{secho}</a>.
+
+<p>
+<a name="shpause"></a>
+<a name="%shpause"></a>
+  <dt><b>shpause</b>=on
+      <dd> (flag) Wait for a keypress after returning from
+      <a href="../commands/sh.html">/sh</a>
+      (unless
+      <a href="../topics/special_variables.html#%interactive">%interactive</a>
+      is off).
+
+<p>
+<a name="sigfigs"></a>
+<a name="%sigfigs"></a>
+  <dt><b>sigfigs</b>=15
+      <dd> The maximum number of significant digits to display when printing a
+      floating point number.  Note that 16 or more may introduce rounding
+      error.  Also note that some real numbers with up to 6 decimal places are
+      stored with fixed points, not floating points, so are not affected by 
+      <a href="../topics/special_variables.html#%sigfigs">sigfigs</a>
+      (or rounding error).
+
+<p>
+<a name="snarf"></a>
+<a name="%snarf"></a>
+  <dt><b>snarf</b>=off
+      <dd> (flag) Don't send empty lines to the server.
+
+<p>
+<a name="sockmload"></a>
+<a name="%sockmload"></a>
+  <dt><b>sockmload</b>=off
+      <dd> (flag) Load <a href="../topics/macros.html">macro</a> files
+      when <a href="../topics/sockets.html#foreground">foregrounding</a> a world
+      ("<a href="../commands/dokey.html">/dokey</a> socketf",
+      "<a href="../commands/dokey.html">/dokey</a> socketb", or
+      "<a href="../commands/fg.html">/fg</a>").  Normally, a world's
+      <a href="../topics/macros.html">macro</a> file is loaded only when
+      TF first connects to it.  (Note: the WORLD
+      <a href="../topics/hooks.html">hook</a> is more useful than
+      sockmload).
+
+<p>
+<a name="sprefix"></a>
+<a name="%sprefix"></a>
+  <dt><b>sprefix</b>=
+      <dd> Prefix prepended to lines echoed by
+      <a href="../topics/special_variables.html#%secho">%{secho}</a>.
+
+<p>
+<a name="start_color"></a>
+<a name="%start_color"></a>
+<a name="start_color_*"></a>
+<a name="%start_color_*"></a>
+<a name="start_color_name"></a>
+<a name="%start_color_name"></a>
+<a name="start_color_<name>"></a>
+<a name="%start_color_<name>"></a>
+<a name="start_color_bgname"></a>
+<a name="%start_color_bgname"></a>
+<a name="start_color_bg<name>"></a>
+<a name="%start_color_bg<name>"></a>
+  <dt><b>start_color_<i>name</i></b>
+  <dt><b>start_color_bg<i>name</i></b>
+      <dd>The control code that should be sent to your terminal to produce
+      foreground or background
+      <a href="../topics/colors.html">color</a> <i>name</i>.  See:
+      <a href="../topics/colors.html">color</a>.
+
+<p>
+<a name="status_attr"></a>
+<a name="%status_attr"></a>
+  <dt><b>status_attr</b>
+      <dd>The 
+      <a href="../topics/attributes.html">attributes</a> used to display
+      the <a href="../topics/status_line.html">status area</a>
+      in <a href="../topics/mode.html#visual">visual mode</a>.
+      See: <a href="../topics/status_line.html">status area</a>.
+
+<p>
+<a name="%status_fields"></a>
+  <dt><b>status_fields</b>
+      <dd><b>Deprecated.</b> The list of fields displayed on
+      row 0 of the <a href="../topics/status_line.html">status area</a>
+      in <a href="../topics/mode.html#visual">visual mode</a>.
+      See: <a href="../topics/status_line.html">status area</a>.
+
+<p>
+<a name="status_height"></a>
+<a name="%status_height"></a>
+  <dt><b>status_height</b>=1
+      <dd>The number of rows in the
+      <a href="../topics/status_line.html">status area</a>
+      in <a href="../topics/mode.html#visual">visual mode</a>.
+      See: <a href="../topics/status_line.html">status area</a>.
+
+<p>
+<a name="status_pad"></a>
+<a name="%status_pad"></a>
+  <dt><b>status_pad</b>=_
+      <dd>The padding character used in displaying
+      the <a href="../topics/status_line.html">status area</a>
+      in <a href="../topics/mode.html#visual">visual mode</a>.
+      See: <a href="../topics/status_line.html">status area</a>.
+
+<p>
+<a name="tab"></a>
+<a name="%tab"></a>
+<a name="tabs"></a>
+<a name="tabsize"></a>
+<a name="%tabsize"></a>
+  <dt><b>tabsize</b>=8
+      <dd> Tabs will be replaced with spaces to pad to a multiple of
+      <a href="../topics/special_variables.html#%tabsize">%{tabsize}</a>.
+      See also:
+      <a href="../topics/special_variables.html#%expand_tabs">%expand_tabs</a>,
+      <a href="../topics/special_variables.html#%emulation">%emulation</a>.
+
+<p>
+<a name="telopt"></a>
+<a name="%telopt"></a>
+  <dt><b>telopt</b>=off
+      <dd> (flag) Display <a href="../commands/telnet.html">telnet</a>
+      option negotiations (for debugging purposes).  See also:
+      <a href="../topics/special_variables.html#%emulation">%emulation</a>=debug,
+      <a href="../topics/debugging.html">debugging</a>.
+
+<p>
+<a name="textdiv"></a>
+<a name="separator"></a>
+<a name="separator.tf"></a>
+<a name="divider"></a>
+<a name="====="></a>
+<a name="dividing line"></a>
+<a name="%textdiv"></a>
+  <dt><b>textdiv</b>=on
+      <dd> (enumerated) When you bring a socket into the foreground,
+      TF can help you distinguish old text that has been displayed
+      before from new text that is being displayed for the first time
+      by printing a dividing line between the old and new text or
+      by clearing the old text.
+      The setting of
+      <a href="../topics/special_variables.html#%textdiv">%textdiv</a>
+      controls this behavior:
+      <dl compact>
+      <dt>"off" (0):
+		<dd>Never print a divider or clear the screen; just draw
+		old and new text normally.
+      <dt>"on" (1):
+		<dd>Print a <a href="#%textdiv_str">%textdiv_str</a>
+		divider between old and new text.
+		The divider is temporary:  when it scrolls off the screen,
+		or the screen is backgrounded, it disappears forever.
+      <dt>"always" (2):
+		<dd>Print a <a href="#%textdiv_str">%textdiv_str</a>
+		divider after the old text even if there is
+		no new text.
+      <dt>"clear" (3):
+		<dd>Clear (don't redraw) all old text before displaying new
+		text.  Old text can be manually redisplayed by
+	        <a href="../topics/scrollback.html">scrolling back</a>.
+      </dl>
+      See also:
+      <a href="../topics/special_variables.html#%textdiv_str">%textdiv_str</a>,
+      <a href="../commands/fg.html">/fg</a>.
+
+<p>
+<a name="textdiv_str"></a>
+<a name="%textdiv_str"></a>
+  <dt><b>textdiv_str</b>======
+      <dd> The dividing line printed between old and new text when bringing
+      a socket to the foreground.
+      See <a href="../topics/special_variables.html#%textdiv">%textdiv</a>.
+
+<p>
+<a name="tfhost"></a>
+<a name="%tfhost"></a>
+  <dt><b>tfhost</b>=
+      <dd>Name or address to use for the client (tf) end of connections.
+      See also:
+      <a href="../commands/addworld.html">addworld</a>,
+      <a href="../commands/connect.html">connect</a>.
+
+<p>
+<a name="sub"></a>
+<a name="%sub"></a>
+  <dt><b>sub</b>=off
+      <dd>
+      See: <a href="../commands/sub.html">/sub</a>.
+
+<p>
+<a name="time_format"></a>
+<a name="%time_format"></a>
+  <dt><b>time_format</b>=%H:%M
+      <dd> The format used to display times in
+      <a href="../commands/recall.html">/recall</a> and
+      <a href="../commands/time.html">/time</a>.  The default displays
+      hours and minutes.  See
+      <a href="../commands/ftime.html">ftime()</a> for a
+      description of the format.
+      See also:
+      <a href="../topics/special_variables.html#%clock_format">%clock_format</a>.
+
+<p>
+<a name="visual"></a>
+<a name="%visual"></a>
+  <dt><b>visual</b>=on
+      <dd> (flag) Divides the screen into an input window and an output
+      window.  The output window will be redrawn when this is changed.
+      (See: <a href="../topics/mode.html">mode</a>)
+
+<p>
+<a name="warn_5keys"></a>
+<a name="%warn_5keys"></a>
+  <dt><b>warn_5keys</b>=on
+      <dd> (flag) If on, TF will warn the first time some of the new
+      5.0 <a href="../topics/keybindings">keybindings</a> are used.
+
+<p>
+<a name="warn_curly_re"></a>
+<a name="%warn_curly_re"></a>
+  <dt><b>warn_curly_re</b>=on
+      <dd> (flag) If on, TF will warn when using a
+      <a href="../topics/patterns.html#regexp">regexp</a>
+      containing '{', which has a new meaning in version 5.0.
+
+<p>
+<a name="warn_status"></a>
+<a name="%warn_status"></a>
+  <dt><b>warn_status</b>=on
+      <dd> (flag) If on, TF will warn when directly setting
+      <a href="../topics/status_line.html">%status_fields</a>,
+      <a href="../topics/status_line.html">%status_int_more</a>,
+      <a href="../topics/status_line.html">%status_int_world</a>, or
+      <a href="../topics/status_line.html">%status_int_clock</a>,
+      which have new default values and new ways to set them in version 5.0.
+      See <a href="../topics/status_line.html">status line</a>.
+
+<p>
+<a name="warning_attr"></a>
+<a name="%warning_attr"></a>
+  <dt><b>error_attr</b>
+      <dd> Defines the <a href="../topics/attributes.html">attributes</a>
+      used by the "W" <a href="../topics/attributes.html">attribute</a>.
+      Can be any combination of
+      <a href="../topics/attributes.html">attributes</a>, including color
+      names.
+      See: <a href="../topics/attributes.html">attributes</a>.
+
+<p>
+<a name="watchdog"></a>
+<a name="%watchdog"></a>
+  <dt><b>watchdog</b>=off
+      <dd> (flag) <a href="../topics/attributes.html">Gag</a> repeated
+      lines.  (See: <a href="../commands/watchdog.html">/watchdog</a>)
+
+<p>
+<a name="watchname"></a>
+<a name="%watchname"></a>
+  <dt><b>watchname</b>=off
+      <dd> (flag) <a href="../topics/attributes.html">Gag</a> overactive
+      players.  (See:
+      <a href="../commands/watchname.html">/watchname</a>)
+
+<p>
+<a name="wordpunct"></a>
+<a name="%wordpunct"></a>
+  <dt><b>wordpunct</b>=_
+      <dd> List of punctuation that will be considered to be part of a
+      word instead of delimiting the ends of a word, by
+      <a href="../topics/functions.html#kbwordleft">kbwordleft()</a> and
+      <a href="../topics/functions.html#kbwordright">kbwordright()</a>
+      (and therefore by <a href="../commands/dokey.html">/dokey</a>
+      WLEFT, WRIGHT, etc).
+
+<p>
+<a name="wordwrap"></a>
+<a name="wrap"></a>
+<a name="%wrap"></a>
+  <dt><b>wrap</b>=on
+      <dd> (flag) Enable wordwrap on the screen.  TF will try to break
+      lines at spaces or other punctuation to fit them within
+      <a href="../topics/special_variables.html#%wrapsize">%{wrapsize}</a>
+      columns.
+      <a href="../topics/special_variables.html#%wrap">%{wrap}</a> is
+      ignored if
+      <a href="../topics/special_variables.html#%emulation">%{emulation}</a>
+      is "raw".
+      See also:
+      <a href="../topics/special_variables.html#%wrappunct">%{wrappunct}</a>,
+      <a href="../topics/special_variables.html#%wrapsize">%{wrapsize}</a>,
+      <a href="../topics/special_variables.html#%wrapspace">%{wrapspace}</a>.
+
+<p>
+<a name="wraplog"></a>
+<a name="%wraplog"></a>
+  <dt><b>wraplog</b>=off
+      <dd> (flag) Enable wordwrap in log files.  See also:
+      <a href="../topics/special_variables.html#%wrap">%wrap</a>.
+
+<p>
+<a name="wrappunct"></a>
+<a name="%wrappunct"></a>
+  <dt><b>wrappunct</b>=10
+      <dd> When <a href="../topics/special_variables.html#%wrap">wrapping</a>,
+      allow wrapping at any punctuation if wrapping only at spaces would
+      have caused more than
+      <a href="../topics/special_variables.html#%wrappunct">%wrappunct</a>
+      characters to wrap.  This can make long URLs look nicer, but harder
+      to cut and paste.  Setting
+      <a href="../topics/special_variables.html#%wrappunct">%wrappunct</a>
+      to 0 disables wrapping at punctuation other than spaces.
+
+<p>
+<a name="wrapsize"></a>
+<a name="%wrapsize"></a>
+  <dt><b>wrapsize</b>=79
+      <dd> Lines (input and output) extending past this column will be
+      split.  Default value is one less than the number of columns on
+      your terminal (typically 80).  Output is not wrapped if
+      <a href="../topics/special_variables.html#%emulation">%{emulation}</a>
+      is "raw".  See also:
+      <a href="../topics/special_variables.html#%wrap">%wrap</a>,
+      <a href="../topics/special_variables.html#%wrappunct">%wrappunct</a>,
+      <a href="../topics/special_variables.html#%wrapspace">%wrapspace</a>,
+      <a href="../topics/functions.html#columns">columns()</a>.
+
+<p>
+<a name="wrapspace"></a>
+<a name="indent"></a>
+<a name="indenting"></a>
+<a name="indentation"></a>
+<a name="%wrapspace"></a>
+  <dt><b>wrapspace</b>=4
+      <dd> Wrapped text is indented by this many spaces.  See also:
+      <a href="../topics/special_variables.html#%wrap">%wrap</a>,
+      <a href="../topics/special_variables.html#%wrapsize">%wrapsize</a>.
+
+  </dl>
+
+<p>
+<a name=""></a>
+  The following builtin commands
+  set the corresponding <a href="../topics/variables.html">variables</a>,
+  and also perform additional functions:
+  <a href="../commands/gag.html">/gag</a>,
+  <a href="../commands/hilite.html">/hilite</a>,
+  <a href="../commands/hook.html">/hook</a>,
+  <a href="../commands/nogag.html">/nogag</a>,
+  <a href="../commands/nohilite.html">/nohilite</a>,
+  <a href="../commands/watchdog.html">/watchdog</a>, and
+  <a href="../commands/watchname.html">/watchname</a>
+
+<p>
+  The standard library also defines the following
+  <a href="../topics/macros.html">macros</a> to set the values of the
+  corresponding <a href="../topics/variables.html">variables</a>:
+  <a href="../topics/library.html">/background</a>,
+  <a href="../topics/library.html">/bamf</a>,
+  <a href="../topics/library.html">/borg</a>,
+  <a href="../topics/library.html">/clearfull</a>,
+  <a href="../topics/library.html">/cleardone</a>,
+  <a href="../topics/library.html">/gpri</a>,
+  <a href="../topics/library.html">/hpri</a>,
+  <a href="../topics/library.html">/insert</a>,
+  <a href="../topics/library.html">/isize</a>,
+  <a href="../topics/library.html">/login</a>,
+  <a href="../topics/library.html">/lp</a>,
+  <a href="../topics/library.html">/lpquote</a>,
+  <a href="../topics/library.html">/kecho</a>,
+  <a href="../topics/library.html">/mecho</a>,
+  <a href="../topics/library.html">/more</a>,
+  <a href="../topics/library.html">/ptime</a>,
+  <a href="../topics/library.html">/qecho</a>,
+  <a href="../topics/library.html">/quiet</a>,
+  <a href="../topics/library.html">/quitdone</a>,
+  <a href="../topics/library.html">/redef</a>,
+  <a href="../topics/library.html">/shpause</a>,
+  <a href="../topics/library.html">/sockmload</a>,
+  <a href="../topics/library.html">/sub</a>,
+  <a href="../topics/library.html">/visual</a> and
+  <a href="../topics/library.html">/wrapspace</a>.
+
+<p>
+  Note: The <a href="../topics/variables.html">variables</a> 'L' and 'R' are
+  reserved (see: <a href="../topics/variables.html">variables</a>).
+  You should not assign values to them.
+
+<p>
+  See:
+  <a href="../topics/variables.html">variables</a>,
+  <a href="../commands/set.html">/set</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

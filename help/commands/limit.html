@@ -1,0 +1,112 @@
+<title>TinyFugue: /limit</title>
+<!--"@/limit"-->
+<!--"@/relimit"-->
+<!--"@/unlimit"-->
+<h1>/limit</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/limit.html">/LIMIT</a> [-v]
+  [-a] [-m<i>style</i>]
+  <!-- [-A<i>n</i>] [-B<i>n</i>] [-C<i>n</i>] -->
+  [<i>pattern</i>]<br>
+  <a href="../commands/limit.html">/RELIMIT</a><br>
+  <a href="../commands/limit.html">/UNLIMIT</a><br>
+<hr>
+
+<p>
+  /Limit redraws the window, showing only lines that match 
+  <i><a href="../topics/patterns.html">pattern</a></i>.
+  It is then possible to scroll forward and backward within the "limited"
+  window.
+  The limit affects only the current screen, and stays in effect until
+  <a href="../commands/limit.html">/unlimit</a> is called.
+
+<p>
+  /Limit <a href="../topics/options.html">options:</a>
+  <dl>
+  <dt>-v
+          <dd>show only lines that <em>don't</em> match
+          <i><a href="../topics/patterns.html">pattern</a></i>
+  <dt>-a
+          <dd>show only lines that have attributes
+  <dt>-m<i>style</i>
+          <dd>use matching style
+          (<a href="../topics/patterns.html#simple">simple</a>,
+          <a href="../topics/patterns.html#glob">glob</a>, or
+          <a href="../topics/patterns.html#regexp">regexp</a>),
+	  instead of the default
+	  <a href="../topics/special_variables.html#%matching">%{matching}</a>.
+<!--
+  <dt>-A<i>n</i>
+          <dd>Show <i>n</i> lines of context after each matching line.
+  <dt>-B<i>n</i>
+          <dd>Show <i>n</i> lines of context before each matching line.
+  <dt>-C<i>n</i>
+          <dd>Equivalent to -A<i>n</i> -B<i>n</i>.
+-->
+  </dl>
+
+<p>
+
+<p>
+  If <i><a href="../topics/patterns.html">pattern</a></i>
+  is given, only lines in the given range that match
+  <i><a href="../topics/patterns.html">pattern</a></i>
+  will be recalled.
+  The matching style is determined by the -m option if given,
+  <a href="../topics/special_variables.html#%matching">%{matching}</a>
+  otherwise.
+  By default, the @more <a href="../topics/status_line.html">status field</a>
+  does not count lines that are omitted by
+  <a href="../commands/limit.html">/limit</a>.
+
+<p>
+  With no options or arguments, <a href="../commands/limit.html">/limit</a>
+  returns 1 if a limit is in effect, 0 if not.
+
+<p>
+  <a href="../commands/limit.html">/unlimit</a> disables the 
+  <a href="../commands/limit.html">/limit</a> so all lines are displayed.
+
+<p>
+  During <a href="../commands/limit.html">/limit</a>,
+  scrolling to any point, including the bottom, results in a
+  More prompt that shows the number of lines (possibly 0) below the status
+  line.  In this state,
+  <a href="../commands/limit.html">/unlimit</a>
+  will leave the bottom visible line where it
+  is, and redraw the unlimited lines above it.
+  Thus, you can use <a href="../commands/limit.html">/limit</a> to find
+  a line you are interested in, use the scrolling keys to position that
+  line at the bottom of the window, then 
+  <a href="../commands/limit.html">/unlimit</a> to see the context of that
+  line.
+  But if you attempt to scroll <em>past</em> the bottom during
+  <a href="../commands/limit.html">/limit</a>,
+  the More prompt changes to "LIMIT ON"; in
+  this state,
+  <a href="../commands/limit.html">/unlimit</a> will redraw with the
+  previously invisible last line at the bottom of the screen.
+
+
+<p>
+  <a href="../commands/limit.html">/relimit</a> repeats the last
+  <a href="../commands/limit.html">/limit</a>.
+
+<p>
+  The default keybinding ^[L toggles the last limit off and on.
+
+<p>
+  See:
+  <a href="../commands/recall.html">/recall</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

@@ -1,0 +1,73 @@
+<title>TinyFugue: /for</title>
+<!--"@/for"-->
+<h1>/for</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/for.html">/FOR</a> <i>variable</i> <i>start</i>
+  <i>end</i> <i>commands</i><br>
+<hr>
+
+<p>
+  The <i>variable</i> will take on all numeric values between <i>start</i>
+  and <i>end</i>, inclusive.  The <i>commands</i> will be executed once for
+  each of the values.  If <i>end</i> is less then <i>start</i>,
+  <i>commands</i> will not be executed.
+
+<p>
+  <i>Commands</i> are executed in a new
+  <a href="../topics/evaluation.html">evaluation scope</a>.
+  This means, for example, that a <a href="../commands/for.html">/for</a>
+  called from a <a href="../topics/macro.html">macro</a>
+  must use "<code>%%{...}</code>" and "<code>%%;</code>"
+  instead of "<code>%{...}</code>" and "<code>%;</code>"
+  to have the <a href="../topics/substitution.html">substitutions</a>
+  performed when the <a href="../commands/for.html">/for</a> is 
+  <a href="../topics/evaluation.html">expanded</a> instead of when the
+  calling <a href="../topics/macro.html">macro</a> is
+  <a href="../topics/evaluation.html">expanded</a>.
+
+<p>
+  Example:
+
+<p>
+  Given the definition
+  <pre>
+  <a href="../commands/def.html">/def</a> countdown = <a href="../commands/for.html">/for</a> i 0 %{1} say $$[%{1} - i]
+  </pre>
+  then the command "<code>/countdown 10</code>"
+  would cause you to execute the commands "say 10", "say 9", ...  "say 0".
+  Note that the "<code>%{1}</code>" is 
+  <a href="../topics/substitution.html">substituted</a> when /countdown is
+  <a href="../topics/evaluation.html">expanded</a>, and the "$$" is replaced
+  with "$".  The resulting "$[10 - i]" is
+  <a href="../topics/substitution.html">substituted</a> when
+  <a href="../commands/for.html">/for</a> is
+  <a href="../topics/evaluation.html">expanded</a>.
+  If /countdown used
+  "$[...]" instead of "$$[...]" in the <i>commands</i>, it would be
+  <a href="../topics/substitution.html">substituted</a> when /countdown is
+  <a href="../topics/evaluation.html">expanded</a>, and you would repeat
+  "10" 11 times.
+  If /countdown used
+  "%%{1}" or "{1}" instead of "%{1}" inside the
+  <a href="../topics/expression.html">expression</a>, it would not be
+  <a href="../topics/substitution.html">substituted</a> until
+  <a href="../commands/for.html">/for</a> was
+  <a href="../topics/evaluation.html">expanded</a>, so it would have the
+  value of <a href="../commands/for.html">/for</a>'s first argument
+  (the string "i", which has numeric value 0), and you would end up counting
+  down from 0 to -10.
+
+<p>
+  See: <a href="../commands/while.html">/while</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

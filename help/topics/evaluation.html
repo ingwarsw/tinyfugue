@@ -1,0 +1,138 @@
+<title>TinyFugue: evaluation</title>
+<!--"@syntax"-->
+<!--"@body"-->
+<!--"@macro body"-->
+<!--"@reentrance"-->
+<!--"@execution"-->
+<!--"@expansion"-->
+<!--"@evaluation"-->
+<h1>evaluation</h1>
+
+<p>
+  A Builtin Command is any of the commands listed under
+  "<a href="../commands/">commands</a>".  All builtin commands start with
+  "/".  All builtins have a return value, usually nonzero for success and 0
+  for failure.
+
+<p>
+  A <a href="../topics/macros.html">Macro</a> Command is a user-defined
+  command.  <a href="../topics/macros.html">Macro</a> commands also start
+  with '/'.  The return value of a <a href="../topics/macros.html">macro</a>
+  is the return value of its body when executed.
+
+<p>
+<a name="/!"></a>
+<a name="/@"></a>
+<a name="/#"></a>
+<a name="/"></a>
+  A command starting with a single "/" is either
+  a <a href="../topics/macros.html">Macro</a> Command or
+  a <a href="../commands/index.html">Builtin</a> Command.
+  If the "/" is followed by "!", the return value of the command will be
+  negated.
+  If the "/" or "/!" is followed by "@", the rest of the word is interpreted
+  as the name of a <a href="../commands/index.html">Builtin</a> Command.
+  If the "/" or "/!" is followed by "#", the rest of the word is interpreted
+  as the number of a <a href="../topics/macros.html">macro</a>.
+  If neither "@" nor "#" is used (the normal case), the rest of the word is
+  interpreted as a <a href="../topics/macros.html">macro</a> if there is one
+  with that name, otherwise it is interpreted as the name of a
+  <a href="../commands/index.html">Builtin Command</a>.
+  If the name does not match any <a href="../topics/macros.html">macro</a> or 
+  <a href="../commands/index.html">Builtin Command</a>,
+  the <a href="../topics/hooks.html#NOMACRO">NOMACRO</a>
+  <a href="../topics/hooks.html">hook</a> is called.
+
+<a name=""></a>
+<p>
+  A Simple Command is any command that does not start with "/".  The text of
+  such a command is sent directly to the
+  <a href="../topics/sockets.html#current">current</a> world, if there is one.
+  The return value of a simple command is 1 if the text is successfully sent to
+  the <a href="../topics/sockets.html#current">current</a> world, otherwise 0.
+  To send a line that starts with "/" without having it interpreted as a
+  <a href="../topics/macros.html">Macro</a> Command or
+  <a href="../commands/index.html">Builtin</a> Command,
+  use a leading "//"; the first "/" will be stripped.
+
+<p>
+  A Compound Command is one of
+  <a href="../commands/if.html">/IF</a>...<a href="../commands/if.html">/ENDIF</a>
+  or
+  <a href="../commands/while.html">/WHILE</a>...<a href="../commands/while.html">/DONE</a>.
+  These are described under separate help sections.  Their return value is
+  that of the last command executed.
+
+<p>
+  A List is a sequence of commands separated by
+  "<a href="../topics/substitution.html#%;">%;</a>" (separator) or
+  "<a href="../topics/evaluation.html">%|</a>" (pipe) tokens.
+  The commands are executed in sequence, but may be aborted early
+  with the <a href="../commands/return.html">/RETURN</a>
+  or <a href="../commands/break.html">/BREAK</a> commands.
+  and the return value of the List is
+  the return value of the last command executed in the sequence.
+  An empty List has a return value of 1.
+
+<p>
+  Two commands separated by "<a href="../topics/evaluation.html">%|</a>"
+  pipe token mentioned above will have the output stream
+  (<a href="../topics/tfio.html">tfout</a>) of the first connected to
+  the input stream (<a href="../topics/tfio.html">tfin</a>) of the second.
+  The first command runs to completion before the second command begins;
+  the second command should stop reading <a href="../topics/tfio.html">tfin</a>
+  when it becomes empty.
+  Simple Commands have no <a href="../topics/tfio.html">tfin</a> or
+  <a href="../topics/tfio.html">tfout</a>, so they may not be piped.
+  The <a href="../topics/tfio.html">tfout</a> of a Compound Command may
+  not be piped directly, but the output of a macro that contains a
+  Compound Command may be piped.
+
+<p>
+  Some characters within a <a href="../topics/macros.html">macro</a> body
+  undergo substitution.  These special characters are not interpreted as
+  themselves, but cause some evaluation to be performed, and the result
+  substituted in place of these characters.  This is described under
+  "<a href="../topics/substitution.html">substitution</a>".
+
+<p>
+<a name="scope"></a>
+<a name="dynamic scope"></a> When an
+  <a href="../topics/evaluation.html">expansion</a> begins, a new scope is
+  created.  Any local <a href="../topics/variables.html">variables</a> created
+  during the <a href="../topics/evaluation.html">expansion</a> will be placed
+  in this new scope.  The scope and all
+  <a href="../topics/variables.html">variables</a> in it are destroyed when
+  the <a href="../topics/evaluation.html">expansion</a> exits.
+
+<p>
+  Any <a href="../topics/variables.html">variable</a> reference will refer to
+  the <a href="../topics/variables.html">variable</a> with that name in the
+  nearest enclosing (i.e., most recently created) still existing scope.  This
+  is called "dynamic scope".
+
+<p>
+  Lexical scope can be simulated to some extent by using
+  <a href="../topics/variables.html">variable</a>
+  substitutions with the correct number of "%"s instead of
+  <a href="../topics/variables.html">variable</a>
+  references.  (Remember, a "reference" uses the name by itself in an
+  <a href="../topics/expressions.html">expression</a>, like
+  <code>"<a href="../commands/test.html">/test</a> foo</code>"; a
+  "substitution" uses "%" characters, like
+  "<code><a href="../commands/test.html">/test</a> %foo</code>").
+
+<p>
+<a name=""></a> See: <a href="../commands/">commands</a>,
+  <a href="../topics/macros.html">macros</a>,
+  <a href="../topics/substitution.html">substitution</a>,
+  <a href="../commands/if.html">/if</a>,
+  <a href="../commands/while.html">/while</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

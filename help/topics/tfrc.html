@@ -1,0 +1,69 @@
+<title>TinyFugue: .tfrc</title>
+<!--"@config"-->
+<!--"@configuration"-->
+<!--"@customization"-->
+<!--"@customizing"-->
+<!--"@tfrc"-->
+<!--"@tinytalk"-->
+<!--"@.tinytalk"-->
+<!--"@.tfrc"-->
+<h1>.tfrc</h1>
+
+<p>
+  At <a href="../topics/tf.html">startup</a>, TF attempts to load and
+  execute commands from the personal config file named
+  "~/.tfrc", "~/tfrc", "./.tfrc" or "./tfrc".
+  This file can contain any commands you want executed automatically
+  when TF starts.
+
+<p>
+  Some useful commands to include in your personal config file:
+
+<p>
+  <dl>
+  <dt><a href="../commands/addworld.html">/addworld</a>
+          <dd>Define a <a href="../topics/worlds.html">world</a>.
+          TF will automatically connect to the first
+          <a href="../topics/worlds.html">world</a> if not started with
+          the "<code>-n</code>" option.
+  <dt><a href="../commands/def.html">/def</a>
+          <dd>Define a <a href="../topics/macro.html">macro</a>
+          (including
+          <a href="../topics/triggers.html">triggers</a>,
+          <a href="../topics/attributes.html">hilites</a>,
+          <a href="../topics/attributes.html">gags</a>, 
+          <a href="../topics/keybindings.html">keybindings</a>, and
+          <a href="../topics/hooks.html">hooks</a>).
+  <dt><a href="../commands/set.html">/set</a>
+          <dd>Set a <a href="../topics/variables.html">variable</a>.  There are
+          many <a href="../topics/special_variables.html">special variables</a>
+          that change the behavior of tf, listed under
+          "<a href="../topics/special_variables.html">special variables</a>".
+  <dt><a href="../commands/load.html">/load</a>
+          <dd>Load commands from another file.
+  <dt><a href="../commands/load.html">/require</a>
+          <dd>Load a library file.
+  </dl>
+
+<p>
+  <a href="../topics/special_variables.html#%TFLIBDIR">TFLIBDIR</a>
+  contains a sample "tfrc" file that you may
+  want to copy and modify to fit your tastes.
+
+<p>
+  For backward compatibility, TF will load ~/.tinytalk if it exists.  The use
+  of ~/.tinytalk is discouraged.
+
+<p>
+  See: <a href="../topics/tf.html">startup</a>,
+  <a href="../topics/library.html">library</a>,
+  <a href="../topics/special_variables.html">special variables</a>,
+  <a href="../commands/load.html">/load</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

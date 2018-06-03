@@ -1,0 +1,69 @@
+<title>TinyFugue: /tick</title>
+<!--"@/tick"--> 
+<!--"@/tickon"--> 
+<!--"@/tickoff"--> 
+<!--"@/tickset"--> 
+<!--"@/ticksize"--> 
+<h1>/tick</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/load.html">/REQUIRE</a> tick.tf<br>
+
+<p>
+  <a href="../commands/tick.html">/tick</a><br>
+  <a href="../commands/tick.html">/tickoff</a><br>
+  <a href="../commands/tick.html">/tickon</a><br>
+  <a href="../commands/tick.html">/tickset</a><br>
+  <a href="../commands/tick.html">/ticksize</a> <i>n</i><br>
+<hr>
+
+<p>
+  The <a href="../commands/tick.html">/tick*</a> commands implement
+  dikumud tick counting, similar to tintin.  When the ticker is started
+  with <a href="../commands/tick.html">/tickon</a>, it will warn you
+  10 seconds before each tick, and print "TICK" on the tick.
+
+<p>
+  The messages can be changed by redefining the /tick_warn (10-second
+  warning) and /tick_action ("TICK") macros.  You can make them perform
+  any tf command, not just printing.
+
+<p>
+  It is up to you to start the ticker in synch with the mud.  If the
+  mud prints something on a tick, you can define a
+  <a href="../topics/trigger.html">trigger</a>
+  on that which calls <a href="../commands/tick.html">/tickon</a>.
+
+<p>
+  <a href="../commands/tick.html">/Tick</a> displays the time
+  remaining until the next tick.
+
+<p>
+  <a href="../commands/tick.html">/Tickoff</a>
+  stops the ticker.
+
+<p>
+  <a href="../commands/tick.html">/Tickon</a> and
+  <a href="../commands/tick.html">/tickset</a>
+  reset and start the ticker.
+
+<p>
+  <a href="../commands/tick.html">/Ticksize</a>
+  sets the tick period to <i>n</i> seconds (the default is 75).
+
+<p>
+  See:
+  <a href="../commands/require.html">/require</a>, 
+  <a href="../topics/timing.html">timing</a>,
+  <a href="../topics/prompts.html">prompts</a> 
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

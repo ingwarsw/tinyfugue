@@ -1,0 +1,103 @@
+<title>TinyFugue: /if</title>
+<!--"@/if"-->
+<!--"@/then"-->
+<!--"@/elseif"-->
+<!--"@/else"-->
+<!--"@/endif"-->
+<!--"@/if"-->
+<h1>/if</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/if.html">/IF</a> (<var>expr</var>) <var>list</var> [
+  <a href="../commands/if.html">/ELSEIF</a> (<var>expr</var>) <var>list</var>
+  ]...  [ <a href="../commands/if.html">/ELSE</a> <var>list</var> ]
+  <a href="../commands/if.html">/ENDIF</a><br>
+  <a href="../commands/if.html">/IF</a> <var>list</var>
+  <a href="../commands/if.html">/THEN</a> <var>list</var> [
+  <a href="../commands/if.html">/ELSEIF</a> <var>list</var>
+  <a href="../commands/if.html">/THEN</a> <var>list</var> ]...  [
+  <a href="../commands/if.html">/ELSE</a> <var>list</var> ]
+  <a href="../commands/if.html">/ENDIF</a><br>
+<hr>
+
+<p>
+  <i>List</i> is any list of commands.  The return value of a <i>list</i> is
+  the return value of the last command executed in the <i>list</i>.  Note
+  that each <i>list</i> must be terminated by
+  "<a href="../topics/substitution.html#%;">%;</a>".
+
+<p>
+  <i>expr</i> is any <a href="../topics/expressions.html">expression</a>, and
+  must be surrounded by parentheses.
+
+<p>
+  The <i>list</i> or <i>expr</i> following the
+  <a href="../commands/if.html">/IF</a> is executed or evaluated.  If the
+  result is non-zero, the next <i>list</i> is executed.  Otherwise, this is
+  repeated for each <a href="../commands/if.html">/ELSEIF</a>.  If none of
+  the <a href="../commands/if.html">/IF</a> or
+  <a href="../commands/if.html">/ELSEIF</a> <i>list</i>s or <i>expr</i>s
+  return non-zero, the <a href="../commands/if.html">/ELSE</a> <i>list</i> is
+  executed if there is one.
+
+<p>
+  The return value of the
+  <a href="../commands/if.html">/IF</a>...<a href="../commands/if.html">/ENDIF</a>
+  statement is undefined.
+
+<p>
+  <code> <a href="../commands/if.html">/IF</a> (expr) body%;
+  <a href="../commands/if.html">/ENDIF</a> </code><br>
+  is equivalent to<br>
+  <code> <a href="../commands/if.html">/IF</a>
+  <a href="../commands/test.html">/TEST</a> expr%;
+  <a href="../commands/if.html">/THEN</a> body%;
+  <a href="../commands/if.html">/ENDIF</a> </code><br>
+  except that in the former, <i>expr</i> does not undergo macro body
+  <a href="../topics/substitution.html">substitution</a>.
+
+<p>
+  When <a href="../commands/if.html">/IF</a> is used on the command line,
+  "<a href="../topics/substitution.html#%;">%;</a>" command separation is
+  done even if <a href="../topics/special_variables.html#%sub">%sub</a>=off.
+  Of course, full substitution will be done if
+  <a href="../topics/special_variables.html#%sub">%sub</a>=full.
+
+<p>
+  If <i>list</i> is a server (mud) command, the condition being tested
+  is whether the command is sent successfully; that is, whether there is a
+  <a href="../topics/sockets.html#current">current socket</a>.
+  TF has no way of knowing how the server deals with the command or
+  what is considered "success" for a server command, and tf does not wait
+  for a server response which will be delayed by network latency.
+  So, doing something like
+  "<code><a href="../commands/if.html">/if</a> rob corpse%; /then ...</code>"
+  will not have the effect you probably want.
+  To achieve that effect, you should define a 
+  <a href="../topics/triggers.html">trigger</a>
+  on each of the possible server responses, before you send your command.
+
+<p>
+  Example:
+<pre>
+  <a href="../commands/if.html">/if</a> (<a href="../topics/special_variables.html#%TERM">TERM</a> !~ "dumb") <a href="../topics/mode.html">/visual</a> on%; <a href="../commands/if.html">/endif</a>
+</pre>
+  will do "<code><a href="../topics/mode.html">/visual</a> on</code>" if your
+  <a href="../topics/special_variables.html#%TERM">%{TERM}</a> is not "dumb".
+
+<p>
+  See: <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../topics/expressions.html">expressions</a>,
+  <a href="../commands/test.html">/test</a>,
+  <a href="../commands/def.html#-E">/def -E</a>,
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

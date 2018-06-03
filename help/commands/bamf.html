@@ -1,0 +1,72 @@
+<title>TinyFugue: /bamf</title>
+<!--"@/bamf"--> 
+<h1>/bamf</h1>
+
+<p>
+  Usage: 
+
+<p>
+  <a href="../commands/bamf.html">/BAMF</a> [OFF|ON|OLD]<br>
+<hr>
+
+<p>
+  Sets the flag <a href="../topics/special_variables.html#%bamf">%{bamf}</a>.  
+  This flag controls whether TF will cooperate with portals.  A portal allows 
+  a mud character to move from one server to another transparently, by simply 
+  going through a seemingly normal mud exit.  
+
+<p>
+  How it works: A "portal" is text sent by a server of the form: 
+
+<p>
+<pre>
+  #### Please reconnect to <i>name</i>@<i>addr</i> (<i>host</i>) port <i>port</i> #### 
+</pre>
+
+<p>
+  For example: 
+
+<p>
+<pre>
+  #### Please reconnect to Islandia@128.100.102.51 (hawkwind.utcs.toronto.edu) port 2323 #### 
+</pre>
+
+<p>
+  If <a href="../topics/special_variables.html#%bamf">%{bamf}</a> is off, 
+  lines in this format have no effect.  If 
+  <a href="../topics/special_variables.html#%bamf">%{bamf}</a> is on, Fugue 
+  will attempt to use the portal as an UnterMUD portal: it will disconnect 
+  from the <a href="../topics/sockets.html#current">current</a>
+  world, and attempt to connect to the new world; if the 
+  <a href="../topics/special_variables.html#%login">%{login}</a> flag is also 
+  on, TF will try to log in to the new world using the name and password from 
+  the <a href="../topics/sockets.html#current">current</a> world.
+  If bamf is "old", Fugue will connect to the new world 
+  without disconnecting from the
+  <a href="../topics/sockets.html#current">current</a> world.  If 
+  <a href="../topics/special_variables.html#%login">%{login}</a> is also on, 
+  and the new world has been defined with a name and password in an 
+  <a href="../commands/addworld.html">/addworld</a> command, Fugue will 
+  attempt to log in automatically.  
+
+<p>
+  Note that on many servers, arbitrary users can spoof the portal text,
+  redirecting your tf against your will if you have bamfing enabled.
+
+<p>
+  The flag <a href="../topics/special_variables.html#%bamf">%{bamf}</a> 
+  defaults to 0 (off).  
+
+<p>
+  See: <a href="../topics/worlds.html">worlds</a>, 
+  <a href="../topics/sockets.html">sockets</a>, 
+  <a href="../topics/special_variables.html#%bamf">%bamf</a>, 
+  <a href="../topics/special_variables.html#%login">%login</a> 
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

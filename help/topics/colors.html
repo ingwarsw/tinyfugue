@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+   "http://www.w3.org/TR/REC-html40">
+<HTML>
+<HEAD>
+<META http-equiv="Content-Style-Type" content="text/css">
+</HEAD>
+<BODY>
+
+<title>TinyFugue: colors</title>
+<!--"@/color_on"-->
+<!--"@/color_off"-->
+<!--"@color"-->
+<!--"@colour"-->
+<!--"@colours"-->
+<!--"@256colors"-->
+<!--"@colors"-->
+<h1>colors</h1>
+
+<p>
+  Color is enabled by default.  To disable it, use "/color_off"; to re-enable
+  color using ANSI codes, use "/color_on".
+  
+<p>
+  The color <a href="../topics/attributes.html">attribute</a>
+  allows you to specify a foreground color with "C<i>name</i>"
+  or a background color with "Cbg<i>name</i>".
+  Any terminal that supports color should support the 8 basic colors:
+  <span style="color: black">black</span> (black),
+  <span style="color: red">red</span>,
+  <span style="color: green">green</span>,
+  <span style="color: yellow">yellow</span>,
+  <span style="color: blue">blue</span>,
+  <span style="color: magenta">magenta</span>,
+  <span style="color: cyan">cyan</span>,
+  <span style="color: white">white</span> (white).
+  (If you are reading this in tf, and the previous sentence did not contain
+  colored words, you do not have working color support.
+  If it contained strange codes, you should do
+  "/color_off" or redefine the codes as described below.)
+  The standard library defines these 8 basic colors with ANSI control codes,
+  which will work on most terminals that support color.
+
+<p>
+  Many terminals also support brighter versions of the 8 basic colors, but
+  may need to be configured to do so.  On xterm, you may want
+  to disable the "boldColors" resource so that bold plus a normal color
+  does not produce one of these bright colors.
+  The bright color names are:
+  gray,
+  brightred,
+  brightgreen,
+  brightyellow,
+  brightblue,
+  brightmagenta,
+  brightcyan, or
+  brightwhite.
+  The standard library defines these 8 bright colors with ISO 6429 extension
+  control codes, which will work on most terminals that support 16 colors.
+
+<p>
+  Some newer terminals can display 256 colors.  If tf was built
+  with the "256colors" <a href="../commands/features.html">feature</a>,
+  tf will recognize the following additional color names.
+  Names names of the form "rgb<i>R</i><i>G</i><i>B</i>" describe a color
+  within a 6x6x6 color cube:  <i>R</i>, <i>G</i> and <i>B</i> are each a
+  single digit between 0 and 5 that specifies the brightness of the
+  red, green, or blue component of the color.
+  For example, "rgb020" is a dark green, and "rgb520" is reddish orange.
+  Names of the form "gray<i>N</i>" describe a point on a grayscale, where
+  <i>N</i> is between 0 (dark) and 23 (light).
+  The standard library defines the "rgb*" and "gray*" colors with
+  xterm 256 color extension control codes.
+
+<p>
+  To test the functionality and appearance of colors in tf, you can
+  "<code><a href="../commands/load.html">/load</a> testcolor.tf".
+  This will also show the
+  <i>R</i>, <i>G</i> and <i>B</i> values of each color.
+
+<p>
+  You can use a defined color in any
+  <a href="../topics/attributes.html">attribute</a> string.  For example, to
+  make <a href="../commands/hilite.html">/hilite</a>'d text appear blue, you
+  can <code><a href="../commands/set.html">/set</a>
+  <a href="../topics/special_variables.html#%hiliteattr">hiliteattr</a>=Cblue</code>.
+
+<p>
+  To define your own control codes for terminals that don't accept the
+  predefined codes,
+  you will need to edit the color
+  <a href="../topics/variables.html">variables</a>.
+  The code to enable foreground or background color <i>name</i> is stored in a 
+  <a href="../topics/variables.html">variable</a> called
+  <a href="../topics/special_variables.html#%start_color_name">%{start_color_<i>name</i>}</a> or
+  <a href="../topics/special_variables.html#%start_color_name">%{start_color_bg<i>name</i>}</a>.
+  The code to turn off colors is stored in
+  <a href="../topics/special_variables.html#%end_color">%{end_color}</a>.
+  These <a href="../topics/variables.html">variables</a> may contain carat
+  notation and backslashed ascii codes in
+  decimal, octal, or hexadecimal (e.g., ESC is ^[, \27, \033, or \0x1B).
+
+<p>
+  The default definition of
+  <a href="../topics/special_variables.html#%end_color">%end_color</a>
+  is <code>"\033[39;49;0m</code>", which should work on most ANSI-like
+  terminals.  If this does not work on your terminal, then try
+  "<code><a href="../commands/set.html">/set</a>
+  <a href="../topics/special_variables.html#%end_color">end_color</a>
+  \033[30;47;0m</code>" (for black on white) or
+  "<code><a href="../commands/set.html">/set</a>
+  <a href="../topics/special_variables.html#%end_color">end_color</a>
+  \033[37;40;0m</code>" (for white on black).
+
+<p>
+  If <a href="../topics/special_variables.html#%emulation">%{emulation}</a> is
+  set to "ansi_attr" (the default), then ANSI, ISO 6429, and xterm 256 color
+  extension codes sent by the server will be interpreted by
+  tf.  As a result, if the
+  <a href="../topics/special_variables.html#%start_color_name">%{start_color_<i>name</i>}</a>
+  <a href="../topics/variables.html">variables</a> are set correctly for
+  your terminal, tf will translate color codes from the server into codes
+  for your terminal, displaying them correctly even if your
+  terminal does not use the same codes the server sends.  See:
+  <a href="../topics/special_variables.html#%emulation">%emulation</a>.
+
+<p>
+  Note for "screen(1)" users:  to make 8-16 colors work under Screen, you
+  need the following screenrc settings:
+  <pre>
+    termcap  xterm AF=\E[3%dm
+    terminfo xterm AF=\E[3%p1%dm
+    termcap  xterm AB=\E[4%dm
+    terminfo xterm AB=\E[4%p1%dm
+  </pre>
+  To make 256 colors work under Screen, it must have been compiled with
+  "--enable-colors256", and you need the following screenrc settings:
+  <pre>
+    terminfo xterm Co=256
+    termcap  xterm Co=256
+    termcap  xterm AF=\E[38;5;%dm
+    terminfo xterm AF=\E[38;5;%p1%dm
+    termcap  xterm AB=\E[48;5;%dm
+    terminfo xterm AB=\E[48;5;%p1%dm
+  </pre>
+
+<p>
+  Colors are numbered 0 through 255 in the order in which they are
+  described above, but refering to colors by their enumeration number is
+  generally not recommended, as the numbering is subject to change.
+  In particular, the numbering and interpretation of background colors
+  changed in version 5.0 beta 7.
+
+<p>
+  See: <a href="../topics/attributes.html">attributes</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>
+
+</BODY>
+</HTML>

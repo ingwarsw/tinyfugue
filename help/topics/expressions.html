@@ -1,0 +1,348 @@
+<title>TinyFugue: expressions</title>
+<!--"@logic"-->
+<!--"@math"-->
+<!--"@strings"-->
+<!--"@arithmetic"-->
+<!--"@expression"-->
+<!--"@expressions"-->
+<h1>expressions</h1>
+
+<p>
+  <a href="../topics/expressions.html">Expressions</a> apply operators
+  to numeric and string operands, and return a result.
+  They can be used in
+  <a href="../topics/substitution.html#$[">$[...] expression subs</a>,
+  the condition of
+  <a href="../commands/if.html">/if</a> and
+  <a href="../commands/while.html">/while</a> statements,
+  the condition of <a href="../commands/def.html#-E">/def -E</a>,
+  and as arguments to <a href="../commands/return.html">/return</a>,
+  <a href="../commands/return.html">/result</a>, and
+  <a href="../commands/test.html">/test</a> commands.
+
+<p>
+<a name="float"></a>
+<a name="real"></a>
+<a name="integer"></a>
+<a name="string"></a>
+<a name="dtime"></a>
+<a name="atime"></a>
+<a name="hours:minutes:seconds"></a>
+<a name="hours:minutes"></a>
+<a name="hh:mm"></a>
+<a name="hh:mm:ss"></a>
+<a name="types"></a>
+<a name="scalar"></a>
+<a name="scalars"></a>
+<a name="operands"></a>
+<h2>Operands</h2>
+  Operands can be any of:
+  <ul>
+  <li>Integer constants (e.g., <code>42</code>).
+  <li>Real decimal point constants ("reals", for short) containing
+      a decimal point (e.g., <code>12.3456789</code>) or
+      exponent (e.g., <code>1e-2</code>) or
+      both (e.g., <code>1.23e4</code>).
+  <li>Time duration ("dtime") values of the form <i>hours</i>:<i>minutes</i>,
+      <i>hours</i>:<i>minutes</i>:<i>seconds</i>, or
+      <i>seconds</i> (where <i>seconds</i> may contain a decimal point
+      followed by up to 6 digits),
+      will be interpreted as real seconds (e.g., 0:01:02.3 == 62.3),
+      and can be used anywhere a number is expected.
+  <li>Absolute time ("atime") values, in the form of a number with up to 6
+      decimal places.  On most systems, this represents the number of seconds
+      since 1970-01-01 00:00:00 UTC.
+  <li>Strings of characters, surrounded with quotes (", ', or `, with the
+      same kind of quote on each end), like <code>"hello world"</code>.
+  <li><a href="../topics/variables.html">Variable</a> references (see below)
+      like <code>visual</code>.
+  <li><a href="../topics/substitution.html#%{">Variable substitutions</a>
+      (see below) like <code>{visual}</code> and <code>{1}</code>.
+  <li><a href="../topics/substitution.html#${">Macro substitutions</a>
+      like <code>${COMPRESS_SUFFIX}</code>.
+  <li><a href="../topics/substitution.html#$(">Command substitutions</a>
+      like <code>$(<a href="../commands/listworlds.html">/listworlds</a>
+      -s)</code>.
+  </ul>
+
+<p>
+  Named <a href="../topics/variables.html">variables</a> may be accessed by
+  simply using their name (with no leading '%').  This is called a
+  <a href="../topics/variables.html">variable</a> reference, and is the
+  preferred way of using a
+  <a href="../topics/variables.html">variable</a> in an expression.
+  The special substitutions
+  (<a href="../topics/substitution.html#%*">*</a>,
+  <a href="../topics/substitution.html#%?">?</a>,
+  <a href="../topics/substitution.html#%#">#</a>,
+  <a href="../topics/substitution.html#%n"><i>n</i></a>,
+  <a href="../topics/substitution.html#%L">L<i>n</i></a>,
+  <a href="../topics/substitution.html#%P">P<i>n</i></a>,
+  <a href="../topics/substitution.html#%R">R</a>)
+  may not be used this way.
+
+<p>
+  <a href="../topics/substitution.html#%{">Variable substitutions</a> of the
+  form "<a href="../topics/substitution.html#%{">{selector}</a>" and
+  "<a href="../topics/substitution.html#%{">{selector-default}</a>" may be
+  used.  They follow the same rules as 
+  <a href="../topics/substitution.html#%{">variable substitution</a> in
+  macros, except that there is no leading
+  '%', and the '{' and '}' are required.
+  The special substitutions
+  (<a href="../topics/substitution.html#%*">*</a>,
+  <a href="../topics/substitution.html#%?">?</a>,
+  <a href="../topics/substitution.html#%#">#</a>,
+  <a href="../topics/substitution.html#%n"><i>n</i></a>,
+  <a href="../topics/substitution.html#%L">L<i>n</i></a>,
+  <a href="../topics/substitution.html#%P">P<i>n</i></a>,
+  <a href="../topics/substitution.html#%R">R</a>)
+  are allowed.
+
+<p>
+  Macro-style
+  <a href="../topics/substitution.html#%{">variable substitutions</a>
+  beginning with '%' may also be used, but are not
+  recommended, since the multiple '%'s required in nested
+  <a href="../topics/macros.html">macros</a> can quickly get confusing.  It
+  always easier to use one of the above methods.
+
+
+<p>
+<a name="operators"></a>
+<h2>Operators</h2>
+  In the following list, operators are listed in groups, from highest to
+  lowest precedence.  Operators listed together have equal precedence.  The
+  letters in the table below correspond to the type of objects acted on by
+  the operators:
+  <var>n</var> for numeric (integer or real);
+  <var>s</var> for string;
+  <var>e</var> for any expression.
+  All operators group left-to-right except assignment,
+  which groups right-to-left.
+  If any binary numeric operator is applied to two integers, the result
+  will be an integer, unless the result would overflow, in which case it
+  is converted to real.  If either operand is a real, the other will
+  be converted to real if it is not already a real, and the result will be
+  a real.
+<p>
+
+<dl compact>
+  <!-- defwidth=11 -->
+  <dt>(<var>e</var>)
+          <dd>Parentheses, for grouping.
+
+<br><br>
+  <dt><var>func</var>(<var>args</var>)
+          <dd>Perform <a href="../topics/functions.html">function</a>
+          <i>func</i> on arguments <i>args</i>.
+          (see:  <a href="../topics/functions.html">functions</a>).
+
+<br><br>
+  <dt>!<var>n</var>
+          <dd>Boolean NOT (1 if <var>n</var>==0, otherwise 0).
+  <dt>+<var>n</var>
+          <dd>Unary positive (useful for converting a string to a number).
+  <dt>-<var>n</var>
+          <dd>Unary negative.
+  <dt>++<var>v</var>
+	  <dd>Equivalent to
+	  <code>(<var>v</var> := <var>v</var> + 1)</code>.
+  <dt>--<var>v</var>
+	  <dd>Equivalent to
+	  <code>(<var>v</var> := <var>v</var> - 1)</code>.
+
+<br><br>
+  <dt><var>n1</var> * <var>n2</var>
+          <dd>Numeric multiplication.
+  <dt><var>n1</var> / <var>n2</var>
+          <dd>Numeric division.
+          Remember, if both operands are type integer, the result will be
+          truncated to integer.
+
+<br><br>
+  <dt><var>n1</var> + <var>n2</var>
+          <dd>Numeric addition.
+  <dt><var>n1</var> - <var>n2</var>
+          <dd>Numeric subtraction.
+
+<br><br>
+  <dt><var>n1</var> = <var>n2</var>
+          <dd>Numeric equality (but easily confused with assignment;
+	  you are advised to use <code>==</code> instead).
+  <dt><var>n1</var> == <var>n2</var>
+          <dd>Numeric equality.
+  <dt><var>n1</var> != <var>n2</var>
+          <dd>Numeric inequality.
+  <dt><var>s1</var> =~ <var>s2</var>
+          <dd>String equality (case sensitive,
+          <a href="../topics/attributes.html">attribute</a> insensitive).
+  <dt><var>s1</var> !~ <var>s2</var>
+          <dd>String inequality (case sensitive,
+          <a href="../topics/attributes.html">attribute</a> insensitive).
+  <dt><var>s1</var> =/ <var>s2</var>
+          <dd>String <var>s1</var> matches
+          <a href="../topics/patterns.html#glob">glob</a> pattern <var>s2</var>.
+  <dt><var>s1</var> !/ <var>s2</var>
+          <dd>String <var>s1</var> does not match
+          <a href="../topics/patterns.html#glob">glob</a> pattern <var>s2</var>.
+  <dt><var>n1</var> &lt; <var>n2</var>
+          <dd>Numeric less than.
+  <dt><var>n1</var> &lt;= <var>n2</var>
+          <dd>Numeric less than or equal.
+  <dt><var>n1</var> &gt; <var>n2</var>
+          <dd>Numeric greater than.
+  <dt><var>n1</var> &gt;= <var>n2</var>
+          <dd>Numeric greater than or equal.
+
+<br><br>
+  <dt><var>n1</var> &amp; <var>n2</var>
+          <dd>Boolean AND.  <var>n2</var> will be evaluated if and only if
+          <var>n1</var> is nonzero.
+
+<br><br>
+  <dt><var>n1</var> | <var>n2</var>
+          <dd>Boolean OR.  <var>n2</var> will be evaluated if and only if
+          <var>n1</var> is zero.
+
+<br><br>
+  <dt><var>n</var> ? <var>e1</var> : <var>e2</var>
+  <br><var>n</var> ? : <var>e2</var>
+          <dd>Conditional.  If <var>n</var> is nonzero, the result is the
+          value of <a href="../topics/expressions.html">expression</a>
+          <var>e1</var>; otherwise it is the value of
+          <a href="../topics/expressions.html">expression</a> <var>e2</var>.
+          If <var>e1</var> is omitted, the value of <var>n</var> is used in
+          its place.
+	  Note that digits followed by a colon is interpreted as a dtime value,
+	  so if the <var>e2</var> operand of the ?: operator is an integer,
+	  you must separate it from the colon (with a space or parenthesis,
+	  for example).
+
+<br><br>
+  <dt><var>v</var> := <var>e</var>
+          <dd>Assignment.  The identifier "<var>v</var>" refers to the
+          <a href="../topics/variables.html">variable</a> in the nearest scope.
+          If not found, a new <a href="../topics/variables.html">variable</a>
+          is created at the global level, as if by
+          <a href="../commands/set.html">/set</a>.
+          If <var>v</var> is a
+          <a href="../topics/special_variables.html">special variable</a>,
+          the value of <var>e</var> may need to be converted to the type of
+          <var>v</var>, or the assignment may fail altogther if the value
+          is not legal for <var>v</var>.  The value of the assignment
+          expression is the new value of <var>v</var>.
+
+  <dt><var>v</var> += <var>n</var>
+	  <dd>Equivalent to
+	  <code><var>v</var> := <var>v</var> + (<var>n</var>)</code>.
+  <dt><var>v</var> -= <var>n</var>
+	  <dd>Equivalent to
+	  <code><var>v</var> := <var>v</var> - (<var>n</var>)</code>.
+  <dt><var>v</var> *= <var>n</var>
+	  <dd>Equivalent to
+	  <code><var>v</var> := <var>v</var> * (<var>n</var>)</code>.
+  <dt><var>v</var> /= <var>n</var>
+	  <dd>Equivalent to
+	  <code><var>v</var> := <var>v</var> / (<var>n</var>)</code>.
+
+<br><br>
+  <dt><var>e1</var> , <var>e2</var>
+          <dd>Comma.  <a href="../topics/expressions.html">Expressions</a>
+          <var>e1</var> and <var>e2</var> are evaluated; the result is the
+          value of <var>e2</var>.  Only useful if <var>e1</var> has some side
+          effect.
+</dl>
+
+<p>
+  The comparison operators return 0 for false, nonzero for true.  The boolean
+  operators (&amp; and |) stop evaluating as soon as the value of the
+  <a href="../topics/expressions.html">expression</a> is known
+  ("short-circuit"), and return the value of the last operand evaluated.
+  This does not affect the value of the
+  <a href="../topics/expressions.html">expression</a>, but is important when
+  the second operand performs side effects.
+
+<p>
+  Normal (non-<a href="../topics/special_variables.html">enumerated</a>)
+  <a href="../topics/variables.html">Variables</a> set with any of the 
+  assignment operators keep the type of the
+  <a href="../topics/expressions.html">expression</a> assigned to them.
+  This is different than <a href="../commands/set.html">/set</a> and
+  <a href="../commands/let.html">/let</a>, which always assign a string value
+  to the <a href="../topics/variables.html">variables</a>.
+  This distinction is important for real numeric values, which lose precision 
+  if converted to a string and back.
+
+<a name="conversion"></a>
+<p>
+  All operands will be automatically converted to the type expected by the
+  operator.
+  <ul>
+  <li>String to numeric:  leading signs, digits, colons, and exponents are
+      interpreted as an integer, decimal (real), or dtime (real) value; e.g.,
+      "12abc" becomes 12,
+      "12.3junk" becomes 12.3,
+      "0:01:02.3" becomes 0:01:02.3,
+      and "xyz" becomes 0.
+
+  <li>Integer to real:  straightforward.
+
+  <li>Real to integer:  the fractional part is truncated.
+
+  <li><a href="../topics/special_variables.html">Enumerated variable</a> to
+      string:  straightforward string value.
+
+  <li><a href="../topics/special_variables.html">Enumerated variable</a> to
+      numeric:  one integer stands for each of the allowed values.
+      "Off" is always 0, "on" is always 1, etc.
+      This makes <code>(!<a href="../topics/mode.html">visual</a>)</code>
+      and <code>(<a href="../topics/mode.html">visual</a> == 0)</code> the same
+      as <code>(<a href="../topics/mode.html">visual</a> =~ 'off')</code>.
+
+  <li>Integer to string:  straightforward.
+  <li>Real to string:  decimal notation if the exponent
+      is greater than -5 and less than
+      <a href="../topics/special_variables.html#%sigfigs">%sigfigs</a>,
+      otherwise exponential notation.
+
+  <li>Normal (non-<a href="../topics/special_variables.html">enumerated</a>)
+      <a href="../topics/variables.html">variables</a> are treated as whatever
+      type their value has.
+  </ul>
+<a name=""></a>
+
+<p>
+<h2>Examples</h2>
+  Given the <a href="../topics/variables.html">variables</a>
+<pre>
+    <a href="../commands/set.html">/set</a> X=5
+    <a href="../commands/set.html">/set</a> name=Hawkeye
+    <a href="../commands/set.html">/set</a> <a href="../topics/mode.html">visual</a>=1
+</pre>
+  here are some <a href="../topics/expressions.html">expressions</a> and
+  their values:
+<pre>
+    <a href="../topics/expressions.html">Expression</a>		   Value   Comments
+    ----		   -----   --------
+    3 + X * 2		      13   3 + (5 * 2) = 13.
+    "foo" =~ "bar"	       0   "foo" is not identical to "bar".
+    name =/ 'hawk*'	       1   "Hawkeye" matches the <a href="../topics/patterns.html#glob">glob</a> "hawk*".
+    X =~ "+5"		       0   X is interpreted as string "5".
+    X == "+5"		       1   string "+5" is converted to integer 5.
+    visual &amp; (X &gt; 0)	       1   visual is nonzero, AND %X is positive.
+</pre>
+
+<p>
+  See: <a href="../topics/functions.html">functions</a>,
+  <a href="../commands/test.html">/test</a>,
+  <a href="../topics/evaluation.html">evaluation</a>,
+  <a href="../topics/patterns.html">patterns</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

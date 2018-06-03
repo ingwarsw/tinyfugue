@@ -1,0 +1,42 @@
+<title>TinyFugue: /kill</title>
+<!--"@/kill"-->
+<h1>/kill</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/kill.html">/KILL</a> <i>pid</i>...<br>
+<hr>
+
+<p>
+  For each <i>pid</i> given,
+  <a href="../commands/kill.html">/kill</a> terminates the corresponding
+  <a href="../topics/processes.html">process</a>
+  (<a href="../commands/quote.html">/quote</a> or
+  <a href="../commands/repeat.html">/repeat</a> command).
+  The pid of a <a href="../topics/processes.html">process</a>
+  can be determined from the return
+  value of the <a href="../commands/quote.html">/quote</a> or
+  <a href="../commands/repeat.html">/repeat</a>, the
+  <a href="../commands/ps.html">/ps</a> command, or a PROCESS
+  <a href="../topics/hooks.html">hook</a>.
+
+<p>
+  Bug: <a href="../commands/kill.html">/kill</a> on a pending
+  <a href="../commands/quote.html">/quote</a> ! will block until the
+  shell process exits.  The block can be broken with an interrupt.
+
+<p>
+  See: <a href="../topics/processes.html">processes</a>,
+  <a href="../commands/quote.html">/quote</a>,
+  <a href="../commands/repeat.html">/repeat</a>,
+  <a href="../commands/ps.html">/ps</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

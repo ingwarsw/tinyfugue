@@ -1,0 +1,28 @@
+<title>TinyFugue: redirection</title>
+<!--"@redirection"-->
+<h1>redirection</h1>
+
+<p>
+  If TF is started with input or output redirected,
+  <a href="../topics/special_variables.html#%more">%more</a> will be ignored
+  and SIGINT (^C) will kill TF without prompting.  TF will not exit when EOF
+  is reached; the <a href="../commands/quit.html">/quit</a> command must be
+  given explicitly.
+
+<p>
+  On UNIX systems, it is possible to write a tf script starting with the
+  lines:
+<pre>
+    #!/bin/sh
+    exec tf -n $* &lt;$0
+</pre>
+  and following with any tf commands.  The file can then be executed directly
+  like a shell script.
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

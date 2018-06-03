@@ -1,0 +1,72 @@
+<title>TinyFugue: /restrict</title>
+<!--"@security"-->
+<!--"@/restrict"-->
+<h1>/restrict</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/restrict.html">/RESTRICT</a> [SHELL|FILE|WORLD]<br>
+<hr>
+
+<p>
+  With no arguments, <a href="../commands/restrict.html">/restrict</a>
+  reports the current restriction level.
+
+<p>
+  With an argument, <a href="../commands/restrict.html">/restrict</a> sets
+  the restriction level.  Once restriction has been set to a particular
+  level, it can not be lowered.
+<dl>
+  <dt>level 0: NONE
+  <dd>No restrictions.
+
+  <dt>level 1: SHELL
+  <dd>Prevents all access to shell or external commands.  Disables
+  TF builtins "<a href="../commands/sh.html">/sh</a>" and
+  "<a href="../commands/quote.html">/quote</a> !", and uncompression during
+  <a href="../commands/load.html">/load</a> and
+  <a href="../commands/help.html">/help</a>.
+
+  <dt>level 2: FILE
+  <dd>Prevents reading and writing of files.  Disables TF builtins
+  "<a href="../commands/load.html">/load</a>",
+  "<a href="../commands/save.html">/save</a>",
+  "<a href="../commands/saveworld.html">/saveworld</a>",
+  "<a href="../commands/lcd.html">/lcd</a>",
+  "<a href="../commands/log.html">/log</a>", and
+  "<a href="../commands/quote.html">/quote</a> '",
+  "<a href="../topics/functions.html#tfopen">tfopen()</a>",
+  the "<a href="../topics/special_variables.html#%sockmload">sockmload</a>
+  feature.
+  Implies <a href="../commands/restrict.html">/restrict</a> shell.
+
+  <dt>level 3: WORLD
+  <dd>Disallows all new user-defined connections.  The TF builtins
+  <a href="../commands/addworld.html">/addworld</a> and the
+  "<a href="../commands/connect.html">/connect</a> <i>host</i> <i>port</i>"
+  semantics are disabled.  Implies
+  <a href="../commands/restrict.html">/restrict</a> file.
+</dl>
+
+<p>
+  <a href="../commands/restrict.html">/Restrict</a> is typically placed in
+  <a href="../topics/special_variables.html#%TFLIBDIR">%{TFLIBDIR}</a>/<a href="../topics/library.html">local.tf</a>
+  by an administrator of a public copy of TF who wishes to restrict users'
+  access.
+
+<p>
+  Note that while I believe these options to be secure, I provide no warranty
+  to that effect.
+
+<p>
+  See: <a href="../topics/copyright.html">warranty</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>

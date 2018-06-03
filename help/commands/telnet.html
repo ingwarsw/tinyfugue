@@ -1,0 +1,55 @@
+<title>TinyFugue: /telnet</title>
+<!--"@/telnet"-->
+<h1>/telnet</h1>
+
+<p>
+  Usage:
+
+<p>
+  <a href="../commands/telnet.html">/TELNET</a> <i>host</i> [<i>port</i>]<br>
+<hr>
+
+<p>
+  Connect to a line-based telnet host.  The telnet login port is used if
+  <i>port</i> is omitted.
+
+<p>
+  Note that TF operates strictly in line-by-line mode, but telnetd (the
+  server running on the telnet login port) expects character-by- character
+  mode.  So, simple shell operations and anything else which is basically
+  line-by-line should work without much difficulty, but anything that tries
+  to control the screen or expects single keystroke input will <em>not</em>
+  work.  <a href="../commands/telnet.html">/Telnet</a> is somewhat useful,
+  but not useful enough to alter the fundamental line-by-line nature of TF.
+  If you want a general telnet client, you know where to find it.
+
+<p>
+  TF supports most of the TELNET protocol (even if a command other than
+  <a href="../commands/telnet.html">/telnet</a> was used to connect).
+  TF implements the TELNET options
+  ECHO (lets server control echoing of input),
+  SGA (suppress GOAHEAD),
+  EOR (allows use of END-OF-RECORD in
+  <a href="../topics/prompt_protocol.html">prompts</a>),
+  NAWS (allows TF to send window size information to the server),
+  TTYPE (allows server to ask about the terminal type),
+  and BINARY (allows transmission of 8-bit characters).
+  For TTYPE queries, TF responds "TINYFUGUE", "ANSI-ATTR", "ANSI", and
+  "UNKNOWN", in that order.
+  For information on TELNET protocol, see RFC 854 and 1123.
+  See also: <a href="../topics/prompts.html">prompts</a>.
+
+<p>
+  See: <a href="../commands/addworldtype.html">/addtelnet</a>,
+  <a href="../commands/connect.html">/connect</a>,
+  <a href="../topics/special_variables.html#%telopt">%telopt</a>,
+  <a href="../topics/special_variables.html#%binary_eol">%binary_eol</a>,
+  <a href="../topics/protocols.html">protocols</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>
+<hr>
+  <a href="../topics/copyright.html">Copyright</a> &copy; 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 <a href="http://sourceforge.net/users/kenkeys/">Ken Keys</a>
