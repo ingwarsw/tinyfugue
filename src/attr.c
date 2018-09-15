@@ -538,6 +538,8 @@ String *decode_ansi(const char *s, attr_t attrs, int emul, attr_t *final_attrs)
                     case 24:  new &= ~F_UNDERLINE;    break;
                     case 25:  new &= ~F_FLASH;        break;
                     case 27:  new &= ~F_REVERSE;      break;
+                    case 39:  new &= ~F_FGCOLOR;      break;
+                    case 49:  new &= ~F_BGCOLOR;      break;
                     default:  /* ignore it */         break;
                 }
             } while (s[0] == ';' && s[1]);
