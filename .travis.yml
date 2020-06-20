@@ -5,8 +5,11 @@ os:
   - osx
   - linux
 
-dist: trusty
+dist: bionic
+
 sudo: false
+
+python: 3.7
 
 addons:
   apt:
