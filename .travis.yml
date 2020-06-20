@@ -5,11 +5,7 @@ os:
   - osx
   - linux
 
-dist: bionic
-
-sudo: false
-
-python: 3.7
+dist: xenial
 
 addons:
   apt:
@@ -30,6 +26,8 @@ before_install:
   - pyenv global system 3.7 || true
 
 env:
+  global:
+    - PATH=/opt/python/3.7.7/bin:$PATH
   matrix:
     - OPTS="--enable-lua --enable-python"
 
