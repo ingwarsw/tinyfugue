@@ -80,25 +80,26 @@ enum enum_attr {
     F_FLASH       = 0x0000,   /* zero - not implemented */
     F_DIM         = 0x0000,   /* zero - not implemented */
     F_BOLD        = 0x0004,
-    F_HILITE      = 0x0008,
-    F_NONE        = 0x0010,
-    F_EXCLUSIVE   = 0x0020,
+    F_ITALIC      = 0x0008,
+    F_HILITE      = 0x0010,
+    F_NONE        = 0x0020,
+    F_EXCLUSIVE   = 0x0040,
 
 #if NCOLORS == 256 /* XXX ??? */
 # define FGCOLORSHIFT 8
     F_FGCOLORMASK = 0x0000ff00,   /* 8 bits, interpreted as an integer */
-    F_FGCOLOR     = 0x00000040,   /* flag */
+    F_FGCOLOR     = 0x00000080,   /* flag */
 # define BGCOLORSHIFT 16
     F_BGCOLORMASK = 0x00ff0000,   /* 8 bits, interpreted as an integer */
-    F_BGCOLOR     = 0x00000080,   /* flag */
+    F_BGCOLOR     = 0x00000100,   /* flag */
 #else
     /* inside the 16 low bits */
 # define FGCOLORSHIFT 8
     F_FGCOLORMASK = 0x0f00,   /* 4 bits, interpreted as an integer */
-    F_FGCOLOR     = 0x0040,   /* flag */
+    F_FGCOLOR     = 0x0080,   /* flag */
 # define BGCOLORSHIFT 12
     F_BGCOLORMASK = 0x7000,   /* 3 bits, interpreted as an integer */
-    F_BGCOLOR     = 0x0080,   /* flag */
+    F_BGCOLOR     = 0x0100,   /* flag */
 #endif
 
     /* outside the 16 low bits */
@@ -114,7 +115,7 @@ enum enum_attr {
     F_FGCOLORS    = (F_FGCOLOR | F_FGCOLORMASK),
     F_BGCOLORS    = (F_BGCOLOR | F_BGCOLORMASK),
     F_COLORS      = (F_FGCOLORS | F_BGCOLORS),
-    F_SIMPLE      = (F_UNDERLINE | F_REVERSE | F_FLASH | F_DIM | F_BOLD),
+    F_SIMPLE      = (F_UNDERLINE | F_REVERSE | F_FLASH | F_DIM | F_BOLD | F_ITALIC),
     F_HWRITE      = (F_SIMPLE | F_HILITE | F_COLORS),
     F_ENCODE      = (F_SIMPLE | F_HILITE | F_FGCOLOR | F_BGCOLOR),
     F_ATTR        = (F_HWRITE | F_GAG | F_NOHISTORY | F_NOACTIVITY | F_NONE |

@@ -1356,6 +1356,7 @@ static int list_defs(TFILE *file, Macro *spec, int mflag, ListOpts *listopts)
                 if (p->attr & F_FLASH)     Stringcat(buffer, "(flash) ");
                 if (p->attr & F_DIM)       Stringcat(buffer, "(dim) ");
                 if (p->attr & F_BOLD)      Stringcat(buffer, "(bold) ");
+                if (p->attr & F_ITALIC)    Stringcat(buffer, "(italic) ");
                 if (p->attr & F_BELL)      Stringcat(buffer, "(bell) ");
                 if (p->attr & F_HILITE)    Stringcat(buffer, "(hilite) ");
                 if (p->attr & F_FGCOLOR)
