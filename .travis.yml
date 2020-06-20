@@ -18,6 +18,7 @@ addons:
     packages:
     - lua5.2
     - liblua5.2-dev
+    - python3.7-dev
   homebrew:
     packages: 
     - python3.7
