@@ -14,23 +14,22 @@ python: 3.7
 addons:
   apt:
     sources:
-      - deadsnakes
+    - deadsnakes
     packages:
-      - lua5.2
-      - liblua5.2-dev
+    - lua5.2
+    - liblua5.2-dev
   homebrew:
     packages: 
-       - python3.7
-       - lua
-       - pcre
+    - python3.7
+    - lua
+    - pcre
+    update: true
 
 before_install:
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then brew update; fi || true
   - pyenv global system 3.7 || true
 
 env:
   matrix:
-    - OPTS=""
     - OPTS="--enable-lua --enable-python"
 
 script: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 $OPTS && make
