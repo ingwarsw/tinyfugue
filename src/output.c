@@ -108,7 +108,7 @@ TERMCODE (reverse,		"\033[7m",	"\033[7m",	"\033[7m")
 TERMCODE (flash,		"\033[5m",	"\033[5m",	"\033[5m")
 TERMCODE (dim,			NULL,		NULL,		NULL)
 TERMCODE (bold,			"\033[1m",	"\033[1m",	"\033[1m")
-TERMCODE (italic, "\033[3m", "\033[3m", "\033[3m")
+TERMCODE (italic,       "\033[3m", "\033[3m", "\033[3m")
 TERMCODE (attr_off,		"\033[m",	"\033[m",	"\033[m")
 TERMCODE (attr_on,		NULL,		NULL,		NULL)
 /* these are only used if others are missing */

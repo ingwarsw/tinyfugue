@@ -224,6 +224,7 @@ static struct Value* pyvar_to_tfvar( PyObject *pRc )
 		PyBytes_AsStringAndSize( temp, &cstr, &len );
 		DPRINTF( "  rc unicode: %s", cstr );
 		rc = newstr( cstr, len );
+		Py_XDECREF(temp);
 	} else if( PyLong_Check( pRc ) ) {
 		DPRINTF( "  rc long: %ld", PyLong_AsLong( pRc ) );
 		rc = newint( PyLong_AsLong( pRc ) );
@@ -237,7 +238,7 @@ static struct Value* pyvar_to_tfvar( PyObject *pRc )
 		DPRINTF( "  rc None" );
 		rc = newstr( "", 0 );
 	}
-	Py_DECREF( pRc );
+	Py_XDECREF( pRc );
 
 	// And return
 	return rc;
