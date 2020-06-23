@@ -6,7 +6,6 @@ os:
   - linux
 
 dist: trusty
-sudo: false
 
 addons:
   apt:
@@ -17,11 +16,11 @@ addons:
       - liblua5.2-dev
 
 before_install:
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then travis_retry brew update; brew upgrade python; travis_retry brew install lua pcre; fi || true
+  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then travis_retry brew update; brew remove python@2; travis_retry brew install lua pcre; fi || true
   - pyenv global system 3.6 || true
 
 env:
-  matrix:
+  jobs:
     - OPTS=""
     - OPTS="--enable-lua"
     - OPTS="--enable-python"
