@@ -6,7 +6,6 @@ os:
   - linux
 
 dist: trusty
-sudo: false
 
 addons:
   apt:
@@ -21,7 +20,7 @@ before_install:
   - pyenv global system 3.6 || true
 
 env:
-  matrix:
+  jobs:
     - OPTS=""
     - OPTS="--enable-lua"
     - OPTS="--enable-python"
