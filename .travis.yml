@@ -4,7 +4,7 @@ compiler: gcc
 os:
   - osx
   - linux
-  
+
 dist: xenial
 
 addons:
@@ -28,7 +28,7 @@ before_install:
 env:
   global:
     - PATH=/opt/python/3.7.7/bin:$PATH
-
+    
   jobs:
     - OPTS=""
     - OPTS="--enable-lua"
