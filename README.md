@@ -1,8 +1,7 @@
 TinyFugue - Rebirth
 =====================
 
-[![Build Status](https://travis-ci.org/ingwarsw/tinyfugue.svg?branch=master)](https://travis-ci.org/ingwarsw/tinyfugue)
-
+[![Build Status](https://travis-ci.org/destor/tinyfugue.svg?branch=master)](https://travis-ci.org/destor/tinyfugue)
 
 This project is meant to give rebirth to TinyFugue MUD client.
 

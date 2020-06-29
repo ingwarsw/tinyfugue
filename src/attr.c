@@ -358,6 +358,7 @@ const char *parse_attrs(const char *str, attr_t *attrp, int delimiter)
         case 'u':  *attrp |= F_UNDERLINE; break;
         case 'r':  *attrp |= F_REVERSE;   break;
         case 'f':  *attrp |= F_FLASH;     break;
+        case 'i':  *attrp |= F_ITALIC;    break;
         case 'd':  *attrp |= F_DIM;       break;
         case 'B':  *attrp |= F_BOLD;      break;
         case 'b':  *attrp |= F_BELL;      break;
@@ -530,11 +531,13 @@ String *decode_ansi(const char *s, attr_t attrs, int emul, attr_t *final_attrs)
 		     */
                 } else switch (i) {
                     case 1:   new |= F_BOLD;          break;
+                    case 3:   new |= F_ITALIC;        break;
                     case 4:   new |= F_UNDERLINE;     break;
                     case 5:   new |= F_FLASH;         break;
                     case 7:   new |= F_REVERSE;       break;
                     case 21:  new &= ~F_BOLD;         break;
                     case 22:  new &= ~(F_BOLD|F_DIM); break;
+                    case 23:  new &= ~F_ITALIC;       break;
                     case 24:  new &= ~F_UNDERLINE;    break;
                     case 25:  new &= ~F_FLASH;        break;
                     case 27:  new &= ~F_REVERSE;      break;
@@ -670,6 +673,7 @@ String *attr2str(String *buffer, attr_t attrs)
     if (attrs & F_REVERSE)    Stringadd(buffer, 'r');
     if (attrs & F_FLASH)      Stringadd(buffer, 'f');
     if (attrs & F_DIM)        Stringadd(buffer, 'd');
+    if (attrs & F_ITALIC)     Stringadd(buffer, 'i');
     if (attrs & F_BOLD)       Stringadd(buffer, 'B');
     if (attrs & F_BELL)       Stringadd(buffer, 'b');
     if (attrs & F_HILITE)     Stringadd(buffer, 'h');
@@ -741,6 +745,7 @@ static String *attr2ansi(String *str, attr_t attrs)
     if (attrs & F_HILITE)    attrs |= hiliteattr;
 
     if (attrs & F_BOLD)      { semi(); Stringcat(str, "1"); }
+    if (attrs & F_ITALIC)    { semi(); Stringcat(str, "3"); }
     if (attrs & F_UNDERLINE) { semi(); Stringcat(str, "4"); }
     if (attrs & F_FLASH)     { semi(); Stringcat(str, "5"); }
     if (attrs & F_REVERSE)   { semi(); Stringcat(str, "7"); }

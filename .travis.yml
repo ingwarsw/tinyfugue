@@ -5,21 +5,30 @@ os:
   - osx
   - linux
 
-dist: trusty
+dist: xenial
 
 addons:
   apt:
     sources:
-      - deadsnakes
+    - deadsnakes
     packages:
-      - lua5.2
-      - liblua5.2-dev
+    - lua5.2
+    - liblua5.2-dev
+    - python3.7-dev
+  homebrew:
+    packages: 
+    - python3.7
+    - lua
+    - pcre
+    update: true
 
 before_install:
-  - if [ "${TRAVIS_OS_NAME}" == "osx" ]; then travis_retry brew update; brew remove python@2; travis_retry brew install lua pcre; fi || true
-  - pyenv global system 3.6 || true
+  - pyenv global system 3.7 || true
 
 env:
+  global:
+    - PATH=/opt/python/3.7.7/bin:$PATH
+    
   jobs:
     - OPTS=""
     - OPTS="--enable-lua"

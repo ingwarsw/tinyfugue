@@ -108,6 +108,7 @@ TERMCODE (reverse,		"\033[7m",	"\033[7m",	"\033[7m")
 TERMCODE (flash,		"\033[5m",	"\033[5m",	"\033[5m")
 TERMCODE (dim,			NULL,		NULL,		NULL)
 TERMCODE (bold,			"\033[1m",	"\033[1m",	"\033[1m")
+TERMCODE (italic,       "\033[3m", "\033[3m", "\033[3m")
 TERMCODE (attr_off,		"\033[m",	"\033[m",	"\033[m")
 TERMCODE (attr_on,		NULL,		NULL,		NULL)
 /* these are only used if others are missing */
@@ -465,7 +466,7 @@ static void init_term(void)
     delete_char = insert_char = insert_start = insert_end = NULL;
     enter_ca_mode = exit_ca_mode = cursor_address = NULL;
     keypad_on = keypad_off = NULL;
-    standout = underline = reverse = flash = dim = bold = bell = NULL;
+    standout = underline = reverse = flash = dim = bold = italic = bell = NULL;
     standout_off = underline_off = attr_off = attr_on = NULL;
 
     {
@@ -518,21 +519,22 @@ static void init_term(void)
         keypad_on            = tgetstr("ks", &area);
         keypad_off           = tgetstr("ke", &area);
 
-        bell		= tgetstr("bl", &area);
-        underline	= tgetstr("us", &area);
-        reverse		= tgetstr("mr", &area);
-        flash		= tgetstr("mb", &area);
-        dim		= tgetstr("mh", &area);
-        bold		= tgetstr("md", &area);
-        standout	= tgetstr("so", &area);
+        bell		    = tgetstr("bl", &area);
+        underline	    = tgetstr("us", &area);
+        reverse		    = tgetstr("mr", &area);
+        flash		    = tgetstr("mb", &area);
+        dim		        = tgetstr("mh", &area);
+        bold		    = tgetstr("md", &area);
+        italic          = tgetstr("ZH", &area);
+        standout	    = tgetstr("so", &area);
         underline_off	= tgetstr("ue", &area);
         standout_off	= tgetstr("se", &area);
-        attr_off	= tgetstr("me", &area);
-        attr_on		= tgetstr("sa", &area);
+        attr_off	    = tgetstr("me", &area);
+        attr_on		    = tgetstr("sa", &area);
 
         if (!attr_off) {
             /* can't exit all attrs, but maybe can exit underline/standout */
-            reverse = flash = dim = bold = NULL;
+            reverse = flash = dim = bold = italic = NULL;
             if (!underline_off) underline = NULL;
             if (!standout_off) standout = NULL;
         }
@@ -594,6 +596,7 @@ static void init_term(void)
     if (flash)     have_attr |= F_FLASH;
     if (dim)       have_attr |= F_DIM;
     if (bold)      have_attr |= F_BOLD;
+    if (italic)    have_attr |= F_ITALIC;
     if (standout)  have_attr |= F_BOLD;
 }
 
@@ -2772,6 +2775,7 @@ static void attributes_on(attr_t attrs)
             (have_attr & attrs & F_FLASH),
             (have_attr & attrs & F_DIM),
             (have_attr & attrs & F_BOLD && bold),
+            (have_attr & attrs & F_ITALIC),
             0, 0, 0));
         } else
 #endif
@@ -2780,6 +2784,7 @@ static void attributes_on(attr_t attrs)
         if (have_attr & attrs & F_DIM)       tp(dim);
         if (have_attr & attrs & F_BOLD)      tp(bold ? bold : standout);
         if (have_attr & attrs & F_UNDERLINE) tp(underline);
+        if (have_attr & attrs & F_ITALIC)    tp(italic);
         if (have_attr & attrs & F_REVERSE)   tp(reverse);
         if (have_attr & attrs & F_FLASH)     tp(flash);
     }
