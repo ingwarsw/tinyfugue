@@ -39,6 +39,8 @@ static const char RCSid[] = "$Id: main.c,v 35004.115 2007/01/13 23:12:39 kkeys E
 #include "expr.h"
 #include "process.h"
 
+extern struct World   *world_decl;     /* declares struct World */
+
 const char sysname[] = UNAME;
 
 /* For customized versions, please add a unique identifer (e.g., your initials)

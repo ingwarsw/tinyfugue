@@ -27,6 +27,8 @@ static const char RCSid[] = "$Id: world.c,v 35004.77 2007/01/13 23:12:39 kkeys E
 #include "socket.h"
 #include "output.h"	/* columns */
 
+struct World   *world_decl;     /* declares struct World */
+
 #define LW_TABLE	001
 #define LW_UNNAMED	002
 #define LW_SHORT	004

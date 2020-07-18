@@ -114,6 +114,8 @@ struct sockaddr_in {
 
 #include NETDB_H
 
+extern struct World   *world_decl;     /* declares struct World */
+
 #if !HAVE_GAI_STRERROR || !defined(AI_NUMERICHOST) || !defined(EAI_SERVICE)
   /* System's implementation is incomplete.  Avoid it. */
 # undef HAVE_GETADDRINFO

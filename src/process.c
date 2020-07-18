@@ -28,6 +28,8 @@ static const char RCSid[] = "$Id: process.c,v 35004.71 2007/01/13 23:12:39 kkeys
 #include "output.h"	/* oflush() */
 #include "signals.h"	/* interrupted() */
 
+extern struct World   *world_decl;     /* declares struct World */
+
 const int feature_process = !(NO_PROCESS - 0);
 #if !NO_PROCESS
 

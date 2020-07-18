@@ -49,6 +49,7 @@ const int feature_float = !(NO_FLOAT-0);
 
 static Value *valpool = NULL;           /* freelist */
 
+extern struct World   *world_decl;     /* declares struct World */
 
 /* dup string operand */
 #define opdstrdup(N) Stringdup(opdstr(N))

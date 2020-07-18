@@ -35,6 +35,8 @@ static const char RCSid[] = "$Id: expand.c,v 35004.232 2007/01/13 23:12:39 kkeys
 #include "command.h"
 #include "variable.h"
 
+extern struct World   *world_decl;     /* declares struct World */
+
 typedef struct { void *ptr; opcode_t op; } opcmd_t;
 
 Value *user_result = NULL;		/* result of last user command */
