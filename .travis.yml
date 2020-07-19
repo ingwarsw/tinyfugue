@@ -14,21 +14,18 @@ addons:
     packages:
     - lua5.2
     - liblua5.2-dev
-    - python3.7-dev
+    - python3.8-dev
   homebrew:
     packages: 
-    - python3.7
+    - python@3.8
     - lua
     - pcre
     update: true
 
 before_install:
-  - pyenv global system 3.7 || true
+  - pyenv global system 3.8 || true
 
-env:
-  global:
-    - PATH=/opt/python/3.7.7/bin:$PATH
-    
+env:    
   jobs:
     - OPTS=""
     - OPTS="--enable-lua"
