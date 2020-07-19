@@ -28,7 +28,6 @@ before_install:
 env:    
   jobs:
     - OPTS=""
-    - OPTS="--enable-lua"
     - OPTS="--enable-python"
     - OPTS="--enable-lua --enable-python"
 
