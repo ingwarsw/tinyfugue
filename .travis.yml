@@ -6,6 +6,7 @@ os:
   - linux
 
 dist: xenial
+osx_image: xcode12
 
 addons:
   apt:
