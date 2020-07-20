@@ -1,12 +1,12 @@
-language: c
-compiler: gcc
+language: python
+python:
+  - 3.7
 
 os:
   - osx
   - linux
 
 dist: xenial
-osx_image: xcode12
 
 addons:
   apt:
@@ -15,15 +15,15 @@ addons:
     packages:
     - lua5.2
     - liblua5.2-dev
-    - python3.7-dev
+#     - python3.7-dev
   homebrew:
     packages: 
-    - python@3.7
+#     - python@3.7
     - lua
     - pcre
 
-before_install:
-  - pyenv global system 3.7 || true
+# before_install:
+#   - pyenv global system 3.7 || true
 
 env:    
   jobs:
