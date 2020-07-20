@@ -1,6 +1,5 @@
-language: python
-python:
-  - 3.7
+language: c
+compiler: gcc
 
 os:
   - osx
@@ -15,20 +14,28 @@ addons:
     packages:
     - lua5.2
     - liblua5.2-dev
-#     - python3.7-dev
+    - python3.7-dev
   homebrew:
     packages: 
-#     - python@3.7
+    - python@3.7
     - lua
     - pcre
 
-# before_install:
-#   - pyenv global system 3.7 || true
+before_install:
+  - brew uninstall python@3.8 || true
+  - pyenv global system 3.7 || true
 
 env:    
   jobs:
     - OPTS=""
     - OPTS="--enable-python"
     - OPTS="--enable-lua --enable-python"
+
+jobs:
+  allow_failures:
+    - os: osx
+      env: OPTS="--enable-python"
+    - os: osx
+      env: OPTS="--enable-lua --enable-python"
 
 script: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 $OPTS && make
