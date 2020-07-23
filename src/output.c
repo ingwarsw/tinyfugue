@@ -41,6 +41,8 @@ static const char RCSid[] = "$Id: output.c,v 35004.242 2007/01/14 00:44:19 kkeys
 #include <wchar.h>
 #endif
 
+extern struct World   *world_decl;     /* declares struct World */
+
 #ifdef EMXANSI
 # define INCL_VIO
 # include <os2.h>
@@ -117,7 +119,6 @@ TERMCODE (standout,		NULL,		NULL,		NULL)
 TERMCODE (standout_off,		NULL,		NULL,		NULL)
 
 /* end HARDCODE section */
-
 
 /* If var==NULL and internal<0, the status is a constant string */
 typedef struct statusfield {

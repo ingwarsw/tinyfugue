@@ -34,12 +34,15 @@ static const char RCSid[] = "$Id: history.c,v 35004.114 2007/01/13 23:12:39 kkey
 #include "variable.h"		/* set_var_by_*() */
 #include "signals.h"		/* interrupted() */
 
+extern struct World   *world_decl;     /* declares struct World */
+
 const int feature_history = !(NO_HISTORY - 0);
 #if !NO_HISTORY
 
 #define GLOBALSIZE    1000	/* global history size */
 #define LOCALSIZE      100	/* local history size */
 #define INPUTSIZE      100	/* command history buffer size */
+
 
 typedef struct History {	/* circular list of lines, and logfile */
     CQueue cq;

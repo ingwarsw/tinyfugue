@@ -16,6 +16,7 @@
 #define DPRINTF(...)
 #endif
 
+extern struct World   *world_decl;     /* declares struct World */
 
 struct module_state {
         PyObject *error;
