@@ -162,7 +162,7 @@ if test "$enable_development" = "yes"; then
 	AC_CHECK_PROGS(CC, tfcc gcc-anal)
     fi
 else
-    AC_DEFINE([NDEBUG], [], [debug disabled])
+    AC_DEFINE([NDEBUG], [1], [debug disabled])
 fi
 
 if test "$enable_core" = "yes"; then
@@ -171,7 +171,7 @@ if test "$enable_core" = "yes"; then
     STRIP=":"
 else
     AC_MSG_NOTICE([Core dumps disabled.])
-    AC_DEFINE([DISABLE_CORE], [], [core dumps disabled])
+    AC_DEFINE([DISABLE_CORE], [1], [core dumps disabled])
 fi
 
 
@@ -333,7 +333,7 @@ if test "$enable_ssl" = "yes"; then
 	    AC_MSG_RESULT([no])
 	fi
 	AC_CHECK_HEADER(openssl/ssl.h, , break)
-	AC_DEFINE([HAVE_SSL], [], [have ssl])
+	AC_DEFINE([HAVE_SSL], [1], [have ssl])
 	ok=1
 	break
     done
@@ -379,7 +379,7 @@ if test "$enable_termcap" = "no"; then
 else
     if test "$enable_termcap" = "yes"; then enable_termcap=""; fi
     AC_SEARCH_LIBS(tgetent, $enable_termcap termcap ncurses curses,
-	AC_DEFINE([TERMCAP], [], [termcap enabled])
+	AC_DEFINE([TERMCAP], [1], [termcap enabled])
     ,
 	AC_DEFINE_UNQUOTED([HARDCODE], [$terminal_hardcode], [termcap enabled - hardcoding terminal])
 	AC_MSG_WARN([Hardcoding terminal codes.]))
@@ -470,7 +470,7 @@ AC_CACHE_CHECK([whether struct sockaddr has sa_len], tf_cv_sa_len,
 	tf_cv_sa_len=no))
 
 if test "${tf_cv_sa_len}" = "yes"; then
-    AC_DEFINE([HAVE_SOCKADDR_SA_LEN], [], [struct sockaddr has sa_len])
+    AC_DEFINE([HAVE_SOCKADDR_SA_LEN], [1], [struct sockaddr has sa_len])
 fi
 
 
@@ -479,7 +479,7 @@ dnl ### Figure out which terminal driver to use.
 AC_CHECK_HEADERS(termios.h termio.h sgtty.h, break)
 
 dnl # Some brain damaged systems (Xenix) need <sys/ptem.h> for struct winsize.
-AC_EGREP_HEADER([struct winsize], sys/ptem.h, AC_DEFINE([NEED_PTEM_H], [], [ptem.h needed]))
+AC_EGREP_HEADER([struct winsize], sys/ptem.h, AC_DEFINE([NEED_PTEM_H], [1], [ptem.h needed]))
 
 
 dnl ########### typedefs ############
@@ -738,14 +738,14 @@ fi
 
 dnl ### write variables
 
-if test "$enable_inet6"   = "yes"; then AC_DEFINE([ENABLE_INET6], [], [inet6 enabled])  fi
-if test "$enable_atcp"    = "yes"; then AC_DEFINE([ENABLE_ATCP], [], [atcp enabled])  fi
-if test "$enable_gmcp"    = "yes"; then AC_DEFINE([ENABLE_GMCP], [], [gmcp enabled])  fi
-if test "$enable_option102"  = "yes"; then AC_DEFINE([ENABLE_OPTION102], [], [option102 enabled])  fi
-if test "$enable_history" = "no"; then AC_DEFINE([NO_HISTORY], [], [history disabled])  fi
-if test "$enable_process" = "no"; then AC_DEFINE([NO_PROCESS], [], [process disabled])  fi
-if test "$enable_float"   = "no"; then AC_DEFINE([NO_FLOAT], [], [float disabled])    fi
-if test "$enable_widechar" = "yes"; then AC_DEFINE([WIDECHAR], [], [widechar enabled])   fi
+if test "$enable_inet6"   = "yes"; then AC_DEFINE([ENABLE_INET6], [1], [inet6 enabled])  fi
+if test "$enable_atcp"    = "yes"; then AC_DEFINE([ENABLE_ATCP], [1], [atcp enabled])  fi
+if test "$enable_gmcp"    = "yes"; then AC_DEFINE([ENABLE_GMCP], [1], [gmcp enabled])  fi
+if test "$enable_option102"  = "yes"; then AC_DEFINE([ENABLE_OPTION102], [1], [option102 enabled])  fi
+if test "$enable_history" = "no"; then AC_DEFINE([NO_HISTORY], [1], [history disabled])  fi
+if test "$enable_process" = "no"; then AC_DEFINE([NO_PROCESS], [1], [process disabled])  fi
+if test "$enable_float"   = "no"; then AC_DEFINE([NO_FLOAT], [1], [float disabled])    fi
+if test "$enable_widechar" = "yes"; then AC_DEFINE([WIDECHAR], [1], [widechar enabled])   fi
 
 CPPFLAGS="${CPPFLAGS} -DDATADIR=\${datadir}"
 AC_SUBST(CFLAGS)
