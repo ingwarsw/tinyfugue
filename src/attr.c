@@ -463,7 +463,17 @@ static void set_attr(String *line, int offset, attr_t *starting,
 String *decode_ansi(const char *s, attr_t attrs, int emul, attr_t *final_attrs)
 {
     String *dst;
-    int i, colorstate = 0;
+    int i;
+    enum colorstate {
+	    COLOR_ERROR = -1,
+	    COLOR_NONE = 0,
+	    COLOR_START,
+	    COLOR_256,
+	    COLOR_RGB_R,
+	    COLOR_RGB_G,
+	    COLOR_RGB_B,
+    } colorstate = COLOR_NONE;
+    unsigned colorcsinum = 0;
     attr_t starting_attrs = attrs;
 #if WIDECHAR
     const char *start = s;
@@ -494,23 +504,34 @@ String *decode_ansi(const char *s, attr_t attrs, int emul, attr_t *final_attrs)
             do {
                 s++;
                 i = strtoint(s, &s);
-		if (colorstate < 0) {
+		if (colorstate == COLOR_ERROR) {
 		    /* ignoring everything after error */
-		} else if (colorstate % 10 == 8) {
-		    if (i == 5) colorstate++;
-		    else colorstate = -1; /* error */
-		} else if (colorstate % 10 == 9) {
-		    if (i < 0 || i > 255)
-			colorstate = -1; /* error */
-		    else {
-#if NCOLORS == 256
-			if (colorstate / 10 == 3)
-			    new = (new & ~F_FGCOLORMASK) | fgcolor2attr(i);
-			else
-			    new = (new & ~F_BGCOLORMASK) | bgcolor2attr(i);
-#endif
-			colorstate = 0;
-		    }
+		} else if (colorstate && i < 0 || i > 255) {
+		    /* only 8 bits at a time */
+		    colorstate = COLOR_ERROR;
+		} else if (colorstate == COLOR_START) {
+		    if (i == 5) colorstate = COLOR_256;
+		    else if (i == 2) colorstate = COLOR_RGB_R;
+		    else colorstate = COLOR_ERROR;
+		} else if (colorstate == COLOR_256) {
+		    if (colorcsinum == 38)
+			new = (new & ~F_FGCOLORMASK) | fgcolor2attr(i);
+		    else
+			new = (new & ~F_BGCOLORMASK) | bgcolor2attr(i);
+		    colorstate = COLOR_NONE;
+		} else if (colorstate == COLOR_RGB_R) {
+		    if (colorcsinum == 38)
+			new = (new & ~F_RGBMASK) | F_RGBISFG;
+		    else
+			new = (new & ~F_RGBMASK);
+		    new |= ((attr_t)i << 48); /* R */
+		    colorstate = COLOR_RGB_G;
+		} else if (colorstate == COLOR_RGB_G) {
+		    new |= ((attr_t)i << 40); /* G */
+		    colorstate = COLOR_RGB_B;
+		} else if (colorstate == COLOR_RGB_B) {
+		    new |= ((attr_t)i << 32); /* B */
+		    colorstate = COLOR_NONE;
                 } else if (!i || emul < EMUL_ANSI_ATTR) {
                     new = 0;
                 } else if (i >= 30 && i <= 37) {
@@ -522,12 +543,17 @@ String *decode_ansi(const char *s, attr_t attrs, int emul, attr_t *final_attrs)
                 } else if (i >= 100 && i <= 107) { /* not really ANSI */
                     new = (new & ~F_BGCOLORMASK) | bgcolor2attr(i - 100 + 8);
                 } else if (i == 38 || i == 48) { /* not really ANSI */
-		    colorstate = i;
+		    colorstate = COLOR_START;
+		    colorcsinum = i;
 		    /* Subsequences of the form "38;5;N" or "48;5;N" describe
 		     * fg or bg xterm 256-color controls, where 0<=N<=255.
 		     * Once we see the start of such a subsequence, any
 		     * deviation from the correct form invalidates the rest
 		     * of the control sequence.
+		     *
+		     * "38;2;R;G;B" and "48;2;R;G;B" are 24-bit colors, also
+		     * handled with colorstate to set the rgb color in attr_t
+		     * bits 32-47.
 		     */
                 } else switch (i) {
                     case 1:   new |= F_BOLD;          break;
@@ -750,6 +776,11 @@ static String *attr2ansi(String *str, attr_t attrs)
     if (attrs & F_FLASH)     { semi(); Stringcat(str, "5"); }
     if (attrs & F_REVERSE)   { semi(); Stringcat(str, "7"); }
 
+    uint8_t r, g, b;
+    r = ((attrs & F_RGBMASK) >> 48) & 0xff;
+    g = ((attrs & F_RGBMASK) >> 40) & 0xff;
+    b = ((attrs & F_RGBMASK) >> 32) & 0xff;
+
     if (attrs & F_FGCOLOR) {
 	semi();
 	color = attr2fgcolor(attrs);
@@ -759,6 +790,9 @@ static String *attr2ansi(String *str, attr_t attrs)
 	    Sappendf(str, "%d", color - 8 + 90);
 	else /* not really ANSI */
 	    Sappendf(str, "38;5;%d", color);
+    } else if (attrs & F_RGBMASK && attrs & F_RGBISFG) {
+	semi();
+	Sappendf(str, "38;2;%u;%u;%u", r, g, b);
     }
     if (attrs & F_BGCOLOR) {
 	semi();
@@ -769,6 +803,9 @@ static String *attr2ansi(String *str, attr_t attrs)
 	    Sappendf(str, "%d", color - 8 + 100);
 	else /* not really ANSI */
 	    Sappendf(str, "48;5;%d", color);
+    } else if (attrs & F_RGBMASK && !(attrs & F_RGBISFG)) {
+	semi();
+	Sappendf(str, "48;2;%u;%u;%u", r, g, b);
     }
 #undef semi
     return str;

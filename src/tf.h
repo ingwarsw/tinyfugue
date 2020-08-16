@@ -81,6 +81,9 @@ enum enum_attr {
     F_BGCOLOR     = 0x0100,   /* flag */
 #endif
 
+    F_RGBMASK     = 0x00FFFFFF00000000,
+    F_RGBISFG     = 0x0100000000000000,
+
     /* outside the 16 low bits */
     F_NOACTIVITY  = 0x01000000,	    /* does not count as activity */
     F_NOLOG       = 0x02000000,
@@ -95,7 +98,7 @@ enum enum_attr {
     F_BGCOLORS    = (F_BGCOLOR | F_BGCOLORMASK),
     F_COLORS      = (F_FGCOLORS | F_BGCOLORS),
     F_SIMPLE      = (F_UNDERLINE | F_REVERSE | F_FLASH | F_DIM | F_BOLD | F_ITALIC),
-    F_HWRITE      = (F_SIMPLE | F_HILITE | F_COLORS),
+    F_HWRITE      = (F_SIMPLE | F_HILITE | F_COLORS | F_RGBMASK | F_RGBISFG),
     F_ENCODE      = (F_SIMPLE | F_HILITE | F_FGCOLOR | F_BGCOLOR),
     F_ATTR        = (F_HWRITE | F_GAG | F_NOHISTORY | F_NOACTIVITY | F_NONE |
 		    F_EXCLUSIVE)

@@ -2756,7 +2756,7 @@ static void attributes_off(attr_t attrs)
             if (have_attr & attrs & F_BOLD     ) tp(standout_off);
         }
     }
-    if ((attrs & F_COLORS) && (ctlseq = getvar("end_color"))) {
+    if ((attrs & (F_COLORS|F_RGBMASK)) && (ctlseq = getvar("end_color"))) {
         print_to_ascii(outbuf, ctlseq);
     }
 }
@@ -2792,6 +2792,16 @@ static void attributes_on(attr_t attrs)
 
     if (attrs & F_FGCOLOR)  color_on("", attr2fgcolor(attrs));
     if (attrs & F_BGCOLOR)  color_on("bg", attr2bgcolor(attrs));
+
+    if (attrs & F_RGBMASK) {
+	uint8_t r, g, b, csinum;
+	r = ((attrs & F_RGBMASK) >> 48) & 0xff;
+	g = ((attrs & F_RGBMASK) >> 40) & 0xff;
+	b = ((attrs & F_RGBMASK) >> 32) & 0xff;
+	/* passthru: these are not actual tf attributes */
+	csinum = (attrs & F_RGBISFG) ? 38 : 48;
+	Sappendf(outbuf, "\033[%u;2;%u;%u;%um", csinum, r, g, b);
+    }
 }
 
 static void color_on(const char *prefix, long color)
