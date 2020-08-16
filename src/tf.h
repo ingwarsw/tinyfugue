@@ -10,35 +10,14 @@
 #ifndef TF_H
 #define TF_H
 
+#include <stdint.h>
+
 #ifndef NCOLORS
 # define NCOLORS 16
 #endif
 
-#if SIZEOF_INT == 4
-    typedef unsigned int attr_t;
-#elif SIZEOF_LONG == 4
-    typedef unsigned long attr_t;
-#else
-#   error "no 32 bit integer?"
-#endif
-
-#if NCOLORS == 256 /* character attributes can't fit in 16 bits */
-# if SIZEOF_INT == 4
-    typedef unsigned int cattr_t;
-# elif SIZEOF_LONG == 4
-    typedef unsigned long cattr_t;
-# else
-#   error "no 32 bit integer?"
-# endif
-#else /* character attributes can fit in 16 bits */
-# if SIZEOF_SHORT == 2
-    typedef unsigned short cattr_t;
-# elif SIZEOF_INT == 2
-    typedef unsigned int cattr_t;
-# else
-#   error "no 16 bit integer?"
-# endif
-#endif
+typedef uint64_t attr_t;
+typedef uint64_t cattr_t;
 
 /* headers needed everywhere */
 #include <time.h>	/* may conflict with <sys/time.h> on some systems? */
