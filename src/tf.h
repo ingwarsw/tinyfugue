@@ -58,27 +58,27 @@ enum enum_attr {
     F_REVERSE     = 0x0002,
     F_FLASH       = 0x0000,   /* zero - not implemented */
     F_DIM         = 0x0000,   /* zero - not implemented */
+    F_ITALIC      = 0x0000,   /* zero - not implemented */
     F_BOLD        = 0x0004,
-    F_ITALIC      = 0x0008,
-    F_HILITE      = 0x0010,
-    F_NONE        = 0x0020,
-    F_EXCLUSIVE   = 0x0040,
+    F_HILITE      = 0x0008,
+    F_NONE        = 0x0010,
+    F_EXCLUSIVE   = 0x0020,
 
 #if NCOLORS == 256 /* XXX ??? */
 # define FGCOLORSHIFT 8
     F_FGCOLORMASK = 0x0000ff00,   /* 8 bits, interpreted as an integer */
-    F_FGCOLOR     = 0x00000080,   /* flag */
+    F_FGCOLOR     = 0x00000040,   /* flag */
 # define BGCOLORSHIFT 16
     F_BGCOLORMASK = 0x00ff0000,   /* 8 bits, interpreted as an integer */
-    F_BGCOLOR     = 0x00000100,   /* flag */
+    F_BGCOLOR     = 0x00000080,   /* flag */
 #else
     /* inside the 16 low bits */
 # define FGCOLORSHIFT 8
     F_FGCOLORMASK = 0x0f00,   /* 4 bits, interpreted as an integer */
-    F_FGCOLOR     = 0x0080,   /* flag */
+    F_FGCOLOR     = 0x0040,   /* flag */
 # define BGCOLORSHIFT 12
     F_BGCOLORMASK = 0x7000,   /* 3 bits, interpreted as an integer */
-    F_BGCOLOR     = 0x0100,   /* flag */
+    F_BGCOLOR     = 0x0080,   /* flag */
 #endif
 
     F_RGBMASK     = 0x00FFFFFF00000000,
