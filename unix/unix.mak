@@ -156,7 +156,7 @@ MANPAGE $(MANPAGE): $(BUILDERS) tf.1.$(MANTYPE)man
 	chmod $(MODE) $(MANPAGE)
 	chmod ugo-x $(MANPAGE)
 
-Makefile: ../unix/vars.mak ../unix/unix.mak ../configure ../configure.in
+Makefile: ../unix/vars.mak ../unix/unix.mak ../configure ../configure.ac
 	@echo
 	@echo "## WARNING: configuration should be rerun."
 	@echo
