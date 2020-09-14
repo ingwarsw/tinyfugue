@@ -191,7 +191,7 @@ enum Vars {
 #define iecho		getintvar(VAR_iecho)
 #define info_attr	getattrvar(VAR_info_attr)
 #define insert		getintvar(VAR_insert)
-#define interactive	getintvar(VAR_interactive)
+#define tfinteractive	getintvar(VAR_interactive)
 #define isize		getintvar(VAR_isize)
 #define istrip		getintvar(VAR_istrip)
 #define kbnum		getstrvar(VAR_kbnum)
