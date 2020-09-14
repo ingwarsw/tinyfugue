@@ -4791,7 +4791,10 @@ fi
 done
 
    ax_python_conf=$PYTHON_CONF
-   ax_python_lib=`$ax_python_conf --ldflags`
+   ax_python_lib=`$ax_python_conf --embed --ldflags`
+   if test "x$ax_python_lib" = "x"; then
+       ax_python_lib=`$ax_python_config --ldflags`
+   fi
    ax_python_header=`$ax_python_conf --includes`
    if test "x$ax_python_header" != "x"; then
        break;
