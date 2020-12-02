@@ -25,6 +25,9 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install packages
+        if: runner.os == "macOS"
+        run: brew install lua pcre
       - name: Configure
         run: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
       - name: Build
