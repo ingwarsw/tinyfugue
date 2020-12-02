@@ -27,7 +27,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install packages on Linux
         if: runner.os == 'Linux'
-        run: apt-get install lua
+        run: sudo apt-get install lua
       - name: Install packages on MacOS
         if: runner.os == 'macOS'
         run: brew install lua pcre
