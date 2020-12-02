@@ -19,7 +19,7 @@ jobs:
           - ""
           - "--enable-python"
           - "--enable-lua"
-          - "--enable-lua --enable-python"
+#          - "--enable-lua --enable-python"
     
     steps:
       - uses: actions/checkout@v2
