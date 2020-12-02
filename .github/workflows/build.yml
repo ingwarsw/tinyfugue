@@ -33,7 +33,6 @@ jobs:
       - name: Install packages on MacOS
         if: runner.os == 'macOS'
         run: |
-#         brew uninstall --ignore-dependencies python3
           brew install lua python@${{ matrix.python-version }}
           echo "/usr/local/opt/python@${{ matrix.python-version }}/bin" >> $GITHUB_PATH
       - name: Configure
