@@ -25,7 +25,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Install packages on Linux
         if: runner.os == 'Linux'
-        run: sudo apt-get install lua5.3
+        run: sudo apt-get install lua5.3-dev
       - name: Install packages on MacOS
         if: runner.os == 'macOS'
         run: brew uninstall --ignore-dependencies python3; brew install lua
