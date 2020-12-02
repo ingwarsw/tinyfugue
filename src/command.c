@@ -218,7 +218,7 @@ struct Value *handle_quit_command(String *args, int offset)
         else return shareval(val_zero);
     }
 
-    if (interactive && have_active_socks() && !yes) {
+    if (tfinteractive && have_active_socks() && !yes) {
 	fix_screen();
 	puts("There are sockets with unseen text.  Really quit tf? (y/N)\r");
 	fflush(stdout);
