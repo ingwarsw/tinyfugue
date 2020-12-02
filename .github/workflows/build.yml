@@ -23,15 +23,15 @@ jobs:
     
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
       - name: Install packages on Linux
         if: runner.os == 'Linux'
         run: sudo apt-get install lua5.3
       - name: Install packages on MacOS
         if: runner.os == 'macOS'
-        run: brew install lua
+        run: brew uninstall --ignore-dependencies python3; brew install lua
+      - uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
       - name: Configure
         run: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
       - name: Build
