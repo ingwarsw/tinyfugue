@@ -64,7 +64,7 @@ if test x$ax_python_bin != x; then
    ax_python_conf=$PYTHON_CONF
    ax_python_lib=`$ax_python_conf --embed --ldflags`
    if [ $? -ne 0 ]; then
-       ax_python_lib=`$ax_python_config --ldflags`
+       ax_python_lib=`$ax_python_conf --ldflags`
    fi   
    ax_python_header=`$ax_python_conf --includes`
    if test "x$ax_python_header" != "x"; then
