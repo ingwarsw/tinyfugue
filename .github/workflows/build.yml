@@ -35,5 +35,7 @@ jobs:
         run: brew uninstall --ignore-dependencies python3; brew install lua python@${{ matrix.python-version }}
       - name: Configure
         run: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
+        env:
+          PATH="/usr/local/opt/python@${{ matrix.python-version }}/bin:$PATH"
       - name: Build
         run: make
