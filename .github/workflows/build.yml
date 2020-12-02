@@ -35,6 +35,8 @@ jobs:
         run: |
           brew install lua python@${{ matrix.python-version }}
           echo "/usr/local/opt/python@${{ matrix.python-version }}/bin" >> $GITHUB_PATH
+      - name: Build2222
+        run: echo $PATH
       - name: Configure
         run: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
       - name: Build
