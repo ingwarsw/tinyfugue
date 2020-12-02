@@ -2887,7 +2887,7 @@ void reset_outcount(Screen *screen)
 /* return TRUE if okay to print */
 static int check_more(Screen *screen)
 {
-    if (!screen->paused && more && interactive && screen->outcount-- <= 0)
+    if (!screen->paused && more && tfinteractive && screen->outcount-- <= 0)
     {
         /* status bar is updated in oflush() to avoid scroll region problems */
         screen->paused = 1;
