@@ -18,6 +18,7 @@ jobs:
         opts: 
           - ""
           - "--enable-python"
+          - "--enable-lua"
           - "--enable-lua --enable-python"
     
     steps:
