@@ -31,7 +31,7 @@ jobs:
         run: sudo apt-get install lua5.2
       - name: Install packages on MacOS
         if: runner.os == 'macOS'
-        run: brew install lua pcre
+        run: brew install lua
       - name: Configure
         run: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
       - name: Build
