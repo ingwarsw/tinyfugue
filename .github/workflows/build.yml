@@ -53,8 +53,8 @@ jobs:
           echo The current directory is %CD%
           dir C:\tools\cygwin\bin
           C:\tools\cygwin\bin\bash.exe --login -c 'ls -alh .'
-          C:\tools\cygwin\bin\bash.exe 'ls -alh .'
-          C:\tools\cygwin\bin\bash.exe 'ls -alh '
+          C:\tools\cygwin\bin\bash.exe -c 'ls -alh .'
+          C:\tools\cygwin\bin\bash.exe -c 'pwd'
           C:\tools\cygwin\bin\bash.exe --norc --noprofile './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
         run: |
