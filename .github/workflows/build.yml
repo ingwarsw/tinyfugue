@@ -14,7 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
+#        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.7]
         opts: 
           - ""
           - "--enable-python"
@@ -39,3 +40,18 @@ jobs:
         run: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
       - name: Build
         run: make
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-cygwin@v1
+        with:
+          platform: x64
+          packages: cmake python3
+      - name: Run bash
+        run: |
+          C:\cg\bin\bash.exe --login -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
+      - name: Run make
+        run: |
+          C:\cg\bin\make.exe
