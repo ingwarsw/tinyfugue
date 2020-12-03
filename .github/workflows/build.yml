@@ -51,9 +51,11 @@ jobs:
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
+          
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c 'unix2dos -f configure'
+          C:\tools\cygwin\bin\bash.exe -c 'echo "export SHELLOPTS" >> ~/.bash_profile'
+          C:\tools\cygwin\bin\bash.exe -c 'echo "set -o igncr >> ~/.bash_profile'
           C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
         run: |
