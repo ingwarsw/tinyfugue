@@ -47,14 +47,14 @@ jobs:
       - uses: actions/checkout@v2
       - uses: egor-tensin/setup-cygwin@v1
         with:
-          packages: python3 make
+          packages: python3 make dos2unix
       - name: Configure
         run: |
           dir
           dir C:\tools\cygwin\bin
           C:\tools\cygwin\bin\bash.exe --login -c 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh .'
-          C:\tools\cygwin\bin\bash.exe -c 'pwd'
+          C:\tools\cygwin\bin\bash.exe -c 'unix2dos configure'
           C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
         run: |
