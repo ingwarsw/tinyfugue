@@ -49,9 +49,11 @@ jobs:
         with:
           platform: x64
           packages: cmake python3
+      - name: aaaaa
+        run: dir C:\tools\cygwin\
       - name: Run bash
         run: |
-          C:\cg\bin\bash.exe --login -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
+          C:\tools\cygwin\bin\bash.exe --login -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Run make
         run: |
           C:\cg\bin\make.exe

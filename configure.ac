@@ -183,6 +183,12 @@ UNAME=`echo $UNAME`  # remove newlines
 AC_SUBST(UNAME)
 #AC_CYGWIN
 
+# Check if this is a Windows/MSYS2 system.
+if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+  echo "Windows/MSYS2 environment found."
+  AC_DEFINE([PLATFORM_WINDOWS], [1], [Windows/MSYS2 shell found])
+fi
+
 dnl ########### programs ############
 
 AC_PROG_CC
@@ -269,9 +275,12 @@ dnl on all platforms since it will _follow_ the -l option for the library
 dnl being tested.)
 LDFLAGS="$LDFLAGS $LIBDIRS"
 
-
-AC_SEARCH_LIBS(select, bsd, ,
+if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+  AC_MSG_WARN([Ignoring missing select()...])
+else
+  AC_SEARCH_LIBS(select, bsd, ,
     AC_MSG_ERROR([TF can not work without select().]))
+fi
 
 dnl # gethostbyname may not be in default libraries.
 dnl # QNX keeps gethostbyname in lsocket.
@@ -457,9 +466,13 @@ TF_SEARCH_HEADERS(ARPA_INET_H, arpa/inet.h sys/inet.h)
 dnl ### Find nameser header
 dnl TF_SEARCH_HEADERS(NAMESER_H, arpa/nameser.h nameser.h)
 
+if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+  AC_MSG_WARN([Ignoring missing netdb.h...])
+else
 dnl ### Find netdb header
-TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h, ,
+  TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h, ,
     AC_MSG_ERROR([can't find netdb.h]))
+fi
 
 AC_CACHE_CHECK([whether struct sockaddr has sa_len], tf_cv_sa_len,
     AC_TRY_COMPILE([
