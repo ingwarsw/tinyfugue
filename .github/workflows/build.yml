@@ -48,12 +48,11 @@ jobs:
       - uses: egor-tensin/setup-cygwin@v1
         with:
           packages: python3 make dos2unix
+      - name: Debug
+        run: |
+          dir C:\tools\cygwin\bin
       - name: Configure
         run: |
-          dir
-          dir C:\tools\cygwin\bin
-          C:\tools\cygwin\bin\bash.exe --login -c 'ls -alh .'
-          C:\tools\cygwin\bin\bash.exe -c 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe -c 'unix2dos -f configure'
           C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
