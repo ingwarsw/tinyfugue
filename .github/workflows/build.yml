@@ -55,7 +55,9 @@ jobs:
       - name: Configure
         run: |
           C:\tools\cygwin\bin\bash.exe -c 'echo "export SHELLOPTS" >> ~/.bash_profile'
-          C:\tools\cygwin\bin\bash.exe -c 'echo "set -o igncr >> ~/.bash_profile'
+          C:\tools\cygwin\bin\bash.exe -c 'echo "set -o igncr" >> ~/.bash_profile'
+          C:\tools\cygwin\bin\bash.exe -c 'ls -alh ~/'
+          C:\tools\cygwin\bin\bash.exe -c 'cat ~/.bash_profile'
           C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
         run: |
