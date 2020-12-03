@@ -50,11 +50,12 @@ jobs:
           packages: python3
       - name: aaaaa
         run: dir C:\tools\cygwin\bin
-      - name: Run bash
+      - name: Configure
         run: |
           C:\tools\cygwin\bin\bash.exe --login -c 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe --norc --noprofile 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe --norc --noprofile './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
-      - name: Run make
+      - name: Build
         run: |
+          C:\tools\cygwin\bin\bash.exe --norc --noprofile 'make'
           C:\tools\cygwin\bin\make.exe
