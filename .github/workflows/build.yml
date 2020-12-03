@@ -51,6 +51,7 @@ jobs:
       - name: Configure
         run: |
           echo The current directory is %CD%
+          dir
           dir C:\tools\cygwin\bin
           C:\tools\cygwin\bin\bash.exe --login -c 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh .'
