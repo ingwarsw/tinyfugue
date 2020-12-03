@@ -54,7 +54,7 @@ jobs:
           dir C:\tools\cygwin\bin
           C:\tools\cygwin\bin\bash.exe --login -c 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh .'
-          C:\tools\cygwin\bin\bash.exe -c 'unix2dos configure'
+          C:\tools\cygwin\bin\bash.exe -c 'unix2dos -f configure'
           C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
         run: |
