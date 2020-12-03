@@ -55,7 +55,7 @@ jobs:
           
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c --login 'echo "export SHELLOPTS" >> ~/.bash_profile'
+          C:\tools\cygwin\bin\bash.exe --login -c 'echo "export SHELLOPTS" >> ~/.bash_profile'
           C:\tools\cygwin\bin\bash.exe -c 'echo "set -o igncr" >> ~/.bash_profile'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe -c 'cat ~/.bash_profile'
