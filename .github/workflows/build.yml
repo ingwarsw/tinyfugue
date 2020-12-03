@@ -50,14 +50,13 @@ jobs:
           packages: python3 make
       - name: Configure
         run: |
-          echo The current directory is %CD%
           dir
           dir C:\tools\cygwin\bin
           C:\tools\cygwin\bin\bash.exe --login -c 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh .'
           C:\tools\cygwin\bin\bash.exe -c 'pwd'
-          C:\tools\cygwin\bin\bash.exe --norc --noprofile './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
+          C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
         run: |
-          C:\tools\cygwin\bin\bash.exe --norc --noprofile 'make'
+          C:\tools\cygwin\bin\bash.exe -c 'make'
           C:\tools\cygwin\bin\make.exe
