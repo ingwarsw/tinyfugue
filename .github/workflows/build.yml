@@ -47,13 +47,14 @@ jobs:
       - uses: actions/checkout@v2
       - uses: egor-tensin/setup-cygwin@v1
         with:
-          platform: x64
-          packages: cmake python3
+          packages: python3
       - name: aaaaa
-        run: dir C:\tools\cygwin\
+        run: dir C:\tools\cygwin\bin
       - name: Run bash
         run: |
-          C:\tools\cygwin\bin\bash.exe --login -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
+          C:\tools\cygwin\bin\bash.exe --login -c 'ls -alh .'
+          C:\tools\cygwin\bin\bash.exe --norc --noprofile 'ls -alh .'
+          C:\tools\cygwin\bin\bash.exe --norc --noprofile './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Run make
         run: |
-          C:\cg\bin\make.exe
+          C:\tools\cygwin\bin\make.exe
