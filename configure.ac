@@ -193,7 +193,6 @@ else
     AC_DEFINE([DISABLE_CORE], [1], [core dumps disabled])
 fi
 
-
 dnl XXX option: TTYDRIVER
 
 if test "$current_os" = "windows"; then

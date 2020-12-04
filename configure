@@ -2751,7 +2751,6 @@ $as_echo "#define DISABLE_CORE 1" >>confdefs.h
 fi
 
 
-
 if test "$current_os" = "windows"; then
 
 $as_echo "#define PLATFORM_WINDOWS 1" >>confdefs.h
