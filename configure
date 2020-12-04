@@ -4292,7 +4292,7 @@ LIBDIRS=""
 
 LDFLAGS="$LDFLAGS $LIBDIRS"
 
-if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if  test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Ignoring missing select()..." >&5
 $as_echo "$as_me: WARNING: Ignoring missing select()..." >&2;}
 else
@@ -5402,7 +5402,7 @@ done
 
 
 
-if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if  test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Ignoring missing netdb.h..." >&5
 $as_echo "$as_me: WARNING: Ignoring missing netdb.h..." >&2;}
 else
