@@ -184,18 +184,18 @@ AC_SUBST(UNAME)
 current_os=linux
 case "$UNAME" in
    Darwin)
-     echo 'Mac OS X'
+     echo 'Current machine is: Mac OS X'
      current_os=darwin
      ;;
    Linux)
-     echo 'Linux'
+     echo 'Current machine is: Linux'
      ;;
    CYGWIN*|MINGW32*|MSYS*|MINGW*)
-     echo 'MS Windows'
+     echo 'Current machine is: MS Windows'
      current_os=windows
      ;;
    *)
-     echo 'Other OS' 
+     echo 'Current machine is: Other OS (assume Linux)'
      ;;
 esac
 
