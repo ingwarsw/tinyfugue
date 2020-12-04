@@ -184,7 +184,7 @@ AC_SUBST(UNAME)
 #AC_CYGWIN
 
 # Check if this is a Windows/MSYS2 system.
-if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   echo "Windows/MSYS2 environment found."
   AC_DEFINE([PLATFORM_WINDOWS], [1], [Windows/MSYS2 shell found])
 fi
@@ -275,7 +275,7 @@ dnl on all platforms since it will _follow_ the -l option for the library
 dnl being tested.)
 LDFLAGS="$LDFLAGS $LIBDIRS"
 
-if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if  test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   AC_MSG_WARN([Ignoring missing select()...])
 else
   AC_SEARCH_LIBS(select, bsd, ,
@@ -466,7 +466,7 @@ TF_SEARCH_HEADERS(ARPA_INET_H, arpa/inet.h sys/inet.h)
 dnl ### Find nameser header
 dnl TF_SEARCH_HEADERS(NAMESER_H, arpa/nameser.h nameser.h)
 
-if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if  test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   AC_MSG_WARN([Ignoring missing netdb.h...])
 else
 dnl ### Find netdb header

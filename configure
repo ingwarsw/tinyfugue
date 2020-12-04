@@ -2740,7 +2740,7 @@ UNAME=`echo $UNAME`  # remove newlines
 #AC_CYGWIN
 
 # Check if this is a Windows/MSYS2 system.
-if test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   echo "Windows/MSYS2 environment found."
 
 $as_echo "#define PLATFORM_WINDOWS 1" >>confdefs.h
