@@ -131,13 +131,13 @@ AC_SUBST(UNAME)
 
 current_os=linux
 case "$UNAME" in
-   Darwin)
+   Darwin*)
      current_os=darwin
      ;;
    CYGWIN*|MINGW32*|MSYS*|MINGW*)
      current_os=windows
      ;;
-   Linux)
+   Linux*)
      ;;
    *)
      AC_MSG_NOTICE([Current machine is: Other OS (assume Linux)])

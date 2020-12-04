@@ -2638,13 +2638,13 @@ UNAME=`echo $UNAME`  # remove newlines
 
 current_os=linux
 case "$UNAME" in
-   Darwin)
+   Darwin*)
      current_os=darwin
      ;;
    CYGWIN*|MINGW32*|MSYS*|MINGW*)
      current_os=windows
      ;;
-   Linux)
+   Linux*)
      ;;
    *)
      { $as_echo "$as_me:${as_lineno-$LINENO}: Current machine is: Other OS (assume Linux)" >&5
