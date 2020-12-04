@@ -2735,12 +2735,11 @@ fi
 
 UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
 UNAME=`echo $UNAME`  # remove newlines
-echo "Uname: $UNAME"
 
 #AC_CYGWIN
 
 # Check if this is a Windows/MSYS2 system.
-if test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if test "$OSTYPE" = "cygwin" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   echo "Windows/MSYS2 environment found."
 
 $as_echo "#define PLATFORM_WINDOWS 1" >>confdefs.h
@@ -4292,7 +4291,7 @@ LIBDIRS=""
 
 LDFLAGS="$LDFLAGS $LIBDIRS"
 
-if  test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if test "$OSTYPE" = "cygwin" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Ignoring missing select()..." >&5
 $as_echo "$as_me: WARNING: Ignoring missing select()..." >&2;}
 else
@@ -5402,7 +5401,7 @@ done
 
 
 
-if  test "$CYGWIN" = "yes" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
+if test "$OSTYPE" = "cygwin" || test "$MSYSTEM" = "MINGW32" || test "$MSYSTEM" = "MINGW64"; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Ignoring missing netdb.h..." >&5
 $as_echo "$as_me: WARNING: Ignoring missing netdb.h..." >&2;}
 else
