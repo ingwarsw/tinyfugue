@@ -2733,9 +2733,9 @@ fi
 
 
 
-
 UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
 UNAME=`echo $UNAME`  # remove newlines
+echo "Uname: $UNAME"
 
 #AC_CYGWIN
 
