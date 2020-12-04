@@ -197,7 +197,6 @@ fi
 dnl XXX option: TTYDRIVER
 
 if test "$current_os" = "windows"; then
-  echo "Windows/MSYS2 environment found."
   AC_DEFINE([PLATFORM_WINDOWS], [1], [Windows/MSYS2 shell found])
 fi
 

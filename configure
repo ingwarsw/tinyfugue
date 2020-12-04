@@ -2753,7 +2753,6 @@ fi
 
 
 if test "$current_os" = "windows"; then
-  echo "Windows/MSYS2 environment found."
 
 $as_echo "#define PLATFORM_WINDOWS 1" >>confdefs.h
 
