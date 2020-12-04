@@ -557,11 +557,11 @@ AC_CHECK_FUNCS(bcopy bzero connect fileno getcwd \
     getpwnam gettimeofday getwd hstrerror index inet_aton)
 
 if test "$enable_getaddrinfo" = "default"; then
-    if test `uname -s` = 'Darwin'; then
-	AC_MSG_WARN([getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override.])
-	enable_getaddrinfo=no
+    if test "$current_os" = "windows"; then
+    	AC_MSG_WARN([getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override.])
+	    enable_getaddrinfo=no
     else
-	enable_getaddrinfo=yes
+    	enable_getaddrinfo=yes
     fi
 fi
 if test "$enable_getaddrinfo" = "no"; then

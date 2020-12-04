@@ -5720,12 +5720,12 @@ done
 
 
 if test "$enable_getaddrinfo" = "default"; then
-    if test `uname -s` = 'Darwin'; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override." >&5
+    if test "$current_os" = "windows"; then
+    	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override." >&5
 $as_echo "$as_me: WARNING: getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override." >&2;}
-	enable_getaddrinfo=no
+	    enable_getaddrinfo=no
     else
-	enable_getaddrinfo=yes
+    	enable_getaddrinfo=yes
     fi
 fi
 if test "$enable_getaddrinfo" = "no"; then
