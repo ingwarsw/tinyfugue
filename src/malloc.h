@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: malloc.h,v 35004.24 2007/01/13 23:12:39 kkeys Exp $ */
 
 /* Function hierarchy:
  *  xmalloc: will kill process if it fails.  Calls dmalloc.
