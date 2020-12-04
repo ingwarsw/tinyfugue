@@ -15,7 +15,7 @@ LONGPATH=${PATH}:@PATH@
 default: files
 
 files all install tf clean uninstall: _force_
-	@cd src; PATH=${LONGPATH} ${MAKE} $@
+	@cd src; PATH="${LONGPATH}" ${MAKE} $@
 
 _force_:
 
