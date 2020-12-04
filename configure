@@ -652,7 +652,6 @@ MODE
 SYMLINK
 LIBNAME
 EXENAME
-PCRE
 PYTHON_INCLUDE
 PYTHON_LIB
 PYTHON_INCLUDE_DIR
@@ -670,8 +669,8 @@ ac_ct_CC
 CPPFLAGS
 LDFLAGS
 CFLAGS
-UNAME
 CC
+UNAME
 TFVERSION
 target_alias
 host_alias
@@ -2633,8 +2632,28 @@ else
 fi
 
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: " >&5
-$as_echo "$as_me: " >&6;}
+UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
+UNAME=`echo $UNAME`  # remove newlines
+
+
+current_os=linux
+case "$UNAME" in
+   Darwin)
+     current_os=darwin
+     ;;
+   CYGWIN*|MINGW32*|MSYS*|MINGW*)
+     current_os=windows
+     ;;
+   Linux)
+     ;;
+   *)
+     { $as_echo "$as_me:${as_lineno-$LINENO}: Current machine is: Other OS (assume Linux)" >&5
+$as_echo "$as_me: Current machine is: Other OS (assume Linux)" >&6;}
+     ;;
+esac
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: Current os: ${current_os} ($UNAME)" >&5
+$as_echo "$as_me: Current os: ${current_os} ($UNAME)" >&6;}
 
 if test "$enable_development" = "default"; then
     if test -d CVS; then
@@ -2732,28 +2751,6 @@ $as_echo "#define DISABLE_CORE 1" >>confdefs.h
 fi
 
 
-
-UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
-UNAME=`echo $UNAME`  # remove newlines
-
-
-current_os=linux
-case "$UNAME" in
-   Darwin)
-     echo 'Current machine is: Mac OS X'
-     current_os=darwin
-     ;;
-   Linux)
-     echo 'Current machine is: Linux'
-     ;;
-   CYGWIN*|MINGW32*|MSYS*|MINGW*)
-     echo 'Current machine is: MS Windows'
-     current_os=windows
-     ;;
-   *)
-     echo 'Current machine is: Other OS (assume Linux)'
-     ;;
-esac
 
 if test "$current_os" = "windows"; then
   echo "Windows/MSYS2 environment found."
@@ -5123,15 +5120,13 @@ fi
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_pcre_pcre_compile" >&5
 $as_echo "$ac_cv_lib_pcre_pcre_compile" >&6; }
 if test "x$ac_cv_lib_pcre_pcre_compile" = xyes; then :
-  :
-else
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBPCRE 1
+_ACEOF
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: Note: will use old copy of pcre distributed with tf" >&5
-$as_echo "$as_me: Note: will use old copy of pcre distributed with tf" >&6;};
-    PCRE=pcre; LDFLAGS="${LDFLAGS} -Lpcre-2.08";
+  LIBS="-lpcre $LIBS"
+
 fi
-
-
 
 
 

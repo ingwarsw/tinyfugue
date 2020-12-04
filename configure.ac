@@ -125,7 +125,26 @@ AC_ARG_WITH(inclibdir) dnl because I never remember if it's singular or plural
 AC_ARG_ENABLE(development, , , enable_development=default)
 AC_ARG_ENABLE(dmalloc, , , enable_dmalloc=no)
 
-AC_MSG_NOTICE([])
+UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
+UNAME=`echo $UNAME`  # remove newlines
+AC_SUBST(UNAME)
+
+current_os=linux
+case "$UNAME" in
+   Darwin)
+     current_os=darwin
+     ;;
+   CYGWIN*|MINGW32*|MSYS*|MINGW*)
+     current_os=windows
+     ;;
+   Linux)
+     ;;
+   *)
+     AC_MSG_NOTICE([Current machine is: Other OS (assume Linux)])
+     ;;
+esac
+
+AC_MSG_NOTICE([Current os: ${current_os} ($UNAME)])
 
 if test "$enable_development" = "default"; then
     if test -d CVS; then
@@ -176,28 +195,6 @@ fi
 
 
 dnl XXX option: TTYDRIVER
-
-UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
-UNAME=`echo $UNAME`  # remove newlines
-AC_SUBST(UNAME)
-
-current_os=linux
-case "$UNAME" in
-   Darwin)
-     echo 'Current machine is: Mac OS X'
-     current_os=darwin
-     ;;
-   Linux)
-     echo 'Current machine is: Linux'
-     ;;
-   CYGWIN*|MINGW32*|MSYS*|MINGW*)
-     echo 'Current machine is: MS Windows'
-     current_os=windows
-     ;;
-   *)
-     echo 'Current machine is: Other OS (assume Linux)'
-     ;;
-esac
 
 if test "$current_os" = "windows"; then
   echo "Windows/MSYS2 environment found."
@@ -426,11 +423,7 @@ fi
 
 AC_CHECK_LIB(z, inflate)
 
-AC_CHECK_LIB(pcre, pcre_compile, :, [
-    AC_MSG_NOTICE([Note: will use old copy of pcre distributed with tf]);
-    PCRE=pcre; LDFLAGS="${LDFLAGS} -Lpcre-2.08"; ])
-AC_SUBST(PCRE)
-
+AC_CHECK_LIB(pcre, pcre_compile)
 
 dnl ########### headers ############
 
