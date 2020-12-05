@@ -53,9 +53,7 @@ jobs:
         run: |
           dir C:\tools\cygwin\bin
           C:\tools\cygwin\bin\bash.exe --login -c 'env'
-          C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/local/lib || true'
-          C:\tools\cygwin\bin\bash.exe -c 'ls -alh /home/runneradmin/share || true'
-          C:\tools\cygwin\bin\bash.exe -c 'ls -alh /home/runneradmin/lib || true'
+          C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/lib || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
           C:\tools\cygwin\bin\bash.exe -c 'gcc -xc -E -v - || true'
         env:
@@ -64,7 +62,7 @@ jobs:
 
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --prefix=/usr/local'
+          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure CFLAGS=-I/usr/include LDFLAGS=-L/usr/lib --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --prefix=/usr/local'
         env:
           LDFLAGS: -L/usr/lib
           CPPFLAGS: -I/usr/include
