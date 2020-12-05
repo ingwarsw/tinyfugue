@@ -52,6 +52,7 @@ jobs:
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
+          C:\tools\cygwin\bin\cygcheck -l cygwin | grep resource.h
           C:\tools\cygwin\bin\bash.exe --login -c 'env'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include/sys || true'
