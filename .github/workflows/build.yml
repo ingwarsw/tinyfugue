@@ -62,8 +62,13 @@ jobs:
       - name: Configure
         run: |
           C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --prefix=/usr/local'
-
+        env:
+          LDFLAGS: -L/usr/lib
+          CPPFLAGS: -I/usr/include
       - name: Build
         run: |
           C:\tools\cygwin\bin\bash.exe -c 'make'
           C:\tools\cygwin\bin\make.exe
+        env:
+          LDFLAGS: -L/usr/lib
+          CPPFLAGS: -I/usr/include
