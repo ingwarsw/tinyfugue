@@ -64,4 +64,5 @@ jobs:
 
       - name: Build
         run: |
+          C:\tools\cygwin\bin\bash.exe -c 'make'
           C:\tools\cygwin\bin\make.exe
