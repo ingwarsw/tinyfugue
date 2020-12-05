@@ -52,6 +52,7 @@ jobs:
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
+          C:\tools\cygwin\bin\cygpath -w /usr/include
           C:\tools\cygwin\bin\bash.exe --login -c 'env'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/lib || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
