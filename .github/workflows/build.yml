@@ -57,20 +57,11 @@ jobs:
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/lib || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
           C:\tools\cygwin\bin\bash.exe -c 'gcc -xc -E -v - || true'
-        env:
-          LDFLAGS: -L/usr/lib
-          CPPFLAGS: -I/usr/include
 
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure CFLAGS=-I/usr/include LDFLAGS=-L/usr/lib --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --prefix=/usr/local'
-        env:
-          LDFLAGS: -L/usr/lib
-          CPPFLAGS: -I/usr/include
+          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure CFLAGS=-IC:/tools/cygwin/usr/include LDFLAGS=-LC:/tools/cygwin/usr/lib --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --prefix=/usr/local'
       - name: Build
         run: |
           C:\tools\cygwin\bin\bash.exe -c 'make'
           C:\tools\cygwin\bin\make.exe
-        env:
-          LDFLAGS: -L/usr/lib
-          CPPFLAGS: -I/usr/include
