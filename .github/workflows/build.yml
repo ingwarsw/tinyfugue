@@ -61,7 +61,7 @@ jobs:
 
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
+          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --prefix=/usr/local'
 
       - name: Build
         run: |
