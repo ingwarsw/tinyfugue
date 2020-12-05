@@ -58,6 +58,9 @@ jobs:
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /home/runneradmin/lib || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
           C:\tools\cygwin\bin\bash.exe -c 'gcc -xc -E -v - || true'
+        env:
+          LDFLAGS: -L/usr/lib
+          CPPFLAGS: -I/usr/include
 
       - name: Configure
         run: |
