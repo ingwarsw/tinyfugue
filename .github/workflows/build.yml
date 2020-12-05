@@ -52,7 +52,10 @@ jobs:
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
-          C:\tools\cygwin\bin\bash.exe -c -login 'env'
+          C:\tools\cygwin\bin\bash.exe --login -c 'env'
+          C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/local/lib || true'
+          C:\tools\cygwin\bin\bash.exe -c 'ls -alh /home/runneradmin/share || true'
+          C:\tools\cygwin\bin\bash.exe -c 'ls -alh /home/runneradmin/lib || true'
 
       - name: Configure
         run: |
