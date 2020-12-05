@@ -60,7 +60,7 @@ jobs:
 
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 --enable-python'
+          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
 
       - name: Build
         run: |
