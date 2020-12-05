@@ -49,11 +49,11 @@ jobs:
         with:
           packages: python3 make libpcre-devel
 
-#      - name: Debug
-#        run: |
-#          dir C:\tools\cygwin\bin
-#          C:\tools\cygwin\bin\bash.exe -c 'env'
-          
+      - name: Debug
+        run: |
+          dir C:\tools\cygwin\bin
+          C:\tools\cygwin\bin\bash.exe -c -login 'env'
+
       - name: Configure
         run: |
           C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
