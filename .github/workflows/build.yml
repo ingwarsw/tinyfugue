@@ -47,11 +47,12 @@ jobs:
       - uses: actions/checkout@v2
       - uses: egor-tensin/setup-cygwin@v1
         with:
-          packages: python3 make pcre libpcre-devel
-      - name: Debug
-        run: |
-          dir C:\tools\cygwin\bin
-          C:\tools\cygwin\bin\bash.exe -c 'env'
+          packages: python3 make libpcre-devel
+
+#      - name: Debug
+#        run: |
+#          dir C:\tools\cygwin\bin
+#          C:\tools\cygwin\bin\bash.exe -c 'env'
           
       - name: Configure
         run: |
