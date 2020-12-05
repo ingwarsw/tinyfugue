@@ -57,7 +57,7 @@ jobs:
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /home/runneradmin/share || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /home/runneradmin/lib || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
-          C:\tools\cygwin\bin\bash.exe -c 'gcc --version || true'
+          C:\tools\cygwin\bin\bash.exe -c 'gcc -xc -E -v - || true'
 
       - name: Configure
         run: |
