@@ -47,7 +47,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: egor-tensin/setup-cygwin@v1
         with:
-          packages: python3 make dos2unix pcre pcre-devel
+          packages: python3 make pcre libpcre-devel
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
