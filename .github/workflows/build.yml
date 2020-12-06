@@ -72,5 +72,6 @@ jobs:
 #          LDFLAGS: -Lc:/tools/cygwin/usr/lib
       - name: Build
         run: |
+          C:\tools\cygwin\bin\bash.exe -c 'cat src/tfconfig.h'
           C:\tools\cygwin\bin\bash.exe -c 'make'
           C:\tools\cygwin\bin\make.exe
