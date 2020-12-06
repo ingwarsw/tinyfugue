@@ -111,7 +111,7 @@ struct sockaddr_in {
 #endif
 
 #ifdef NETDB_H
-#include NETDB_H
+# include NETDB_H
 #endif
 
 extern struct World   *world_decl;     /* declares struct World */

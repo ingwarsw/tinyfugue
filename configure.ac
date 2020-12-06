@@ -557,7 +557,7 @@ AC_CHECK_FUNCS(bcopy bzero connect fileno getcwd \
     getpwnam gettimeofday getwd hstrerror index inet_aton)
 
 if test "$enable_getaddrinfo" = "default"; then
-    if test "$current_os" = "windows"; then
+    if test "$current_os" = "darwin"; then
     	AC_MSG_WARN([getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override.])
 	    enable_getaddrinfo=no
     else
