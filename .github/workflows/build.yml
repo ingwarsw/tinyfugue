@@ -53,7 +53,7 @@ jobs:
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
-          packages: python3 make libpcre-devel cygwin-devel mingw64-i686-gcc-g++ gcc-g++
+          packages: python3 make libpcre-devel cygwin-devel mingw64-i686-gcc-g++ gcc-core
 
       - name: Debug
         run: |
