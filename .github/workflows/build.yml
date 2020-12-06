@@ -48,8 +48,8 @@ jobs:
 #      - uses: egor-tensin/setup-mingw@v1
 #        with:
 #          platform: x86
-#      - name: Uninstall MinGW
-#        run: choco.exe uninstall -y --no-progress mingw strawberryperl
+      - name: Uninstall MinGW
+        run: choco.exe uninstall -y --no-progress mingw strawberryperl
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
