@@ -40,6 +40,8 @@ jobs:
         run: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
       - name: Build
         run: make
+      - name: Install
+        run: make install
 
   build_windows:
     runs-on: windows-latest
