@@ -65,6 +65,7 @@ jobs:
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include/sys || true'
           C:\tools\cygwin\bin\bash.exe -c 'gcc -xc -E -v - || true'
+          C:\tools\cygwin\bin\bash.exe -c 'git config -l || true'
 
       - name: Configure
         run: |
