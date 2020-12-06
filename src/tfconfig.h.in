@@ -29,7 +29,7 @@
 #define HAVE_LOCALE_H 0
 #define NETINET_IN_H 0
 #define ARPA_INET_H 0
-#define NETDB_H 0
+#undef NETDB_H
 #define HAVE_PWD_H 0
 #define NEED_PTEM_H 0
 #define HAVE_ZLIB_H 0
