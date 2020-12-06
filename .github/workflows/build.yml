@@ -45,6 +45,9 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-mingw@v1
+        with:
+          platform: x86
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
