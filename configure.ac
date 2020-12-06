@@ -575,7 +575,7 @@ AC_CHECK_FUNCS(kill memcpy memset raise setlocale setrlimit sigaction \
     strcasecmp strchr strcmpi strcspn strerror stricmp strtod tzset waitpid)
 
 dnl # override a few values
-if test "$CYGWIN" = "yes"; then
+if test "$current_os" = "windows"; then
     AC_DEFINE([HAVE_H_ERRNO], [0  /* h_errno is broken in cygwin32 b18. */], [cygwins h_errno is broken])
 fi
 
