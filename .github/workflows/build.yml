@@ -46,12 +46,11 @@ jobs:
   build_windows:
     runs-on: windows-latest
     steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
       - uses: actions/checkout@v2
-#      - uses: egor-tensin/setup-mingw@v1
-#        with:
-#          platform: x86
-#      - name: Uninstall MinGW
-#        run: choco.exe uninstall -y --no-progress mingw strawberryperl
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
@@ -69,7 +68,7 @@ jobs:
 
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c 'export SHELLOPTS;set -o igncr;./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
+          C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
 #        env:
 #          CFLAGS: -Ic:/tools/cygwin/usr/include
 #          LDFLAGS: -Lc:/tools/cygwin/usr/lib
