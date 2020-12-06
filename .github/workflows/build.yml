@@ -59,19 +59,15 @@ jobs:
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
-          C:\tools\cygwin\bin\cygcheck -l cygwin | grep resource.h
           C:\tools\cygwin\bin\bash.exe --login -c 'env'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include/sys || true'
           C:\tools\cygwin\bin\bash.exe -c 'gcc -xc -E -v - || true'
-          C:\tools\cygwin\bin\bash.exe -c 'git config -l || true'
 
       - name: Configure
         run: |
           C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
-        run: |
-          C:\tools\cygwin\bin\bash.exe -c 'cat src/tfconfig.h'
-          C:\tools\cygwin\bin\bash.exe -c 'cat config.log'
-          C:\tools\cygwin\bin\bash.exe -c 'make'
-          C:\tools\cygwin\bin\make.exe
+        run: C:\tools\cygwin\bin\bash.exe -c 'make'
+      - name: Install
+        run: C:\tools\cygwin\bin\bash.exe -c 'make install'
