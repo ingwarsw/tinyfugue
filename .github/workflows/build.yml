@@ -54,7 +54,7 @@ jobs:
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
-          packages: gcc-core make libpcre-devel lua-devel python38-devel
+          packages: gcc-core make libpcre-devel lua-devel python38-devel intl-devel
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
