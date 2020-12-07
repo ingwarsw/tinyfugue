@@ -66,7 +66,7 @@ jobs:
 
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --disable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102'
+          C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
         run: |
           C:\tools\cygwin\bin\bash.exe -c 'cat src/tfconfig.h'
