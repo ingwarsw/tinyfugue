@@ -16,10 +16,8 @@ jobs:
         os: [ubuntu-latest, macos-latest]
         python-version: [3.7, 3.8, 3.9]
         opts: 
-          - ""
           - "--enable-python"
-          - "--enable-lua"
-#          - "--enable-lua --enable-python"
+          - "--enable-lua --enable-python"
     
     steps:
       - uses: actions/checkout@v2
