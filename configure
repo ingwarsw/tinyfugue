@@ -5410,9 +5410,6 @@ done
 
 
 
-#if test "$current_os" = "windows"; then
-#  AC_MSG_WARN([Ignoring missing netdb.h...])
-#else
 
     found=0;
     for f in netdb.h sys/netdb.h; do
@@ -5440,11 +5437,10 @@ done
     if test $found -eq 1; then
 	:;
     else
-	:; as_fn_error $? "can't find netdb.h" "$LINENO" 5
+	:;
     fi
     unset found
 
-#fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether struct sockaddr has sa_len" >&5
 $as_echo_n "checking whether struct sockaddr has sa_len... " >&6; }
