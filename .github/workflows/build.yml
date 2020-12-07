@@ -11,11 +11,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
         os: [ubuntu-latest, macos-latest]
-#        python-version: [3.7, 3.8, 3.9]
-        python-version: [3.7]
+        python-version: [3.7, 3.8, 3.9]
         opts: 
           - ""
           - "--enable-python"
@@ -54,8 +53,7 @@ jobs:
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
-          packages: python3 make libpcre-devel gcc-core
-
+          packages: gcc-core make libpcre-devel lua-deval python3-devel
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
@@ -69,8 +67,6 @@ jobs:
         run: |
           C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102'
       - name: Build
-        run: |
-          C:\tools\cygwin\bin\bash.exe -c 'cat src/tfconfig.h'
-          C:\tools\cygwin\bin\bash.exe -c 'make'
+        run: C:\tools\cygwin\bin\bash.exe -c 'make'
       - name: Install
         run: C:\tools\cygwin\bin\bash.exe -c 'make install'
