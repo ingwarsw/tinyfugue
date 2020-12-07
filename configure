@@ -5410,10 +5410,9 @@ done
 
 
 
-if test "$current_os" = "windows"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Ignoring missing netdb.h..." >&5
-$as_echo "$as_me: WARNING: Ignoring missing netdb.h..." >&2;}
-else
+#if test "$current_os" = "windows"; then
+#  AC_MSG_WARN([Ignoring missing netdb.h...])
+#else
 
     found=0;
     for f in netdb.h sys/netdb.h; do
@@ -5445,7 +5444,7 @@ done
     fi
     unset found
 
-fi
+#fi
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether struct sockaddr has sa_len" >&5
 $as_echo_n "checking whether struct sockaddr has sa_len... " >&6; }
