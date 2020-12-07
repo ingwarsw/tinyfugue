@@ -54,7 +54,7 @@ jobs:
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
-          packages: gcc-core make libpcre-devel lua-devel python3-devel
+          packages: gcc-core make libpcre-devel lua-devel python38-devel
       - name: Debug
         run: |
           dir C:\tools\cygwin\bin
@@ -62,8 +62,6 @@ jobs:
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include || true'
           C:\tools\cygwin\bin\bash.exe -c 'ls -alh /usr/include/sys || true'
           C:\tools\cygwin\bin\bash.exe -c 'gcc -xc -E -v - || true'
-          
-
       - name: Configure
         run: |
           C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 --enable-lua --enable-python'
