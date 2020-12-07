@@ -472,12 +472,8 @@ TF_SEARCH_HEADERS(ARPA_INET_H, arpa/inet.h sys/inet.h)
 dnl ### Find nameser header
 dnl TF_SEARCH_HEADERS(NAMESER_H, arpa/nameser.h nameser.h)
 
-#if test "$current_os" = "windows"; then
-#  AC_MSG_WARN([Ignoring missing netdb.h...])
-#else
 dnl ### Find netdb header
-TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h, , AC_MSG_ERROR([can't find netdb.h]))
-#fi
+TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h)
 
 AC_CACHE_CHECK([whether struct sockaddr has sa_len], tf_cv_sa_len,
     AC_TRY_COMPILE([
