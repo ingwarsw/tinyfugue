@@ -5,6 +5,9 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '22 3 22 * *'
     
 jobs:
   build:
@@ -15,10 +18,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest]
         python-version: [3.7, 3.8, 3.9]
-        opts: 
-          - ""
-          - "--enable-python"
+        opts:
           - "--enable-lua"
+          - "--enable-python"
 #          - "--enable-lua --enable-python"
     
     steps:
@@ -36,6 +38,31 @@ jobs:
           brew install lua python@${{ matrix.python-version }}
           echo "/usr/local/opt/python@${{ matrix.python-version }}/bin" >> $GITHUB_PATH
       - name: Configure
-        run: ./configure --enable-version --enable-symlink --enable-getaddrinfo --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
+        run: ./configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
       - name: Build
         run: make
+      - name: Install
+        run: make install
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-cygwin@v1
+        with:
+          platform: x86
+          packages: gcc-core make libpcre-devel lua-devel python3-devel libintl-devel
+      - name: Create home dir
+        run: |
+          C:\tools\cygwin\bin\bash.exe --login -c 'env'
+      - name: Configure
+        run: |
+          sh configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 --enable-lua --enable-python
+      - name: Build
+        run: make
+      - name: Install
+        run: make install

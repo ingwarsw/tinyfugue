@@ -74,7 +74,7 @@ _failmsg:
 #	fi
 
 TF tf$(X):     $(OBJS) $(BUILDERS)
-	$(CC) $(LDFLAGS) -o tf$(X) $(OBJS) $(LIBS) -lpcre
+	$(CC) $(LDFLAGS) -o tf$(X) $(OBJS) $(LIBS)
 #	@# Some stupid linkers return ok status even if they fail.
 	@test -f "tf$(X)"
 #	@# ULTRIX's sh errors here if strip isn't found, despite "true".

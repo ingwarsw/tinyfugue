@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: variable.h,v 35004.40 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef VARIABLE_H
 #define VARIABLE_H

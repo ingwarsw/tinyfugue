@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: tfconfig.h.in,v 35004.36 2007/01/13 23:12:39 kkeys Exp $ */
 
 /* This file must not have trailing carriage returns on lines:  they will
  * confuse configure.  (With autoconf 2.13, a trailing space and comment

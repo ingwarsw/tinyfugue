@@ -125,7 +125,26 @@ AC_ARG_WITH(inclibdir) dnl because I never remember if it's singular or plural
 AC_ARG_ENABLE(development, , , enable_development=default)
 AC_ARG_ENABLE(dmalloc, , , enable_dmalloc=no)
 
-AC_MSG_NOTICE([])
+UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
+UNAME=`echo $UNAME`  # remove newlines
+AC_SUBST(UNAME)
+
+current_os=linux
+case "$UNAME" in
+   Darwin*)
+     current_os=darwin
+     ;;
+   CYGWIN*|MINGW32*|MSYS*|MINGW*)
+     current_os=windows
+     ;;
+   Linux*)
+     ;;
+   *)
+     AC_MSG_NOTICE([Current machine is: Other OS (assume Linux)])
+     ;;
+esac
+
+AC_MSG_NOTICE([Current os: ${current_os} ($UNAME)])
 
 if test "$enable_development" = "default"; then
     if test -d CVS; then
@@ -174,14 +193,11 @@ else
     AC_DEFINE([DISABLE_CORE], [1], [core dumps disabled])
 fi
 
-
 dnl XXX option: TTYDRIVER
 
-
-UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
-UNAME=`echo $UNAME`  # remove newlines
-AC_SUBST(UNAME)
-#AC_CYGWIN
+if test "$current_os" = "windows"; then
+  AC_DEFINE([PLATFORM_WINDOWS], [1], [Windows/MSYS2 shell found])
+fi
 
 dnl ########### programs ############
 
@@ -269,9 +285,12 @@ dnl on all platforms since it will _follow_ the -l option for the library
 dnl being tested.)
 LDFLAGS="$LDFLAGS $LIBDIRS"
 
-
-AC_SEARCH_LIBS(select, bsd, ,
+if test "$current_os" = "windows"; then
+  AC_MSG_WARN([Ignoring missing select()...])
+else
+  AC_SEARCH_LIBS(select, bsd, ,
     AC_MSG_ERROR([TF can not work without select().]))
+fi
 
 dnl # gethostbyname may not be in default libraries.
 dnl # QNX keeps gethostbyname in lsocket.
@@ -402,11 +421,7 @@ fi
 
 AC_CHECK_LIB(z, inflate)
 
-AC_CHECK_LIB(pcre, pcre_compile, :, [
-    AC_MSG_NOTICE([Note: will use old copy of pcre distributed with tf]);
-    PCRE=pcre; LDFLAGS="${LDFLAGS} -Lpcre-2.08"; ])
-AC_SUBST(PCRE)
-
+AC_CHECK_LIB(pcre, pcre_compile)
 
 dnl ########### headers ############
 
@@ -458,8 +473,7 @@ dnl ### Find nameser header
 dnl TF_SEARCH_HEADERS(NAMESER_H, arpa/nameser.h nameser.h)
 
 dnl ### Find netdb header
-TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h, ,
-    AC_MSG_ERROR([can't find netdb.h]))
+TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h)
 
 AC_CACHE_CHECK([whether struct sockaddr has sa_len], tf_cv_sa_len,
     AC_TRY_COMPILE([
@@ -538,11 +552,11 @@ AC_CHECK_FUNCS(bcopy bzero connect fileno getcwd \
     getpwnam gettimeofday getwd hstrerror index inet_aton)
 
 if test "$enable_getaddrinfo" = "default"; then
-    if test `uname -s` = 'Darwin'; then
-	AC_MSG_WARN([getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override.])
-	enable_getaddrinfo=no
+    if test "$current_os" = "darwin"; then
+    	AC_MSG_WARN([getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override.])
+	    enable_getaddrinfo=no
     else
-	enable_getaddrinfo=yes
+    	enable_getaddrinfo=yes
     fi
 fi
 if test "$enable_getaddrinfo" = "no"; then
@@ -556,7 +570,7 @@ AC_CHECK_FUNCS(kill memcpy memset raise setlocale setrlimit sigaction \
     strcasecmp strchr strcmpi strcspn strerror stricmp strtod tzset waitpid)
 
 dnl # override a few values
-if test "$CYGWIN" = "yes"; then
+if test "$current_os" = "windows"; then
     AC_DEFINE([HAVE_H_ERRNO], [0  /* h_errno is broken in cygwin32 b18. */], [cygwins h_errno is broken])
 fi
 

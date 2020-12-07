@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-
 #include "tfconfig.h"
 #include "port.h"
 #include "tf.h"

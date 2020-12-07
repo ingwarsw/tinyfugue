@@ -6,7 +6,6 @@
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
 
-
 /********************************************************************
  * Fugue expression interpreter
  *

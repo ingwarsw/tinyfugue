@@ -6,7 +6,6 @@
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
 
-
 /*
  * Regexp wrappers and glob pattern matching.
  */

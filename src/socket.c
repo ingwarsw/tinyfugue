@@ -6,7 +6,6 @@
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
 
-
 /***************************************************************
  * Fugue socket handling
  *
@@ -111,7 +110,9 @@ struct sockaddr_in {
 # endif
 #endif
 
-#include NETDB_H
+#ifdef NETDB_H
+# include NETDB_H
+#endif
 
 extern struct World   *world_decl;     /* declares struct World */
 

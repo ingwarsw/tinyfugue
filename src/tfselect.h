@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: tfselect.h,v 35000.15 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef TFSELECT_H
 #define TFSELECT_H
