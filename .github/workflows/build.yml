@@ -64,7 +64,7 @@ jobs:
           C:\tools\cygwin\bin\bash.exe -c 'gcc -xc -E -v - || true'
       - name: Configure
         run: |
-          C:\tools\cygwin\bin\bash.exe -c './configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 --enable-lua --enable-python'
+          bash configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 --enable-lua --enable-python
       - name: Build
         run: make
       - name: Install
