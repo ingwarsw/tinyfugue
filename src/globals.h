@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: globals.h,v 35000.78 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef GLOBALS_H
 #define GLOBALS_H
@@ -191,7 +190,7 @@ enum Vars {
 #define iecho		getintvar(VAR_iecho)
 #define info_attr	getattrvar(VAR_info_attr)
 #define insert		getintvar(VAR_insert)
-#define interactive	getintvar(VAR_interactive)
+#define tfinteractive	getintvar(VAR_interactive)
 #define isize		getintvar(VAR_isize)
 #define istrip		getintvar(VAR_istrip)
 #define kbnum		getstrvar(VAR_kbnum)

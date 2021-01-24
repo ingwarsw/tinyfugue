@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: expand.h,v 35004.45 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef EXPAND_H
 #define EXPAND_H

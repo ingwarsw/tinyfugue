@@ -125,7 +125,26 @@ AC_ARG_WITH(inclibdir) dnl because I never remember if it's singular or plural
 AC_ARG_ENABLE(development, , , enable_development=default)
 AC_ARG_ENABLE(dmalloc, , , enable_dmalloc=no)
 
-AC_MSG_NOTICE([])
+UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
+UNAME=`echo $UNAME`  # remove newlines
+AC_SUBST(UNAME)
+
+current_os=linux
+case "$UNAME" in
+   Darwin*)
+     current_os=darwin
+     ;;
+   CYGWIN*|MINGW32*|MSYS*|MINGW*)
+     current_os=windows
+     ;;
+   Linux*)
+     ;;
+   *)
+     AC_MSG_NOTICE([Current machine is: Other OS (assume Linux)])
+     ;;
+esac
+
+AC_MSG_NOTICE([Current os: ${current_os} ($UNAME)])
 
 if test "$enable_development" = "default"; then
     if test -d CVS; then
@@ -162,7 +181,7 @@ if test "$enable_development" = "yes"; then
 	AC_CHECK_PROGS(CC, tfcc gcc-anal)
     fi
 else
-    AC_DEFINE(NDEBUG)
+    AC_DEFINE([NDEBUG], [1], [debug disabled])
 fi
 
 if test "$enable_core" = "yes"; then
@@ -171,17 +190,14 @@ if test "$enable_core" = "yes"; then
     STRIP=":"
 else
     AC_MSG_NOTICE([Core dumps disabled.])
-    AC_DEFINE(DISABLE_CORE)
+    AC_DEFINE([DISABLE_CORE], [1], [core dumps disabled])
 fi
-
 
 dnl XXX option: TTYDRIVER
 
-
-UNAME=`{ uname -s && uname -v && uname -r || uname -a; } 2>/dev/null`
-UNAME=`echo $UNAME`  # remove newlines
-AC_SUBST(UNAME)
-#AC_CYGWIN
+if test "$current_os" = "windows"; then
+  AC_DEFINE([PLATFORM_WINDOWS], [1], [Windows/MSYS2 shell found])
+fi
 
 dnl ########### programs ############
 
@@ -269,9 +285,12 @@ dnl on all platforms since it will _follow_ the -l option for the library
 dnl being tested.)
 LDFLAGS="$LDFLAGS $LIBDIRS"
 
-
-AC_SEARCH_LIBS(select, bsd, ,
+if test "$current_os" = "windows"; then
+  AC_MSG_WARN([Ignoring missing select()...])
+else
+  AC_SEARCH_LIBS(select, bsd, ,
     AC_MSG_ERROR([TF can not work without select().]))
+fi
 
 dnl # gethostbyname may not be in default libraries.
 dnl # QNX keeps gethostbyname in lsocket.
@@ -333,7 +352,7 @@ if test "$enable_ssl" = "yes"; then
 	    AC_MSG_RESULT([no])
 	fi
 	AC_CHECK_HEADER(openssl/ssl.h, , break)
-	AC_DEFINE(HAVE_SSL)
+	AC_DEFINE([HAVE_SSL], [1], [have ssl])
 	ok=1
 	break
     done
@@ -375,20 +394,20 @@ if test "$enable_termcap" = "default"; then
 fi
 
 if test "$enable_termcap" = "no"; then
-    AC_DEFINE_UNQUOTED(HARDCODE, $terminal_hardcode)
+    AC_DEFINE_UNQUOTED([HARDCODE], [$terminal_hardcode], [termcap disabled - hardcoding terminal])
 else
     if test "$enable_termcap" = "yes"; then enable_termcap=""; fi
     AC_SEARCH_LIBS(tgetent, $enable_termcap termcap ncurses curses,
-	AC_DEFINE(TERMCAP)
+	AC_DEFINE([TERMCAP], [1], [termcap enabled])
     ,
-	AC_DEFINE_UNQUOTED(HARDCODE, $terminal_hardcode)
+	AC_DEFINE_UNQUOTED([HARDCODE], [$terminal_hardcode], [termcap enabled - hardcoding terminal])
 	AC_MSG_WARN([Hardcoding terminal codes.]))
 fi
 dnl XXX check for debian linux's broken termcap
 
 
 if test "$enable_256colors" = "yes"; then
-    AC_DEFINE(NCOLORS, 256)
+    AC_DEFINE([NCOLORS], [256], [256colors enabled])
 fi
 
 
@@ -402,11 +421,7 @@ fi
 
 AC_CHECK_LIB(z, inflate)
 
-AC_CHECK_LIB(pcre, pcre_compile, :, [
-    AC_MSG_NOTICE([Note: will use old copy of pcre distributed with tf]);
-    PCRE=pcre; LDFLAGS="${LDFLAGS} -Lpcre-2.08"; ])
-AC_SUBST(PCRE)
-
+AC_CHECK_LIB(pcre, pcre_compile)
 
 dnl ########### headers ############
 
@@ -433,7 +448,7 @@ AC_DEFUN([TF_SEARCH_HEADERS], [
     found=0;
     for f in $2; do
 	AC_CHECK_HEADERS($f,
-	    AC_DEFINE_UNQUOTED($1, <$f>)
+	    AC_DEFINE_UNQUOTED([$1], [<$f>], [$1 defined])
 	    found=1
 	    break)
 	if test $found -eq 1; then break; fi
@@ -458,8 +473,7 @@ dnl ### Find nameser header
 dnl TF_SEARCH_HEADERS(NAMESER_H, arpa/nameser.h nameser.h)
 
 dnl ### Find netdb header
-TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h, ,
-    AC_MSG_ERROR([can't find netdb.h]))
+TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h)
 
 AC_CACHE_CHECK([whether struct sockaddr has sa_len], tf_cv_sa_len,
     AC_TRY_COMPILE([
@@ -470,7 +484,7 @@ AC_CACHE_CHECK([whether struct sockaddr has sa_len], tf_cv_sa_len,
 	tf_cv_sa_len=no))
 
 if test "${tf_cv_sa_len}" = "yes"; then
-    AC_DEFINE(HAVE_SOCKADDR_SA_LEN)
+    AC_DEFINE([HAVE_SOCKADDR_SA_LEN], [1], [struct sockaddr has sa_len])
 fi
 
 
@@ -479,7 +493,7 @@ dnl ### Figure out which terminal driver to use.
 AC_CHECK_HEADERS(termios.h termio.h sgtty.h, break)
 
 dnl # Some brain damaged systems (Xenix) need <sys/ptem.h> for struct winsize.
-AC_EGREP_HEADER([struct winsize], sys/ptem.h, AC_DEFINE(NEED_PTEM_H))
+AC_EGREP_HEADER([struct winsize], sys/ptem.h, AC_DEFINE([NEED_PTEM_H], [1], [ptem.h needed]))
 
 
 dnl ########### typedefs ############
@@ -502,7 +516,7 @@ $3
 ], ac_cv_type_$1=yes, ac_cv_type_$1=no)])dnl
 AC_MSG_RESULT($ac_cv_type_$1)
 if test $ac_cv_type_$1 = no; then
-  AC_DEFINE($1, $2)
+  AC_DEFINE([$1], [$2], [$1 defined])
 fi
 ])
 
@@ -538,11 +552,11 @@ AC_CHECK_FUNCS(bcopy bzero connect fileno getcwd \
     getpwnam gettimeofday getwd hstrerror index inet_aton)
 
 if test "$enable_getaddrinfo" = "default"; then
-    if test `uname -s` = 'Darwin'; then
-	AC_MSG_WARN([getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override.])
-	enable_getaddrinfo=no
+    if test "$current_os" = "darwin"; then
+    	AC_MSG_WARN([getaddrinfo() may be broken, so IPv6 support is disabled.  Use --enable-getaddrinfo to override.])
+	    enable_getaddrinfo=no
     else
-	enable_getaddrinfo=yes
+    	enable_getaddrinfo=yes
     fi
 fi
 if test "$enable_getaddrinfo" = "no"; then
@@ -556,8 +570,8 @@ AC_CHECK_FUNCS(kill memcpy memset raise setlocale setrlimit sigaction \
     strcasecmp strchr strcmpi strcspn strerror stricmp strtod tzset waitpid)
 
 dnl # override a few values
-if test "$CYGWIN" = "yes"; then
-    AC_DEFINE(HAVE_H_ERRNO, [0  /* h_errno is broken in cygwin32 b18. */])
+if test "$current_os" = "windows"; then
+    AC_DEFINE([HAVE_H_ERRNO], [0  /* h_errno is broken in cygwin32 b18. */], [cygwins h_errno is broken])
 fi
 
 if test "$enable_inet6" = "yes"; then
@@ -574,7 +588,7 @@ if test "$enable_inet6" = "yes"; then
 #endif
 	    struct ${type} foo;
 	    ],
-	    AC_DEFINE_UNQUOTED(IN6_ADDR, $type)
+	    AC_DEFINE_UNQUOTED([IN6_ADDR], [$type], [IN6_ADDR defined])
 	    AC_MSG_RESULT([$type])
 	    break)
     done
@@ -613,7 +627,7 @@ else
     MAILDIR="$enable_mailcheck"
 fi
 if test -n "$MAILDIR"; then
-    AC_DEFINE_UNQUOTED(MAILDIR, "$MAILDIR")
+    AC_DEFINE_UNQUOTED([MAILDIR], ["$MAILDIR"], [MAILDIR defined])
 fi
 
 
@@ -738,14 +752,14 @@ fi
 
 dnl ### write variables
 
-if test "$enable_inet6"   = "yes"; then AC_DEFINE(ENABLE_INET6)  fi
-if test "$enable_atcp"    = "yes"; then AC_DEFINE(ENABLE_ATCP)  fi
-if test "$enable_gmcp"    = "yes"; then AC_DEFINE(ENABLE_GMCP)  fi
-if test "$enable_option102"  = "yes"; then AC_DEFINE(ENABLE_OPTION102)  fi
-if test "$enable_history" = "no"; then AC_DEFINE(NO_HISTORY)  fi
-if test "$enable_process" = "no"; then AC_DEFINE(NO_PROCESS)  fi
-if test "$enable_float"   = "no"; then AC_DEFINE(NO_FLOAT)    fi
-if test "$enable_widechar" = "yes"; then AC_DEFINE(WIDECHAR)   fi
+if test "$enable_inet6"   = "yes"; then AC_DEFINE([ENABLE_INET6], [1], [inet6 enabled])  fi
+if test "$enable_atcp"    = "yes"; then AC_DEFINE([ENABLE_ATCP], [1], [atcp enabled])  fi
+if test "$enable_gmcp"    = "yes"; then AC_DEFINE([ENABLE_GMCP], [1], [gmcp enabled])  fi
+if test "$enable_option102"  = "yes"; then AC_DEFINE([ENABLE_OPTION102], [1], [option102 enabled])  fi
+if test "$enable_history" = "no"; then AC_DEFINE([NO_HISTORY], [1], [history disabled])  fi
+if test "$enable_process" = "no"; then AC_DEFINE([NO_PROCESS], [1], [process disabled])  fi
+if test "$enable_float"   = "no"; then AC_DEFINE([NO_FLOAT], [1], [float disabled])    fi
+if test "$enable_widechar" = "yes"; then AC_DEFINE([WIDECHAR], [1], [widechar enabled])   fi
 
 CPPFLAGS="${CPPFLAGS} -DDATADIR=\${datadir}"
 AC_SUBST(CFLAGS)

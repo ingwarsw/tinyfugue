@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: socket.h,v 35004.44 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef SOCKET_H
 #define SOCKET_H
@@ -20,8 +19,6 @@
 #define CONN_SSL	0x04
 #define CONN_BG		0x08
 #define CONN_FG		0x10
-
-struct World   *world_decl;	/* declares struct World */
 
 extern String *incoming_text;
 extern int quit_flag;

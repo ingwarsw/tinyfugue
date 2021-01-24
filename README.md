@@ -1,12 +1,11 @@
 TinyFugue - Rebirth
 =====================
 
-[![Build Status](https://travis-ci.org/ingwarsw/tinyfugue.svg?branch=master)](https://travis-ci.org/ingwarsw/tinyfugue)
-
+![CI](https://github.com/ingwarsw/tinyfugue/workflows/CI/badge.svg)
 
 This project is meant to give rebirth to TinyFugue MUD client.
 
-Because Kan Keys is not activelly developing it from 6 years and i gathered a lot of pathes over that time in thet time i decided to push them together.
+Because Ken Keys is not activelly developing it from 6 years and i gathered a lot of pathes over that time in thet time i decided to push them together.
 
 # New features
 

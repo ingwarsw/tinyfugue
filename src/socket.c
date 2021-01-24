@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: socket.c,v 35004.288 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /***************************************************************
  * Fugue socket handling
@@ -112,7 +110,11 @@ struct sockaddr_in {
 # endif
 #endif
 
-#include NETDB_H
+#ifdef NETDB_H
+# include NETDB_H
+#endif
+
+extern struct World   *world_decl;     /* declares struct World */
 
 #if !HAVE_GAI_STRERROR || !defined(AI_NUMERICHOST) || !defined(EAI_SERVICE)
   /* System's implementation is incomplete.  Avoid it. */

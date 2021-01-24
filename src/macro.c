@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: macro.c,v 35004.188 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /**********************************************
  * Fugue macro package                        *
@@ -1356,6 +1354,7 @@ static int list_defs(TFILE *file, Macro *spec, int mflag, ListOpts *listopts)
                 if (p->attr & F_FLASH)     Stringcat(buffer, "(flash) ");
                 if (p->attr & F_DIM)       Stringcat(buffer, "(dim) ");
                 if (p->attr & F_BOLD)      Stringcat(buffer, "(bold) ");
+                if (p->attr & F_ITALIC)    Stringcat(buffer, "(italic) ");
                 if (p->attr & F_BELL)      Stringcat(buffer, "(bell) ");
                 if (p->attr & F_HILITE)    Stringcat(buffer, "(hilite) ");
                 if (p->attr & F_FGCOLOR)

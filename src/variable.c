@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: variable.c,v 35004.110 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /**************************************
  * Internal and environment variables *
@@ -27,6 +25,8 @@ static const char RCSid[] = "$Id: variable.c,v 35004.110 2007/01/13 23:12:39 kke
 #include "expand.h"	/* SUB_KEYWORD */
 #include "parse.h"	/* types */
 #include "variable.h"
+
+extern struct World   *world_decl;     /* declares struct World */
 
 static const char *varchar(Var *var);
 static Var   *findlevelvar(const char *name, List *level);

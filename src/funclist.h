@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: funclist.h,v 35000.66 2007/01/13 23:12:39 kkeys Exp $ */
 
 /* sorted by name */
 /*	 Name		Pure	Arguments */

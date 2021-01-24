@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: command.c,v 35004.141 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /*****************************************************************
  * Fugue command handlers
@@ -218,7 +216,7 @@ struct Value *handle_quit_command(String *args, int offset)
         else return shareval(val_zero);
     }
 
-    if (interactive && have_active_socks() && !yes) {
+    if (tfinteractive && have_active_socks() && !yes) {
 	fix_screen();
 	puts("There are sockets with unseen text.  Really quit tf? (y/N)\r");
 	fflush(stdout);

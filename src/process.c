@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: process.c,v 35004.71 2007/01/13 23:12:39 kkeys Exp $";
 
 /************************
  * Fugue processes.     *
@@ -27,6 +26,8 @@ static const char RCSid[] = "$Id: process.c,v 35004.71 2007/01/13 23:12:39 kkeys
 #include "cmdlist.h"
 #include "output.h"	/* oflush() */
 #include "signals.h"	/* interrupted() */
+
+extern struct World   *world_decl;     /* declares struct World */
 
 const int feature_process = !(NO_PROCESS - 0);
 #if !NO_PROCESS

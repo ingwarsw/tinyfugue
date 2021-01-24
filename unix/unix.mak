@@ -74,7 +74,7 @@ _failmsg:
 #	fi
 
 TF tf$(X):     $(OBJS) $(BUILDERS)
-	$(CC) $(LDFLAGS) -o tf$(X) $(OBJS) $(LIBS) -lpcre
+	$(CC) $(LDFLAGS) -o tf$(X) $(OBJS) $(LIBS)
 #	@# Some stupid linkers return ok status even if they fail.
 	@test -f "tf$(X)"
 #	@# ULTRIX's sh errors here if strip isn't found, despite "true".
@@ -156,7 +156,7 @@ MANPAGE $(MANPAGE): $(BUILDERS) tf.1.$(MANTYPE)man
 	chmod $(MODE) $(MANPAGE)
 	chmod ugo-x $(MANPAGE)
 
-Makefile: ../unix/vars.mak ../unix/unix.mak ../configure ../configure.in
+Makefile: ../unix/vars.mak ../unix/unix.mak ../configure ../configure.ac
 	@echo
 	@echo "## WARNING: configuration should be rerun."
 	@echo

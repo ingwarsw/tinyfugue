@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: main.c,v 35004.115 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /***********************************************
  * Fugue main routine                          *
@@ -38,6 +36,8 @@ static const char RCSid[] = "$Id: main.c,v 35004.115 2007/01/13 23:12:39 kkeys E
 #include "expand.h"
 #include "expr.h"
 #include "process.h"
+
+extern struct World   *world_decl;     /* declares struct World */
 
 const char sysname[] = UNAME;
 

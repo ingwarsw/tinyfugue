@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: tfio.c,v 35004.114 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /***********************************
  * TinyFugue "standard" I/O
@@ -46,6 +44,7 @@ static const char RCSid[] = "$Id: tfio.c,v 35004.114 2007/01/13 23:12:39 kkeys E
 #include "keyboard.h"	/* keyboard_pos */
 #include "expand.h"	/* current_command */
 #include "cmdlist.h"
+#include "socket.h"
 
 TFILE *loadfile = NULL; /* currently /load'ing file */
 int loadline = 0;       /* line number in /load'ing file */

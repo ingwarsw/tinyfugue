@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: attr.h,v 35004.4 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef ATTR_H
 #define ATTR_H

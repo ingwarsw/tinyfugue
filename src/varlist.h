@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: varlist.h,v 35000.78 2007/01/13 23:12:39 kkeys Exp $ */
 
 /* This keeps the constants and the array in the same place, so they can't
  * get out of sync.

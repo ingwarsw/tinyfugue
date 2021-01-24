@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: signals.h,v 35004.21 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef SIGNALS_H
 #define SIGNALS_H

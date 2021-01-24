@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: tty.h,v 35004.15 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef TTY_H
 #define TTY_H

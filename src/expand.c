@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: expand.c,v 35004.232 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /********************************************************************
  * Fugue macro text interpreter
@@ -34,6 +32,8 @@ static const char RCSid[] = "$Id: expand.c,v 35004.232 2007/01/13 23:12:39 kkeys
 #include "cmdlist.h"
 #include "command.h"
 #include "variable.h"
+
+extern struct World   *world_decl;     /* declares struct World */
 
 typedef struct { void *ptr; opcode_t op; } opcmd_t;
 
