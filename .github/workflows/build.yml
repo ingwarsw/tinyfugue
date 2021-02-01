@@ -55,7 +55,7 @@ jobs:
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
-          packages: gcc-core make libpcre-devel lua-devel python3-devel libintl-devel
+          packages: gcc-core make libpcre-devel liblua-devel python3-devel libintl-devel
       - name: Create home dir
         run: |
           C:\tools\cygwin\bin\bash.exe --login -c 'env'
