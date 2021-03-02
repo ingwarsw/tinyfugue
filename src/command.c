@@ -360,7 +360,7 @@ int handle_echo_func(
             return 0;
     }
     if (raw) {
-        write(STDOUT_FILENO, src->data, src->len);
+        size_t w_len = write(STDOUT_FILENO, src->data, src->len);
         return 1;
     }
 
