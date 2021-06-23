@@ -68,7 +68,7 @@ union wait *dummy_union_wait;
 # define WEXITSTATUS(w)  (((*(int *)&(w)) >> 8) & 0xFF) /* works most places */
 #endif
 
-typedef RETSIGTYPE (SigHandler)(int sig);
+typedef void (SigHandler)(int sig);
 
 #if !HAVE_RAISE
 # if HAVE_KILL
@@ -129,18 +129,18 @@ const int feature_core = 1 - DISABLE_CORE;
 static const char *argv0 = NULL;
 static int have_pending_signals = 0;
 static sig_set pending_signals;
-static RETSIGTYPE (*parent_tstp_handler)(int sig);
+static void (*parent_tstp_handler)(int sig);
 
 static void   handle_interrupt(void);
 static void   terminate(int sig);
 static void   coremsg(FILE *dumpfile);
 static int    debugger_dump(void);
 static FILE  *get_dumpfile(void);
-static RETSIGTYPE core_handler(int sig);
-static RETSIGTYPE signal_scheduler(int sig);
-static RETSIGTYPE signal_jumper(int sig);
+static void core_handler(int sig);
+static void signal_scheduler(int sig);
+static void signal_jumper(int sig);
 #ifndef SIG_IGN
-static RETSIGTYPE SIG_IGN(int sig);
+static void SIG_IGN(int sig);
 #endif
 
 
@@ -255,7 +255,7 @@ void init_signals(void)
 }
 
 #ifndef SIG_IGN
-static RETSIGTYPE SIG_IGN(int sig)
+static void SIG_IGN(int sig)
 {
     setsighandler(sig, SIG_IGN);  /* restore handler (POSIX) */
 }
@@ -309,7 +309,7 @@ int suspend(void)
 }
 
 
-static RETSIGTYPE core_handler(int sig)
+static void core_handler(int sig)
 {
     FILE *dumpfile;
     setsighandler(sig, core_handler);  /* restore handler (POSIX) */
@@ -571,14 +571,14 @@ static void terminate(int sig)
     raise(sig);
 }
 
-static RETSIGTYPE signal_scheduler(int sig)
+static void signal_scheduler(int sig)
 {
     setsighandler(sig, signal_scheduler);  /* restore handler (POSIX) */
     VEC_SET(sig, &pending_signals);        /* set flag to deal with it later */
     have_pending_signals++;
 }
 
-static RETSIGTYPE signal_jumper(int sig)
+static void signal_jumper(int sig)
 {
     fatal_signal = sig;
     longjmp(jumpenv, 1);

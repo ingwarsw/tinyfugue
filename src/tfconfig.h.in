@@ -15,7 +15,6 @@
 #define PLATFORM_UNIX 1
 
 #undef MAILDIR
-#undef RETSIGTYPE
 #undef pid_t
 #undef size_t
 #undef time_t
