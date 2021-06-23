@@ -5682,7 +5682,7 @@ fi
 
 
     found=0;
-    for f in netinet/in.h; do
+    for f in netinet/in.h sys/in.h sys/netinet/in.h; do
 	    as_ac_Header=`printf "%s\n" "ac_cv_header_$f" | $as_tr_sh`
 ac_fn_c_check_header_compile "$LINENO" "$f" "$as_ac_Header" "$ac_includes_default"
 if eval test \"x\$"$as_ac_Header"\" = x"yes"
@@ -5697,9 +5697,10 @@ fi
 	    if test $found -eq 1; then break; fi
     done
     if test $found -eq 1; then
-	:; sys/in.h
+	:;
     else
-	:; sys/netinet/in.h
+	:; { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: I will use my own internet structures.  Good luck." >&5
+printf "%s\n" "$as_me: WARNING: I will use my own internet structures.  Good luck." >&2;}
     fi
     unset found
 

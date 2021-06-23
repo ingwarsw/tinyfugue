@@ -465,7 +465,7 @@ AC_DEFUN([TF_SEARCH_HEADERS], [
 ])
 
 dnl ### Find internet structure header
-TF_SEARCH_HEADERS(NETINET_IN_H, netinet/in.h, sys/in.h, sys/netinet/in.h, ,
+TF_SEARCH_HEADERS(NETINET_IN_H, netinet/in.h sys/in.h sys/netinet/in.h, ,
 AC_MSG_WARN([I will use my own internet structures.  Good luck.]))
 
 dnl ### Find internet address header
