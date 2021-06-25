@@ -3506,7 +3506,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                 continue;  /* avoid non-telnet processing */
 
             } else if (xsock->fsastate == TN_SB) {
-		if (xsock->subbuffer->len > 255) {
+		if (xsock->subbuffer->len > 30*1023) {
 		    /* It shouldn't take this long; server is broken.  Abort. */
 		    SStringcat(xsock->buffer, CS(xsock->subbuffer));
 		    Stringtrunc(xsock->subbuffer, 0);
