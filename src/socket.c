@@ -2611,6 +2611,45 @@ int handle_send_function(conString *string, const char *world,
     return result;
 }
 
+#if ENABLE_ATCP
+int handle_atcp_function(conString *string, const char *world)
+{
+    Sock *old_xsock = xsock;
+
+    xsock = (!world || !*world) ? xsock : find_sock(world);
+        Sprintf(telbuf, "%c%c%c%s%c%c", TN_IAC, TN_SB, TN_ATCP, string->data, TN_IAC, TN_SE);
+        telnet_send(telbuf);
+    xsock = old_xsock;
+        return 1;
+}
+#endif
+
+#if ENABLE_GMCP
+int handle_gmcp_function(conString *string, const char *world)
+{
+    Sock *old_xsock = xsock;
+
+    xsock = (!world || !*world) ? xsock : find_sock(world);
+        Sprintf(telbuf, "%c%c%c%s%c%c", TN_IAC, TN_SB, TN_GMCP, string->data, TN_IAC, TN_SE);
+        telnet_send(telbuf);
+    xsock = old_xsock;
+        return 1;
+}
+#endif
+
+#if ENABLE_OPTION102
+int handle_option102_function(conString *string, const char *world)
+{
+    Sock *old_xsock = xsock;
+
+    xsock = (!world || !*world) ? xsock : find_sock(world);
+        Sprintf(telbuf, "%c%c%c%s%c%c", TN_IAC, TN_SB, TN_102, string->data, TN_IAC, TN_SE);
+        telnet_send(telbuf);
+    xsock = old_xsock;
+        return 1;
+}
+#endif
+
 /* Code for the undocumented fake_recv script function. */
 int handle_fake_recv_function(conString *string, const char *world,
     const char *flags)
