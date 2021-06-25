@@ -3569,7 +3569,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		    (rawchar == TN_GMCP && gmcp) ||
 #endif
 #if ENABLE_OPTION102
-		    (rawchar == TN_102 && 102) ||
+		    (rawchar == TN_102 && socket102) ||
 #endif
                     rawchar == TN_ECHO ||
                     rawchar == TN_SEND_EOR ||
