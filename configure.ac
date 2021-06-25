@@ -15,14 +15,15 @@ dnl Note: autoconf uses <<EOF, so we use <<END instead.
 
 dnl ### Initialization variables.
 
-AC_INIT([src/tf.h])
+AC_INIT
+AC_CONFIG_SRCDIR([src/tf.h])
 
 SOCKS=''
 OTHER_OBJS=""
 TFVER=`sed -ne 's/^TFVER=\(.*\)/\1/p' src/vars.mak`
 TFVERSION=`sed -n -e '/Fugue version/s/^.*"\(.*\)".*$/\1/p' src/main.c`
 
-AC_CONFIG_HEADER([src/tfconfig.h])
+AC_CONFIG_HEADERS([src/tfconfig.h])
 
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -220,7 +221,7 @@ dnl     echo
 dnl     exit 1
 dnl }
 
-dnl XXX AC_AIX
+dnl XXX AC_USE_SYSTEM_EXTENSIONS
 
 AC_PROG_MAKE_SET
 
@@ -415,17 +416,12 @@ if test "$enable_float" = "yes"; then
     AC_SEARCH_LIBS(sqrt, m)
 fi
 
-if test "$enable_widechar" = "yes"; then
-    AC_CHECK_HEADERS(wchar.h wctype.h)
-fi
-
 AC_CHECK_LIB(z, inflate)
 
 AC_CHECK_LIB(pcre, pcre_compile)
 
 dnl ########### headers ############
 
-AC_HEADER_STDC
 AC_CHECK_HEADERS(unistd.h memory.h sys/select.h)
 AC_HEADER_SYS_WAIT
 
@@ -438,7 +434,7 @@ AC_CHECK_HEADERS(pwd.h, ,
 AC_MSG_WARN([Filename '~user' expansion will not be supported.]))
 
 dnl ### Find zlib.h
-AC_CHECK_HEADERS(zlib.h)
+AC_CHECK_HEADERS([zlib.h])
 
 
 dnl TF_SEARCH_HEADERS(SYMBOL, HEADERS... [, DO-IF-FOUND [, DO-IF-NOT-FOUND]])
@@ -447,11 +443,11 @@ dnl found.
 AC_DEFUN([TF_SEARCH_HEADERS], [
     found=0;
     for f in $2; do
-	AC_CHECK_HEADERS($f,
-	    AC_DEFINE_UNQUOTED([$1], [<$f>], [$1 defined])
-	    found=1
-	    break)
-	if test $found -eq 1; then break; fi
+	    AC_CHECK_HEADER([$f],
+	        AC_DEFINE_UNQUOTED([$1], [<$f>], [$1 defined])
+	        found=1
+	        break)
+	    if test $found -eq 1; then break; fi
     done
     if test $found -eq 1; then
 	:; $3
@@ -460,7 +456,6 @@ AC_DEFUN([TF_SEARCH_HEADERS], [
     fi
     unset found
 ])
-
 
 dnl ### Find internet structure header
 TF_SEARCH_HEADERS(NETINET_IN_H, netinet/in.h sys/in.h sys/netinet/in.h, ,
@@ -476,12 +471,9 @@ dnl ### Find netdb header
 TF_SEARCH_HEADERS(NETDB_H, netdb.h sys/netdb.h)
 
 AC_CACHE_CHECK([whether struct sockaddr has sa_len], tf_cv_sa_len,
-    AC_TRY_COMPILE([
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include<sys/types.h>
-#include <sys/socket.h>],
-        [struct sockaddr sa; return sa.sa_len;],
-        tf_cv_sa_len=yes,
-	tf_cv_sa_len=no))
+#include <sys/socket.h>]], [[struct sockaddr sa; return sa.sa_len;]])],[tf_cv_sa_len=yes],[tf_cv_sa_len=no]))
 
 if test "${tf_cv_sa_len}" = "yes"; then
     AC_DEFINE([HAVE_SOCKADDR_SA_LEN], [1], [struct sockaddr has sa_len])
@@ -494,44 +486,6 @@ AC_CHECK_HEADERS(termios.h termio.h sgtty.h, break)
 
 dnl # Some brain damaged systems (Xenix) need <sys/ptem.h> for struct winsize.
 AC_EGREP_HEADER([struct winsize], sys/ptem.h, AC_DEFINE([NEED_PTEM_H], [1], [ptem.h needed]))
-
-
-dnl ########### typedefs ############
-
-dnl TF_CHECK_TYPE(TYPE, DEFAULT [, OTHER_HEADERS])
-dnl ...because AC_CHECK_TYPE doesn't have OTHER_HEADERS
-AC_DEFUN([TF_CHECK_TYPE],
-[AC_REQUIRE([AC_HEADER_STDC])dnl
-AC_MSG_CHECKING(for $1)
-AC_CACHE_VAL(ac_cv_type_$1,
-[AC_EGREP_CPP(dnl
-changequote(<<,>>)dnl
-<<(^|[^a-zA-Z_0-9])$1[^a-zA-Z_0-9]>>dnl
-changequote([,]), [
-#if STDC_HEADERS
-#include <stdlib.h>
-#include <stddef.h>
-#endif
-$3
-], ac_cv_type_$1=yes, ac_cv_type_$1=no)])dnl
-AC_MSG_RESULT($ac_cv_type_$1)
-if test $ac_cv_type_$1 = no; then
-  AC_DEFINE([$1], [$2], [$1 defined])
-fi
-])
-
-
-AC_TYPE_SIGNAL
-AC_TYPE_PID_T
-AC_TYPE_SIZE_T
-AC_CHECK_TYPE(time_t, long)
-TF_CHECK_TYPE(socklen_t, int, [
-#include <sys/types.h>
-#include <sys/socket.h>
-])
-
-
-dnl ########### structures ############
 
 
 dnl ########### functions ############
@@ -577,20 +531,18 @@ fi
 if test "$enable_inet6" = "yes"; then
     AC_MSG_CHECKING([for IPv6 address structure])
     for type in in6_addr in_addr6; do
-	AC_TRY_COMPILE([
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/types.h>
 #include <sys/socket.h>
 #include NETINET_IN_H
-],
-	    [
+]], [[
 #ifndef AF_INET6
 # error AF_INET6 not defined
 #endif
 	    struct ${type} foo;
-	    ],
-	    AC_DEFINE_UNQUOTED([IN6_ADDR], [$type], [IN6_ADDR defined])
-	    AC_MSG_RESULT([$type])
-	    break)
+	    ]])],[AC_DEFINE_UNQUOTED(IN6_ADDR, $type, IN6_ADDR defined)
+	    AC_MSG_RESULT($type)
+	    break],[])
     done
 fi
 
@@ -759,7 +711,18 @@ if test "$enable_option102"  = "yes"; then AC_DEFINE([ENABLE_OPTION102], [1], [o
 if test "$enable_history" = "no"; then AC_DEFINE([NO_HISTORY], [1], [history disabled])  fi
 if test "$enable_process" = "no"; then AC_DEFINE([NO_PROCESS], [1], [process disabled])  fi
 if test "$enable_float"   = "no"; then AC_DEFINE([NO_FLOAT], [1], [float disabled])    fi
-if test "$enable_widechar" = "yes"; then AC_DEFINE([WIDECHAR], [1], [widechar enabled])   fi
+
+if test "$enable_widechar" = "yes"; then
+    AX_CHECK_ICU(1,[
+            AC_DEFINE([WIDECHAR], [1], [widechar enabled])
+dnl            CPPFLAGS="${CPPFLAGS} ${ICU_CPPFLAGS}" 
+dnl            LIBS="${LIBS} ${ICU_LIBS}" 
+        ],
+        AC_MSG_WARN([libicuuc not found.. disabling widechar support.]))
+    dnl AC_CHECK_HEADERS(wchar.h wctype.h)
+    dnl AC_CHECK_LIB(icuuc, main, AC_DEFINE([WIDECHAR], [1], [widechar enabled]), AC_MSG_WARN([libicuuc not found.. disabling widechar support.]))
+dnl    AC_CHECK_HEADER(unicode/utypes.h, [], [AC_MSG_ERROR([header file <unicode/utypes.h> is required for ICU])])
+fi
 
 CPPFLAGS="${CPPFLAGS} -DDATADIR=\${datadir}"
 AC_SUBST(CFLAGS)
@@ -785,7 +748,8 @@ AC_SUBST(LUA_DEFINES)
 AC_SUBST(LUA_SOURCES)
 AC_SUBST(LUA_OBJECTS)
 
-AC_OUTPUT(Makefile unix/vars.mak src/tfdefs.h, [
+AC_CONFIG_FILES([Makefile unix/vars.mak src/tfdefs.h])
+AC_CONFIG_COMMANDS([default],[
 
 ### Create src/Makefile from pieces.
 
@@ -798,7 +762,8 @@ cat >src/Makefile <<END
 
 END
 cat unix/vars.mak src/vars.mak unix/unix.mak src/rules.mak >> src/Makefile
-])
+],[])
+AC_OUTPUT
 
 AC_MSG_NOTICE([
 #####################################################
