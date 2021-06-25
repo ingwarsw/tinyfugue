@@ -53,19 +53,6 @@ extern World *defaultworld;
 #define world_mfile(w) \
    (w->mfile ? w->mfile : defaultworld ? defaultworld->mfile : NULL)
 
-extern World *defaultworld;
-
-/* Macros to get string field from world or defaultworld */
-#define world_type(w) \
-   (w->type ? w->type : defaultworld ? defaultworld->type : NULL)
-#define world_character(w) \
-   (w->character ? w->character : defaultworld ? defaultworld->character : NULL)
-#define world_pass(w) \
-   (w->pass ? w->pass : defaultworld ? defaultworld->pass : NULL)
-#define world_mfile(w) \
-   (w->mfile ? w->mfile : defaultworld ? defaultworld->mfile : NULL)
-
-
 extern World *new_world(const char *name, const char *type,
     const char *host, const char *port,
     const char *character, const char *pass,
