@@ -2678,8 +2678,10 @@ int handle_fake_recv_function(conString *string, const char *world,
     {
 	handle_socket_input(string->data, string->len, NULL);
     }
-    else
+    else {
 	queue_socket_line(sock, string, string->len, 0);
+	flushxsock();
+    }
     return 1;
 }
 
