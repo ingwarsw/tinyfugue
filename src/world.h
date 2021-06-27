@@ -14,24 +14,27 @@
 #define WORLD_SSL	004
 #define WORLD_ECHO	010
 
-struct World {		/* World structure */
-    char *name;			/* name of world - first, for cstrpppcmp */
+struct World {          /* World structure */
+    char *name;                 /* name of world - first, for cstrpppcmp */
     int flags;
     struct World *next;
-    char *character;		/* login name */
-    char *pass;			/* password */
-    char *host;			/* server host name */
-    char *port;			/* server port number or service name */
-    char *myhost;		/* client host name */
-    char *mfile;		/* macro file */
-    char *type;			/* user-defined server type (tiny, lp...) */
-    struct Sock *sock;		/* open socket, if any */
-    List triglist[1];		/* trigger macros for this world */
-    List hooklist[1];		/* hook macros for this world */
-    Screen *screen;		/* displayed and undisplayed text */
-    void *md;			/* mmalloc descriptor */
+    char *character;            /* login name */
+    char *pass;                 /* password */
+    char *host;                 /* server host name */
+    char *port;                 /* server port number or service name */
+    char *myhost;               /* client host name */
+    char *mfile;                /* macro file */
+    char *type;                 /* user-defined server type (tiny, lp...) */
+#if WIDECHAR
+    char *charset;              /* default charset */
+#endif
+    struct Sock *sock;          /* open socket, if any */
+    List triglist[1];           /* trigger macros for this world */
+    List hooklist[1];           /* hook macros for this world */
+    Screen *screen;             /* displayed and undisplayed text */
+    void *md;                   /* mmalloc descriptor */
 #if !NO_HISTORY
-    struct History *history;	/* history and logging info */
+    struct History *history;    /* history and logging info */
 #endif
 #ifdef WORLD_VARS
     Var *special_vars[NUM_VARS];
@@ -49,7 +52,6 @@ extern World *defaultworld;
    (w->pass ? w->pass : defaultworld ? defaultworld->pass : NULL)
 #define world_mfile(w) \
    (w->mfile ? w->mfile : defaultworld ? defaultworld->mfile : NULL)
-
 
 extern World *new_world(const char *name, const char *type,
     const char *host, const char *port,

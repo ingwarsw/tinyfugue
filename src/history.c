@@ -149,7 +149,7 @@ static void save_to_log(History *hist, const conString *str)
      }
 
     if (ansi_log)
-        SStringcat(log_buffer, encode_ansi(str, 0));
+        SStringcat(log_buffer, (const conString *) encode_ansi(str, 0));
     else
         SStringcat(log_buffer, str);
         
