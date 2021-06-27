@@ -3569,7 +3569,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		    (rawchar == TN_GMCP && gmcp) ||
 #endif
 #if ENABLE_OPTION102
-		    (rawchar == TN_102 && option102) ||
+		    (rawchar == TN_102 && OPTION102) ||
 #endif
                     rawchar == TN_ECHO ||
                     rawchar == TN_SEND_EOR ||
@@ -4068,4 +4068,3 @@ int nactive(const char *worldname)
         return 0;
     return w->screen->active ? w->screen->nnew : 0;
 }
-
