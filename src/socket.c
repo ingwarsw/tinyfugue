@@ -26,7 +26,6 @@
 #include <sys/file.h>	/* for FNONBLOCK on SVR4, hpux, ... */
 #include <sys/socket.h>
 #include <signal.h>	/* for killing resolver child process */
-#include "varlist.h"
 
 #if WIDECHAR
 #include <unicode/ucnv.h>
@@ -40,6 +39,7 @@
     SSL_CTX *ssl_ctx;
 #endif
 
+#define RECEIVELIMIT ((32 * 1024) -1)
 
 #ifdef NETINET_IN_H
 # include NETINET_IN_H
@@ -2878,7 +2878,7 @@ static void handle_socket_lines(void)
 	    socks_with_lines--;
 
 	if (line->attrs & (F_TFPROMPT)) {
-	    incoming_text = line;
+	    incoming_text = (String *) line;
 	    handle_prompt(incoming_text, 0, TRUE);
 	    continue;
 	}
@@ -3067,8 +3067,7 @@ static void test_prompt(void)
 static void telnet_subnegotiation(void)
 {
     unsigned int i;
-    char *p;
-    const char *end;
+    char *p, *end;
     char temp_buff[255]; /* Same length as whole subnegotiation line. */
     char *temp_ptr;
     int ttype;
@@ -3507,7 +3506,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                 continue;  /* avoid non-telnet processing */
 
             } else if (xsock->fsastate == TN_SB) {
-		if (xsock->subbuffer->len > 30*1023) {
+		if (xsock->subbuffer->len > RECEIVELIMIT) {
 		    /* It shouldn't take this long; server is broken.  Abort. */
 		    SStringcat(xsock->buffer, CS(xsock->subbuffer));
 		    Stringtrunc(xsock->subbuffer, 0);
