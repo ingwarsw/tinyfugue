@@ -19,8 +19,8 @@ AC_INIT([src/tf.h])
 
 SOCKS=''
 OTHER_OBJS=""
-TFVER=`sed -ne 's/^TFVER=\(.*\)/\1/p' src/vars.mak`
-TFVERSION=`sed -n -e '/Fugue version/s/^.*"\(.*\)".*$/\1/p' src/main.c`
+TFVER=`git describe --tags --always --dirty || echo "development"`
+TFVERSION="TinyFugue version $TFVER"
 
 AC_CONFIG_HEADER([src/tfconfig.h])
 
@@ -37,6 +37,7 @@ AC_PREFIX_DEFAULT(`
     fi
 `)
 
+AC_SUBST(TFVER)
 AC_SUBST(TFVERSION)
 AC_MSG_NOTICE([Configuring $TFVERSION])
 
