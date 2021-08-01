@@ -3300,6 +3300,20 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
     if (xsock->constate <= SS_CONNECTING || xsock->constate >= SS_ZOMBIE)
 	return 0;
 
+   /* We assumed last text was a prompt, but now we have more text, so
+    * we now assume that they are both part of the same long line.  (If
+    * we're wrong, the previous prompt appears as output.  But if we did
+    * the opposite, a real begining of a line would never appear in the
+    * output window; that would be a worse mistake.)
+    * Note that a terminated (EOR or GOAHEAD) prompt will NOT be cleared
+    * when new text arrives (it will only be cleared when there is a new
+    * prompt).
+    */
+    if (xsock->prompt && !(xsock->flags & SOCKPROMPT)) {
+        unprompt(xsock, xsock==fsock);
+    }
+    xsock->prompt_timeout = tvzero;
+
 #if WIDECHAR
     if (encoding == NULL) {
 	incomingposttelnet = xsock->incomingposttelnet;
@@ -3439,8 +3453,8 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 #if WIDECHAR
 		    inbound_decode_str(xsock->buffer, incomingposttelnet,
                         incomingFSM, 0);
-		    handle_socket_input_queue_lines(xsock);
 #endif
+		    handle_socket_input_queue_lines(xsock);
 		    queue_socket_line(xsock, CS(xsock->buffer), xsock->buffer->len, F_SERVPROMPT);
 		    Stringtrunc(xsock->buffer, 0);
                     break;
