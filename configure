@@ -6430,11 +6430,14 @@ printf "%s\n" "#define WIDECHAR 1" >>confdefs.h
 
 
   else
-     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: libicuuc not found.. disabling widechar support." >&5
-printf "%s\n" "$as_me: WARNING: libicuuc not found.. disabling widechar support." >&2;}
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: libicuuc not found.. Disabling widechar support." >&5
+printf "%s\n" "$as_me: WARNING: libicuuc not found.. Disabling widechar support." >&2;}
   fi
 
-        fi
+else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Widechar support disabled." >&5
+printf "%s\n" "$as_me: Widechar support disabled." >&6;}
+fi
 
 CPPFLAGS="${CPPFLAGS} -DDATADIR=\${datadir}"
 

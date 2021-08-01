@@ -715,13 +715,10 @@ if test "$enable_float"   = "no"; then AC_DEFINE([NO_FLOAT], [1], [float disable
 if test "$enable_widechar" = "yes"; then
     AX_CHECK_ICU(1,[
             AC_DEFINE([WIDECHAR], [1], [widechar enabled])
-dnl            CPPFLAGS="${CPPFLAGS} ${ICU_CPPFLAGS}" 
-dnl            LIBS="${LIBS} ${ICU_LIBS}" 
         ],
-        AC_MSG_WARN([libicuuc not found.. disabling widechar support.]))
-    dnl AC_CHECK_HEADERS(wchar.h wctype.h)
-    dnl AC_CHECK_LIB(icuuc, main, AC_DEFINE([WIDECHAR], [1], [widechar enabled]), AC_MSG_WARN([libicuuc not found.. disabling widechar support.]))
-dnl    AC_CHECK_HEADER(unicode/utypes.h, [], [AC_MSG_ERROR([header file <unicode/utypes.h> is required for ICU])])
+        AC_MSG_WARN([libicuuc not found.. Disabling widechar support.]))
+else
+    AC_MSG_NOTICE([Widechar support disabled.])
 fi
 
 CPPFLAGS="${CPPFLAGS} -DDATADIR=\${datadir}"
