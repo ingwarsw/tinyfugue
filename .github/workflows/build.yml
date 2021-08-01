@@ -21,6 +21,7 @@ jobs:
         opts:
           - "--enable-lua"
           - "--enable-python"
+          - "--disable-widechar"
 #          - "--enable-lua --enable-python"
     
     steps:
