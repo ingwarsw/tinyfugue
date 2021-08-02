@@ -2,6 +2,7 @@ TinyFugue - Rebirth
 =====================
 
 ![CI](https://github.com/ingwarsw/tinyfugue/workflows/CI/badge.svg)
+[![GitHub Release](https://img.shields.io/github/release/ingwarsw/tinyfugue.svg?style=flat)](https://github.com/ingwarsw/tinyfugue/releases/latest)  
 
 This project is meant to give rebirth to TinyFugue MUD client.
 
@@ -9,7 +10,29 @@ Because Ken Keys is not activelly developing it from 6 years and i gathered a lo
 
 # New features
 
+### Python support
+
+To enable:
+```
+./configure --enable-python
+```
+
 ### Lua support
+
+To enable:
+```
+./configure --enable-lua
+```
+
+### Widechar support
+
+Widehar is enabled by default.
+Widechar requires icu libraries to be installed on system (libicu-dev on ubuntu).
+
+To disable:
+```
+./configure --disable-widechar
+```
 
 ### New telnet options
 
@@ -29,6 +52,11 @@ To enable compile with:
 
 	- Timestamp logging
 	- Ansi logging
+
+## New versioning scheme
+
+Because version was not changed ower last 14 years I have decided to go with normal versioning to allow easy distinguish different new versions.
+I started with version 5.1.0 and will use try to follow [Semantic Versioning](https://semver.org/)
 
 ## Copyright
 
