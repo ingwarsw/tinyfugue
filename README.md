@@ -27,7 +27,7 @@ To enable:
 ### Widechar support
 
 Widehar is enabled by default.
-Widechar requires icu libraries to be installed on system.
+Widechar requires icu libraries to be installed on system (libicu-dev on ubuntu).
 
 To disable:
 ```
