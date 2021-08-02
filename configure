@@ -705,6 +705,7 @@ CFLAGS
 CC
 UNAME
 TFVERSION
+TFVER
 target_alias
 host_alias
 build_alias
@@ -2668,10 +2669,11 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 SOCKS=''
 OTHER_OBJS=""
-TFVER=`sed -ne 's/^TFVER=\(.*\)/\1/p' src/vars.mak`
-TFVERSION=`sed -n -e '/Fugue version/s/^.*"\(.*\)".*$/\1/p' src/main.c`
+TFVER=`git describe --tags --always --dirty || echo "development"`
+TFVERSION="TinyFugue version $TFVER"
 
 ac_config_headers="$ac_config_headers src/tfconfig.h"
+
 
 
 

@@ -45,11 +45,7 @@ const char sysname[] = UNAME;
  * to the version number, and put a brief description of the modifications
  * in the mods[] string.
  */
-const char version[] =
-#if DEVELOPMENT
-    "DEVELOPMENT VERSION: "
-#endif
-    "TinyFugue version 5.0 beta 9";
+const char version[] = TFVERSION;
 
 const char mods[] = "Ingwar Swenson (ingwar@ingwar.eu.org) +ansi_log +log_timestamp +lua +gmcp +ATCP +GMCP +option102";
 
