@@ -220,12 +220,14 @@ static struct Value* pyvar_to_tfvar( PyObject *pRc )
 	if( PyBytes_Check( pRc ) && ( PyBytes_AsStringAndSize( pRc, &cstr, &len ) != -1 ) ) {
 		DPRINTF( "  rc string: %s", cstr );
 		rc = newstr( cstr, len );
+#if WIDECHAR
 	} else if( PyUnicode_Check( pRc) ) {
 		PyObject* temp = PyUnicode_AsASCIIString( pRc );
 		PyBytes_AsStringAndSize( temp, &cstr, &len );
 		DPRINTF( "  rc unicode: %s", cstr );
 		rc = newstr( cstr, len );
 		Py_XDECREF(temp);
+#endif
 	} else if( PyLong_Check( pRc ) ) {
 		DPRINTF( "  rc long: %ld", PyLong_AsLong( pRc ) );
 		rc = newint( PyLong_AsLong( pRc ) );
