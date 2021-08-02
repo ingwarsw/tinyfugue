@@ -8,7 +8,6 @@
 
 #define MAILDIR    ""
 
-#define RETSIGTYPE void
 /* #undef pid_t */ /* ? */
 /* #undef size_t */ /* ? */
 /* #undef time_t */

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '**' ]
   pull_request:
-    branches: [ master ]
+    branches: [ '**' ]
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: '22 3 22 * *'
@@ -17,10 +17,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.7, 3.9]
         opts:
           - "--enable-lua"
           - "--enable-python"
+          - "--disable-widechar"
 #          - "--enable-lua --enable-python"
     
     steps:
