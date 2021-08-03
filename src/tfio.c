@@ -739,7 +739,7 @@ void tfpywprintf(const char *fmt, ...)
     }
     va_list ap;
     va_start(ap, fmt);
-    tfwprintf(fmt, ap);
+    tf_wprintf(fmt, ap);
     va_end(ap);
 }
 #endif
