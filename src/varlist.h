@@ -167,6 +167,9 @@ varflag(VAR_telopt,	"telopt",	FALSE,		NULL)
 varenum(VAR_textdiv,	"textdiv",	TRUE,		NULL,	enum_textdiv)
 varstr (VAR_textdiv_str,"textdiv_str",	"=====",	NULL)
 varstr (VAR_tfhost,	"tfhost",	NULL,		NULL)
+#if TFPYTHON
+varflag(VAR_tfpy_debug,	"tfpy_debug",	FALSE,		NULL)
+#endif
 varstr (VAR_time_format,"time_format",	"%H:%M",	NULL)
 varflag(VAR_virtscreen,	"virtscreen",	TRUE,		undocumented_var)
 varflag(VAR_visual,	"visual",	-1,		ch_visual)

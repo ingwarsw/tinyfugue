@@ -726,6 +726,24 @@ void tf_wprintf(const char *fmt, ...)
     va_end(ap);
 }
 
+#if TFPYTHON
+/* The Python interpreter needs to be able to be debugged separately
+ * from the rest of TF. This function allow for that through setting:
+ * /set tfpy_debug=on
+ */
+/* print a formatted warning message */
+void tfpywprintf(const char *fmt, ...)
+{
+    if (!tfpy_debug) {
+        return;
+    }
+    va_list ap;
+    va_start(ap, fmt);
+    tfwprintf(fmt, ap);
+    va_end(ap);
+}
+#endif
+
 static const char interrmsg[] =
     "Please report this to the author, and describe what you did.";
 
