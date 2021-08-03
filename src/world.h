@@ -66,4 +66,8 @@ extern void   mapworld(void (*func)(struct World *world));
 extern void   free_worlds(void);
 #endif
 
+#if WIDECHAR
+extern int ch_default_charset(Var *var);
+#endif
+
 #endif /* WORLD_H */
