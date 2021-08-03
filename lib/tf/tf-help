@@ -9048,6 +9048,13 @@ Special global variables
           allows you to continue doing other things while TF tries to 
           establish a new connection.  See also [1m%gethostbyname[22;0m.  
 
+#default_charset
+#%default_charset
+  [1mdefault_charset[22m=UTF-8
+          Set the default character set for newly created [1mworlds[22;0m. For use with 
+          MUDs that do not negotiate the character set they use. Changing 
+          this does not alter the character sets of any worlds.  
+
 #defcompile
 #%defcompile
   [1mdefcompile[22m=off 

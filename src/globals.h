@@ -170,6 +170,9 @@ enum Vars {
 #define binary_eol	getintvar(VAR_binary_eol)
 #define borg		getintvar(VAR_borg)
 #define cecho		getintvar(VAR_cecho)
+#if WIDECHAR
+#define default_charset	getstrvar(VAR_default_charset)
+#endif
 #define cleardone	getintvar(VAR_cleardone)
 #define clearfull	getintvar(VAR_clearfull)
 #define clock_flag	getintvar(VAR_clock)

@@ -27,6 +27,10 @@
 
 struct World   *world_decl;     /* declares struct World */
 
+#if WIDECHAR
+#include <unicode/ucnv.h>
+#endif
+
 #define LW_TABLE	001
 #define LW_UNNAMED	002
 #define LW_SHORT	004
@@ -51,6 +55,9 @@ static void free_world(World *w)
     if (w->mfile)     FREE(w->mfile);
     if (w->type)      FREE(w->type);
     if (w->myhost)    FREE(w->myhost);
+#if WIDECHAR
+    if (w->charset)   FREE(w->charset);
+#endif
     if (w->screen)    free_screen(w->screen);
 #if !NO_HISTORY
     if (w->history) {
@@ -160,6 +167,9 @@ World *new_world(const char *name, const char *type,
     setfield(type);
     setfield(myhost);
     result->flags |= flags;
+#if WIDECHAR
+    result->charset = STRDUP(default_charset->data);
+#endif
 
 #ifdef PLATFORM_UNIX
 # ifndef __CYGWIN32__
@@ -422,3 +432,20 @@ void mapworld(void (*func)(World *world))
         (*func)(w);
 }
 
+#if WIDECHAR
+/* used by %{default_charset} */
+int ch_default_charset(Var *var)
+{
+    UErrorCode err = U_ZERO_ERROR;
+    UConverter *cnv = ucnv_open(default_charset->data, &err);
+
+    if (U_FAILURE(err)) {
+        /* This could be an out-of-memory or other error too */
+        eprintf("illegal charset name: %s", default_charset->data);
+        return 0;
+    }
+
+    ucnv_close(cnv);
+    return 1;
+}
+#endif
