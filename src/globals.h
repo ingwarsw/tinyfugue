@@ -194,6 +194,9 @@ enum Vars {
 #define info_attr	getattrvar(VAR_info_attr)
 #define insert		getintvar(VAR_insert)
 #define tfinteractive	getintvar(VAR_interactive)
+#if TFPYTHON
+# define tfpy_debug	getintvar(VAR_tfpy_debug)
+#endif
 #define isize		getintvar(VAR_isize)
 #define istrip		getintvar(VAR_istrip)
 #define kbnum		getstrvar(VAR_kbnum)

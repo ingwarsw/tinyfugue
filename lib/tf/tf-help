@@ -9630,6 +9630,12 @@ Special global variables
           Name or address to use for the client (tf) end of connections.  See 
           also: [1maddworld[22;0m, [1mconnect[22;0m.  
 
+#tfpy_debug
+#%tfpy_debug
+  [1mtypy_debug[22m=off
+          (flag) Enables debugging print statements for the python interpreter.
+          See: [1mpython[22;0m.
+
 #sub
 #%sub
   [1msub[22m=off 
@@ -10950,6 +10956,8 @@ python()
 
   See [1m/help tf python[22;0m for calling back into TinyFugue
   and for overall issues of performance and persistence.
+
+  See [1m/help tfpy_debug[22;0m for enable debugging for the python interpreter.
 
 &/python_call
 
