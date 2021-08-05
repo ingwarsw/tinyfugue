@@ -409,7 +409,7 @@ static char initial_dir[PATH_MAX+1] = "."; /* default: many users never chdir */
 static void coremsg(FILE *dumpfile)
 {
     fputs("Also describe what you were doing in tf when this\r\n", stderr);
-    fputs("occured, and whether you can repeat it.\r\n\n", stderr);
+    fputs("occurred, and whether you can repeat it.\r\n\n", stderr);
     fprintf(dumpfile, "> %.512s\r\n", version);
     if (*sysname) fprintf(dumpfile, "> %.256s\r\n", sysname);
     fprintf(dumpfile, "> %.256s\r\n", featurestr->data);
