@@ -608,7 +608,7 @@ int do_file_load(const char *args, int tinytalk, char **savename)
 		!user_result->u.ival && !warned)
 	    {
 		eprintf("(This line was implicitly treated as an /addworld "
-		    "because it occured before the first '/' line and did not "
+		    "because it occurred before the first '/' line and did not "
 		    "start with a '/', ';', or '#'.)");
 		warned = 1;
 	    }
