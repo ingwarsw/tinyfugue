@@ -83,69 +83,71 @@ TF tf$(X):     $(OBJS) $(BUILDERS)
 PREFIXDIRS:
 
 install_TF $(TF): tf$(X) $(BUILDERS)
-	install -Dm755 tf${X} ${DESTDIR}${bindir}/tf
+	install -d -m755 ${DESTDIR}${bindir}
+	install -m755 tf${X} ${DESTDIR}${bindir}/tf
 
 SYMLINK $(SYMLINK): $(TF)
 
 LIBRARY $(TF_LIBDIR): ../lib/tf/tf-help ../lib/tf/tf-help.idx
-	install -Dm644 ../lib/tf/lisp.tf ${DESTDIR}${datadir}/tf-lib/lisp.tf
-	install -Dm644 ../lib/tf/hanoi.tf ${DESTDIR}${datadir}/tf-lib/hanoi.tf
-	install -Dm644 ../lib/tf/spell.tf ${DESTDIR}${datadir}/tf-lib/spell.tf
-	install -Dm644 ../lib/tf/spedwalk.tf ${DESTDIR}${datadir}/tf-lib/spedwalk.tf
-	install -Dm644 ../lib/tf/kb-emacs.tf ${DESTDIR}${datadir}/tf-lib/kb-emacs.tf
-	install -Dm644 ../lib/tf/tf-help.idx ${DESTDIR}${datadir}/tf-lib/tf-help.idx
-	install -Dm644 ../lib/tf/tools.tf ${DESTDIR}${datadir}/tf-lib/tools.tf
-	install -Dm644 ../lib/tf/watch.tf ${DESTDIR}${datadir}/tf-lib/watch.tf
-	install -Dm644 ../lib/tf/kb_badterm.tf ${DESTDIR}${datadir}/tf-lib/kb_badterm.tf
-	install -Dm644 ../lib/tf/world-q.tf ${DESTDIR}${datadir}/tf-lib/world-q.tf
-	install -Dm644 ../lib/tf/changes.tf ${DESTDIR}${datadir}/tf-lib/changes.tf
-	install -Dm644 ../lib/tf/stack-q.tf ${DESTDIR}${datadir}/tf-lib/stack-q.tf
-	install -Dm644 ../lib/tf/factoral.tf ${DESTDIR}${datadir}/tf-lib/factoral.tf
-	install -Dm644 ../lib/tf/cylon.tf ${DESTDIR}${datadir}/tf-lib/cylon.tf
-	install -Dm644 ../lib/tf/quoter.tf ${DESTDIR}${datadir}/tf-lib/quoter.tf
-	install -Dm644 ../lib/tf/psh.tf ${DESTDIR}${datadir}/tf-lib/psh.tf
-	install -Dm644 ../lib/tf/textutil.tf ${DESTDIR}${datadir}/tf-lib/textutil.tf
-	install -Dm644 ../lib/tf/finger.tf ${DESTDIR}${datadir}/tf-lib/finger.tf
-	install -Dm644 ../lib/tf/savehist.tf ${DESTDIR}${datadir}/tf-lib/savehist.tf
-	install -Dm644 ../lib/tf/textencode.tf ${DESTDIR}${datadir}/tf-lib/textencode.tf
-	install -Dm644 ../lib/tf/spc-page.tf ${DESTDIR}${datadir}/tf-lib/spc-page.tf
-	install -Dm644 ../lib/tf/teraterm.keyboard.cnf ${DESTDIR}${datadir}/tf-lib/teraterm.keyboard.cnf
-	install -Dm644 ../lib/tf/testcolor.tf ${DESTDIR}${datadir}/tf-lib/testcolor.tf
-	install -Dm644 ../lib/tf/tintin.tf ${DESTDIR}${datadir}/tf-lib/tintin.tf
-	install -Dm644 ../lib/tf/grep.tf ${DESTDIR}${datadir}/tf-lib/grep.tf
-	install -Dm644 ../lib/tf/tfrc ${DESTDIR}${datadir}/tf-lib/tfrc
-	install -Dm644 ../lib/tf/rwho.tf ${DESTDIR}${datadir}/tf-lib/rwho.tf
-	install -Dm644 ../lib/tf/alias.tf ${DESTDIR}${datadir}/tf-lib/alias.tf
-	install -Dm644 ../lib/tf/kbbind.tf ${DESTDIR}${datadir}/tf-lib/kbbind.tf
-	install -Dm644 ../lib/tf/complete.tf ${DESTDIR}${datadir}/tf-lib/complete.tf
-	install -Dm644 ../lib/tf/kbregion.tf ${DESTDIR}${datadir}/tf-lib/kbregion.tf
-	install -Dm644 ../lib/tf/color.tf ${DESTDIR}${datadir}/tf-lib/color.tf
-	install -Dm644 ../lib/tf/kb-bash.tf ${DESTDIR}${datadir}/tf-lib/kb-bash.tf
-	install -Dm644 ../lib/tf/kbstack.tf ${DESTDIR}${datadir}/tf-lib/kbstack.tf
-	install -Dm644 ../lib/tf/filexfer.tf ${DESTDIR}${datadir}/tf-lib/filexfer.tf
-	install -Dm644 ../lib/tf/activity_status.tf ${DESTDIR}${datadir}/tf-lib/activity_status.tf
-	install -Dm644 ../lib/tf/tfstatus.tf ${DESTDIR}${datadir}/tf-lib/tfstatus.tf
-	install -Dm644 ../lib/tf/relog.tf ${DESTDIR}${datadir}/tf-lib/relog.tf
-	install -Dm644 ../lib/tf/local-eg.tf ${DESTDIR}${datadir}/tf-lib/local-eg.tf
-	install -Dm644 ../lib/tf/stdlib.tf ${DESTDIR}${datadir}/tf-lib/stdlib.tf
-	install -Dm644 ../lib/tf/at.tf ${DESTDIR}${datadir}/tf-lib/at.tf
-	install -Dm644 ../lib/tf/tick.tf ${DESTDIR}${datadir}/tf-lib/tick.tf
-	install -Dm644 ../lib/tf/kb-os2.tf ${DESTDIR}${datadir}/tf-lib/kb-os2.tf
-	install -Dm644 ../lib/tf/kbfunc.tf ${DESTDIR}${datadir}/tf-lib/kbfunc.tf
-	install -Dm644 ../lib/tf/pcmd.tf ${DESTDIR}${datadir}/tf-lib/pcmd.tf
-	install -Dm644 ../lib/tf/map.tf ${DESTDIR}${datadir}/tf-lib/map.tf
-	install -Dm644 ../lib/tf/activity_status2.tf ${DESTDIR}${datadir}/tf-lib/activity_status2.tf
-	install -Dm644 ../lib/tf/kb-old.tf ${DESTDIR}${datadir}/tf-lib/kb-old.tf
-	install -Dm644 ../lib/tf/tr.tf ${DESTDIR}${datadir}/tf-lib/tr.tf
-	install -Dm644 ../CHANGES ${DESTDIR}${datadir}/tf-lib/CHANGES
-	install -Dm644 ../README.md ${DESTDIR}${datadir}/tf-lib/README
-	install -Dm644 ../lib/tf/examples.old ${DESTDIR}${datadir}/tf-lib/examples.old
-	install -Dm644 ../lib/py/config.py ${DESTDIR}${datadir}/tf-lib/config.py
-	install -Dm644 ../lib/py/diffedit.py ${DESTDIR}${datadir}/tf-lib/diffedit.py
-	install -Dm644 ../lib/py/tf.py ${DESTDIR}${datadir}/tf-lib/tf.py
-	install -Dm644 ../lib/py/tf4.py ${DESTDIR}${datadir}/tf-lib/tf4.py
-	install -Dm644 ../lib/py/tfutil.py ${DESTDIR}${datadir}/tf-lib/tfutil.py
-	install -Dm644 ../lib/py/urlwatch.py ${DESTDIR}${datadir}/tf-lib/urlwatch.py
+	install -d -m755 ${DESTDIR}${datadir}
+	install -m644 ../lib/tf/lisp.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/hanoi.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/spell.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/spedwalk.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kb-emacs.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/tf-help.idx ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/tools.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/watch.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kb_badterm.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/world-q.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/changes.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/stack-q.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/factoral.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/cylon.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/quoter.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/psh.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/textutil.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/finger.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/savehist.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/textencode.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/spc-page.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/teraterm.keyboard.cnf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/testcolor.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/tintin.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/grep.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/tfrc ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/rwho.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/alias.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kbbind.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/complete.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kbregion.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/color.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kb-bash.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kbstack.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/filexfer.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/activity_status.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/tfstatus.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/relog.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/local-eg.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/stdlib.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/at.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/tick.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kb-os2.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kbfunc.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/pcmd.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/map.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/activity_status2.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/kb-old.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/tr.tf ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../CHANGES ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../README.md ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/tf/examples.old ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/py/config.py ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/py/diffedit.py ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/py/tf.py ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/py/tf4.py ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/py/tfutil.py ${DESTDIR}${datadir}/tf-lib
+	install -m644 ../lib/py/urlwatch.py ${DESTDIR}${datadir}/tf-lib
 
 makehelp: makehelp.c
 	$(CC) $(CFLAGS) -o makehelp makehelp.c
@@ -161,6 +163,8 @@ __always__:
 	./makehelp < ../lib/tf/tf-help > ../lib/tf/tf-help.idx
 
 MANPAGE $(MANPAGE): $(BUILDERS) tf.1.$(MANTYPE)man
+	install -d -m755 ${DESTDIR}${mandir}/man1
+	install -m644 tf.1.${MANTYPE}man ${DESTDIR}${mandir}/man1
 	cp tf.1.$(MANTYPE)man $(MANPAGE)
 	chmod $(MODE) $(MANPAGE)
 	chmod ugo-x $(MANPAGE)
