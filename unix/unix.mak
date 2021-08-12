@@ -20,7 +20,7 @@ BUILDERS   = Makefile
 
 default: all
 
-install:  _all PREFIXDIRS $(TF) LIBRARY $(MANPAGE) $(SYMLINK)
+install:  _all $(TF) LIBRARY $(MANPAGE) $(SYMLINK)
 	@echo
 	@echo '#####################################################'
 	@echo '## TinyFugue installation successful.'
@@ -80,14 +80,12 @@ TF tf$(X):     $(OBJS) $(BUILDERS)
 #	@# ULTRIX's sh errors here if strip isn't found, despite "true".
 	-test -z "$(STRIP)" || $(STRIP) tf$(X) || true
 
-PREFIXDIRS:
-
 install_TF $(TF): tf$(X) $(BUILDERS)
 	install -d -m755 ${DESTDIR}${bindir}
 	install -m755 tf${X} ${DESTDIR}${bindir}/$(TF)
 
 SYMLINK $(SYMLINK): $(TF)
-    test -z "$(SYMLINK)" || { rm -f $(SYMLINK) && ln -s $(TF) $(SYMLINK); }
+	test -z "$(SYMLINK)" || { rm -f $(SYMLINK) && ln -s $(TF) $(SYMLINK); }
 
 LIBRARY $(TF_LIBDIR): ../lib/tf/tf-help ../lib/tf/tf-help.idx
 	install -d -m755 ${DESTDIR}${datadir}
