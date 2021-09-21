@@ -20,7 +20,7 @@ BUILDERS   = Makefile
 
 default: all
 
-install:  _all PREFIXDIRS $(TF) LIBRARY $(MANPAGE) $(SYMLINK)
+install:  _all $(TF) LIBRARY $(MANPAGE) $(SYMLINK)
 	@echo
 	@echo '#####################################################'
 	@echo '## TinyFugue installation successful.'
@@ -80,63 +80,72 @@ TF tf$(X):     $(OBJS) $(BUILDERS)
 #	@# ULTRIX's sh errors here if strip isn't found, despite "true".
 	-test -z "$(STRIP)" || $(STRIP) tf$(X) || true
 
-PREFIXDIRS:
-	test -d "$(bindir)" || mkdir $(bindir)
-	test -d "$(datadir)" || mkdir $(datadir)
-
 install_TF $(TF): tf$(X) $(BUILDERS)
-	-@rm -f $(TF)
-	cp tf$(X) $(TF)
-	chmod $(MODE) $(TF)
+	install -d -m755 ${DESTDIR}$(bindir)
+	install -m755 tf${X} ${DESTDIR}$(TF)
 
 SYMLINK $(SYMLINK): $(TF)
 	test -z "$(SYMLINK)" || { rm -f $(SYMLINK) && ln -s $(TF) $(SYMLINK); }
 
 LIBRARY $(TF_LIBDIR): ../lib/tf/tf-help ../lib/tf/tf-help.idx
-	@echo '## Creating library directory...'
-#	@# Overly simplified shell commands, to avoid problems on ultrix
-	-@test -n "$(TF_LIBDIR)" || echo "TF_LIBDIR is undefined."
-	test -n "$(TF_LIBDIR)"
-	test -d "$(TF_LIBDIR)" || mkdir $(TF_LIBDIR)
-	-@test -d "$(TF_LIBDIR)" || echo "Can't make $(TF_LIBDIR) directory.  See if"
-	-@test -d "$(TF_LIBDIR)" || echo "there is already a file with that name."
-	test -d "$(TF_LIBDIR)"
-#
-#	@#rm -f $(TF_LIBDIR)/*;  # wrong: this would remove local.tf, etc.
-	@echo '## Copying library files...'
-	cd ../lib/tf; \
-	for f in *; do test -f $$f && files="$$files $$f"; done; \
-	( cd $(TF_LIBDIR); rm -f $$files tf.help tf.help.index; ); \
-	cp $$files $(TF_LIBDIR); \
-	cd ../../lib/py; \
-	for f in *; do test -f $$f && pyfiles="$$pyfiles $$f"; done; \
-	( cd $(TF_LIBDIR); rm -f $$pyfiles tf.help tf.help.index; ); \
-	cp $$pyfiles $(TF_LIBDIR); \
-	cd $(TF_LIBDIR); \
-	chmod $(MODE) $$files; chmod ugo-wx $$files ;\
-	chmod $(MODE) $$pyfiles; chmod ugo-wx $$pyfiles
-	-rm -f $(TF_LIBDIR)/CHANGES 
-	cp ../CHANGES $(TF_LIBDIR)
-	chmod $(MODE) $(TF_LIBDIR)/CHANGES; chmod ugo-wx $(TF_LIBDIR)/CHANGES
-	chmod $(MODE) $(TF_LIBDIR)
-	-@cd $(TF_LIBDIR); old=`ls replace.tf 2>/dev/null`; \
-	if [ -n "$$old" ]; then \
-	    echo "## WARNING: Obsolete files found in $(TF_LIBDIR): $$old"; \
-	fi
-	@echo '## Creating links so old library names still work...'
-#	@# note: ln -sf isn't portable.
-	@cd $(TF_LIBDIR); \
-	rm -f bind-bash.tf;    ln -s  kb-bash.tf   bind-bash.tf;    \
-	rm -f bind-emacs.tf;   ln -s  kb-emacs.tf  bind-emacs.tf;   \
-	rm -f completion.tf;   ln -s  complete.tf  completion.tf;   \
-	rm -f factorial.tf;    ln -s  factoral.tf  factorial.tf;    \
-	rm -f file-xfer.tf;    ln -s  filexfer.tf  file-xfer.tf;    \
-	rm -f local.tf.sample; ln -s  local-eg.tf  local.tf.sample; \
-	rm -f pref-shell.tf;   ln -s  psh.tf       pref-shell.tf;   \
-	rm -f space_page.tf;   ln -s  spc-page.tf  space_page.tf;   \
-	rm -f speedwalk.tf;    ln -s  spedwalk.tf  speedwalk.tf;    \
-	rm -f stack_queue.tf;  ln -s  stack-q.tf   stack_queue.tf;  \
-	rm -f worldqueue.tf;   ln -s  world-q.tf   worldqueue.tf;
+	install -d -m755 ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/lisp.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/hanoi.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/spell.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/spedwalk.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kb-emacs.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tf-help.idx ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tools.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/watch.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kb_badterm.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/world-q.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/changes.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/stack-q.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/factoral.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/cylon.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/quoter.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/psh.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/textutil.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/finger.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/savehist.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/textencode.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/spc-page.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/teraterm.keyboard.cnf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/testcolor.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tintin.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/grep.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tfrc ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/rwho.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/alias.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kbbind.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/complete.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kbregion.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/color.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kb-bash.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kbstack.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/filexfer.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/activity_status.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tfstatus.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/relog.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/local-eg.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/stdlib.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/at.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tick.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kb-os2.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kbfunc.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/pcmd.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/map.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/activity_status2.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/kb-old.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tr.tf ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/examples.old ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/py/config.py ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/py/diffedit.py ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/py/tf.py ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/py/tf4.py ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/py/tfutil.py ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/py/urlwatch.py ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../CHANGES ${DESTDIR}$(TF_LIBDIR)
 
 makehelp: makehelp.c
 	$(CC) $(CFLAGS) -o makehelp makehelp.c
@@ -152,6 +161,8 @@ __always__:
 	./makehelp < ../lib/tf/tf-help > ../lib/tf/tf-help.idx
 
 MANPAGE $(MANPAGE): $(BUILDERS) tf.1.$(MANTYPE)man
+	install -d -m755 ${DESTDIR}${mandir}/man1
+	install -m644 tf.1.${MANTYPE}man ${DESTDIR}${mandir}/man1
 	cp tf.1.$(MANTYPE)man $(MANPAGE)
 	chmod $(MODE) $(MANPAGE)
 	chmod ugo-x $(MANPAGE)
