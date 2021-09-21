@@ -81,6 +81,7 @@ TF tf$(X):     $(OBJS) $(BUILDERS)
 	-test -z "$(STRIP)" || $(STRIP) tf$(X) || true
 
 install_TF $(TF): tf$(X) $(BUILDERS)
+	install -d -m755 ${DESTDIR}$(bindir)
 	install -m755 tf${X} ${DESTDIR}$(TF)
 
 SYMLINK $(SYMLINK): $(TF)
