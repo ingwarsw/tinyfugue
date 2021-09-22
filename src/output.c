@@ -2054,7 +2054,7 @@ int ch_visual(Var *var)
 {
     int need_redraw = 0, resized = 0, row;
 
-    for (row = 0; row < status_height; row++) {
+    for (row = 0; row < max_status_height; row++) {
 	if (status_line[row]->len < columns)
 	    Stringnadd(status_line[row], '?', columns - status_line[row]->len);
 	Stringtrunc(status_line[row], columns);
