@@ -89,12 +89,14 @@ SYMLINK $(SYMLINK): $(TF)
 
 LIBRARY $(TF_LIBDIR): ../lib/tf/tf-help ../lib/tf/tf-help.idx
 	install -d -m755 ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../CHANGES ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tf-help.idx ${DESTDIR}$(TF_LIBDIR)
+	install -m644 ../lib/tf/tf-help ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/tf/lisp.tf ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/tf/hanoi.tf ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/tf/spell.tf ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/tf/spedwalk.tf ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/tf/kb-emacs.tf ${DESTDIR}$(TF_LIBDIR)
-	install -m644 ../lib/tf/tf-help.idx ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/tf/tools.tf ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/tf/watch.tf ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/tf/kb_badterm.tf ${DESTDIR}$(TF_LIBDIR)
@@ -145,7 +147,6 @@ LIBRARY $(TF_LIBDIR): ../lib/tf/tf-help ../lib/tf/tf-help.idx
 	install -m644 ../lib/py/tf4.py ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/py/tfutil.py ${DESTDIR}$(TF_LIBDIR)
 	install -m644 ../lib/py/urlwatch.py ${DESTDIR}$(TF_LIBDIR)
-	install -m644 ../CHANGES ${DESTDIR}$(TF_LIBDIR)
 
 makehelp: makehelp.c
 	$(CC) $(CFLAGS) -o makehelp makehelp.c
