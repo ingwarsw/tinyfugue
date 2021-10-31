@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: dstring.h,v 35004.37 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef DSTRING_H
 #define DSTRING_H
@@ -132,6 +131,7 @@ static inline conString *CS(String *s) { return (conString*)s; }
 #define Stringadd(str, c)	dSadd((str), (c), __FILE__, __LINE__)
 #define Stringnadd(str, c, n)	dSnadd((str), (c), (n), __FILE__, __LINE__)
 #define Stringtrunc(str, n)	dStrunc((str), (n), __FILE__, __LINE__)
+#define Stringshift(str, n)     dSshift((str), (n), __FILE__, __LINE__)
 #define Stringcpy(dst, src)	dScpy((dst), (src), __FILE__, __LINE__)
 #define SStringcpy(dst, src)	dSScpy((dst), (src), __FILE__, __LINE__)
 #define Stringncpy(dst, src, n)	dSncpy((dst), (src), (n), __FILE__, __LINE__)
@@ -157,6 +157,7 @@ extern void    dSfree  (String *str, FL);  /* call via Stringfree() */
 extern String *dSadd   (String *str, int c, FL);
 extern String *dSnadd  (String *str, int c, int n, FL);
 extern String *dStrunc (String *str, int n, FL);
+extern String *dSshift (String *str, int n, FL);
 extern String *dScpy   (String *dest, const char *src, FL);
 extern String *dSScpy  (String *dest, const conString *src, FL);
 extern String *dSncpy  (String *dest, const char *src, int n, FL);

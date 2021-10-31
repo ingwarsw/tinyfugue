@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: expr.c,v 35004.179 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /********************************************************************
  * Fugue expression interpreter
@@ -929,8 +927,10 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
                     enum2int(opdstd(n-2), 0, enum_flag, "arg 3 (inline)") : 1;
                 constr = CS(i ? decode_attr(opdstr(n), 0, 0) :
                     Stringdup(opdstr(n)));
+		if (!constr)
+		    return shareval(val_blank);
                 constr->attrs = adj_attr(constr->attrs, attr);
-                return constr ? newSstr(constr) : shareval(val_blank);
+		return newSstr(constr);
             }
 
         case FN_strip_attr:

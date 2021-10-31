@@ -27,7 +27,7 @@ default: __always__
 # to make "install", "all", "files", AND "tf", instead of just "install".
 install all files tf: default
 
-configure: configure.in
+configure: configure.ac
 	autoconf
 
 reconfigure:  unconfigure install

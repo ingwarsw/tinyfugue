@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: command.h,v 35004.24 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef COMMAND_H
 #define COMMAND_H

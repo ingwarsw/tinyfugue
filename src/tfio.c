@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: tfio.c,v 35004.114 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /***********************************
  * TinyFugue "standard" I/O
@@ -46,6 +44,7 @@ static const char RCSid[] = "$Id: tfio.c,v 35004.114 2007/01/13 23:12:39 kkeys E
 #include "keyboard.h"	/* keyboard_pos */
 #include "expand.h"	/* current_command */
 #include "cmdlist.h"
+#include "socket.h"
 
 TFILE *loadfile = NULL; /* currently /load'ing file */
 int loadline = 0;       /* line number in /load'ing file */
@@ -726,6 +725,24 @@ void tf_wprintf(const char *fmt, ...)
     veprintf(1, fmt, ap);
     va_end(ap);
 }
+
+#if TFPYTHON
+/* The Python interpreter needs to be able to be debugged separately
+ * from the rest of TF. This function allow for that through setting:
+ * /set tfpy_debug=on
+ */
+/* print a formatted warning message */
+void tfpywprintf(const char *fmt, ...)
+{
+    if (!tfpy_debug) {
+        return;
+    }
+    va_list ap;
+    va_start(ap, fmt);
+    tf_wprintf(fmt, ap);
+    va_end(ap);
+}
+#endif
 
 static const char interrmsg[] =
     "Please report this to the author, and describe what you did.";

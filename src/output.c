@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: output.c,v 35004.242 2007/01/14 00:44:19 kkeys Exp $";
-
 
 /*****************************************************************
  * Fugue output handling
@@ -26,19 +24,22 @@ static const char RCSid[] = "$Id: output.c,v 35004.242 2007/01/14 00:44:19 kkeys
 #include "pattern.h"
 #include "search.h"
 #include "tfio.h"
-#include "socket.h"	/* fgprompt(), fgname() */
+#include "socket.h"     /* fgprompt(), fgname() */
 #include "output.h"
 #include "attr.h"
-#include "macro.h"	/* add_ibind(), rebind_key_macros() */
-#include "tty.h"	/* init_tty(), get_window_wize() */
+#include "macro.h"      /* add_ibind(), rebind_key_macros() */
+#include "tty.h"        /* init_tty(), get_window_wize() */
 #include "variable.h"
-#include "expand.h"	/* current_command */
-#include "parse.h"	/* expr_value_safe() */
-#include "keyboard.h"	/* keyboard_pos */
+#include "expand.h"     /* current_command */
+#include "parse.h"      /* expr_value_safe() */
+#include "keyboard.h"   /* keyboard_pos */
 #include "cmdlist.h"
 
 #if WIDECHAR
 #include <wchar.h>
+#include <unicode/uchar.h>
+#include <unicode/utext.h>
+#include <unicode/ubrk.h>
 #endif
 
 extern struct World   *world_decl;     /* declares struct World */
@@ -46,6 +47,10 @@ extern struct World   *world_decl;     /* declares struct World */
 #ifdef EMXANSI
 # define INCL_VIO
 # include <os2.h>
+#endif
+
+#if HAVE_SETLOCALE
+static char *lang = NULL;
 #endif
 
 /* Terminal codes and capabilities.
@@ -2049,7 +2054,7 @@ int ch_visual(Var *var)
 {
     int need_redraw = 0, resized = 0, row;
 
-    for (row = 0; row < status_height; row++) {
+    for (row = 0; row < max_status_height; row++) {
 	if (status_line[row]->len < columns)
 	    Stringnadd(status_line[row], '?', columns - status_line[row]->len);
 	Stringtrunc(status_line[row], columns);
@@ -3105,55 +3110,138 @@ static int next_physline(Screen *screen)
     return 1;
 }
 
-/* returns length of prefix of str that will fit in {wrapsize} */
 int wraplen(const char *str, int len, int indent)
 {
     int total, max, visible;
 #if WIDECHAR
-    wchar_t wc;
-    size_t ret;
-    mbstate_t mbs;
-
-    memset(&mbs, 0, sizeof(mbs));
+    UText *ut = NULL;
+    UBreakIterator *lineBI = NULL;
+    UBreakIterator *charBI = NULL;
+    UErrorCode icuerr = U_ZERO_ERROR;
+    UChar32 c;
+    UEastAsianWidth ea;
+    int nativeIndex = 0;
 #endif
 
     if (emulation == EMUL_RAW) return len;
 
     max = Wrap - indent;
 
-    for (visible = total = 0; total < len && visible < max; total++) {
-	if (str[total] == '\t')
-	    visible += tabsize - visible % tabsize;
-	else {
 #if WIDECHAR
-	    ret = mbrtowc(&wc, (char *)str + total, total - len, &mbs);
-	    if (ret >= (size_t) -2) {
-		/* Invalid char. Punt. */
-		visible++;
-	    } else {
-		total += ret - 1;
-		visible += wcwidth(wc);
-	    }
+    ut = utext_openUTF8(ut, str, len, &icuerr);
+    if (!U_SUCCESS(icuerr))
+        return len;
+
+    c = UTEXT_NEXT32(ut);
+    for (visible = 0; visible < max && c != U_SENTINEL; c = UTEXT_NEXT32(ut)) {
+        if (c == '\t')
+            visible += tabsize - visible % tabsize;
+        else {
+            ea = (UEastAsianWidth)u_getIntPropertyValue(c,
+                UCHAR_EAST_ASIAN_WIDTH);
+            switch (ea) {
+                case U_EA_NEUTRAL:
+                case U_EA_AMBIGUOUS:
+                case U_EA_HALFWIDTH:
+                    ++visible;
+                    break;
+                case U_EA_FULLWIDTH:
+                    visible += 2;
+                    break;
+                case U_EA_NARROW:
+                    ++visible;
+                    break;
+                case U_EA_WIDE:
+                    visible += 2;
+                    break;
+                default:
+                    ++visible;
+            }
+        }
+    }
+
+    if (c == U_SENTINEL) {
+        utext_close(ut);
+        return len;
+    }
+
+    /* If we had a full width character as the last UChar32, go
+     * back one to fit within our max length.
+     */
+    if (visible >= max)
+        UTEXT_PREVIOUS32(ut);
+
+    lineBI = ubrk_open(UBRK_LINE, lang, NULL, 0, &icuerr);
+    if (!U_SUCCESS(icuerr)) {
+        utext_close(ut);
+        return len;
+    }
+
+    ubrk_setUText(lineBI, ut, &icuerr);
+    if (!U_SUCCESS(icuerr)) {
+        nativeIndex = utext_getNativeIndex(ut);
+        ubrk_close(lineBI);
+        utext_close(ut);
+        return nativeIndex;
+    }
+
+    total = ubrk_preceding(lineBI, utext_getNativeIndex(ut));
+
+    /* If we can't break at an acceptable "line break" point.
+     * Break at the previous glyph.
+     */
+    if (total == 0) {
+        charBI = ubrk_open(UBRK_CHARACTER, lang, NULL, 0, &icuerr);
+        if (!U_SUCCESS(icuerr)) {
+            nativeIndex = utext_getNativeIndex(ut);
+            ubrk_close(lineBI);
+            utext_close(ut);
+            return nativeIndex;
+        }
+
+        ubrk_setUText(charBI, ut, &icuerr);
+        if (!U_SUCCESS(icuerr)) {
+            nativeIndex = utext_getNativeIndex(ut);
+            ubrk_close(charBI);
+            ubrk_close(lineBI);
+            utext_close(ut);
+            return nativeIndex;
+        }
+
+        total = ubrk_preceding(charBI, utext_getNativeIndex(ut));
+
+        /* Return the position we're at if there's no good break. */
+        if (total == 0)
+            total = utext_getNativeIndex(ut);
+        ubrk_close(charBI);
+    }
+
+    ubrk_close(lineBI);
+    utext_close(ut);
+    return total;
 #else
-	    visible++;
-#endif
-	}
+    for (visible = total = 0; total < len && visible < max; total++) {
+        if (str[total] == '\t')
+            visible += tabsize - visible % tabsize;
+        else
+            visible++;
     }
 
     if (total == len) return len;
     len = total;
     if (wrapflag) {
         while (len && !is_space(str[len-1]))
-	    --len;
-	if (wrappunct > 0 && len < total - wrappunct) {
-	    len = total;
-	    while (len && !is_space(str[len-1]) && !is_punct(str[len-1]))
-		--len;
-	}
+
+            --len;
+        if (wrappunct > 0 && len < total - wrappunct) {
+            len = total;
+            while (len && !is_space(str[len-1]) && !is_punct(str[len-1]))
+                --len;
+        }
     }
     return len ? len : total;
+#endif /* WIDECHAR */
 }
-
 
 /****************
  * Main drivers *

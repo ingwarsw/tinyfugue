@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: command.c,v 35004.141 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /*****************************************************************
  * Fugue command handlers
@@ -362,7 +360,7 @@ int handle_echo_func(
             return 0;
     }
     if (raw) {
-        write(STDOUT_FILENO, src->data, src->len);
+        size_t w_len = write(STDOUT_FILENO, src->data, src->len);
         return 1;
     }
 
@@ -525,7 +523,7 @@ int do_file_load(const char *args, int tinytalk, char **savename)
 		    Stringadd(libfile, *path++);
 		}
 		if (!is_absolute_path(libfile->data)) {
-		    tf_wprintf((const wchar_t *)"invalid directory in TFPATH: %S", libfile);
+		    tf_wprintf("invalid directory in TFPATH: %S", libfile);
 		} else {
 		    Sappendf(libfile, "/%s", args);
 		    file = tfopen(expand_filename(libfile->data), "r");
@@ -533,7 +531,7 @@ int do_file_load(const char *args, int tinytalk, char **savename)
 	    } while (!file && *path);
 	} else {
 	    if (!is_absolute_path(TFLIBDIR)) {
-		tf_wprintf((const wchar_t *)"invalid TFLIBDIR: %s", TFLIBDIR);
+		tf_wprintf("invalid TFLIBDIR: %s", TFLIBDIR);
 	    } else {
 		Sprintf(libfile, "%s/%s", TFLIBDIR, args);
 		file = tfopen(expand_filename(libfile->data), "r");
@@ -592,7 +590,7 @@ int do_file_load(const char *args, int tinytalk, char **savename)
                 i = line->len - 1;
                 while (i > 0 && is_space(line->data[i])) i--;
                 if (line->data[i] == '\\')
-                    tf_wprintf((const wchar_t *)"whitespace following final '\\'");
+                    tf_wprintf("whitespace following final '\\'");
             }
         } else {
             last_cmd_line = 0;
@@ -610,7 +608,7 @@ int do_file_load(const char *args, int tinytalk, char **savename)
 		!user_result->u.ival && !warned)
 	    {
 		eprintf("(This line was implicitly treated as an /addworld "
-		    "because it occured before the first '/' line and did not "
+		    "because it occurred before the first '/' line and did not "
 		    "start with a '/', ';', or '#'.)");
 		warned = 1;
 	    }

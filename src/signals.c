@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: signals.c,v 35004.70 2007/01/14 19:28:36 kkeys Exp $";
 
 /* Signal handling, core dumps, job control, and interactive shells */
 
@@ -69,7 +68,7 @@ union wait *dummy_union_wait;
 # define WEXITSTATUS(w)  (((*(int *)&(w)) >> 8) & 0xFF) /* works most places */
 #endif
 
-typedef RETSIGTYPE (SigHandler)(int sig);
+typedef void (SigHandler)(int sig);
 
 #if !HAVE_RAISE
 # if HAVE_KILL
@@ -130,18 +129,18 @@ const int feature_core = 1 - DISABLE_CORE;
 static const char *argv0 = NULL;
 static int have_pending_signals = 0;
 static sig_set pending_signals;
-static RETSIGTYPE (*parent_tstp_handler)(int sig);
+static void (*parent_tstp_handler)(int sig);
 
 static void   handle_interrupt(void);
 static void   terminate(int sig);
 static void   coremsg(FILE *dumpfile);
 static int    debugger_dump(void);
 static FILE  *get_dumpfile(void);
-static RETSIGTYPE core_handler(int sig);
-static RETSIGTYPE signal_scheduler(int sig);
-static RETSIGTYPE signal_jumper(int sig);
+static void core_handler(int sig);
+static void signal_scheduler(int sig);
+static void signal_jumper(int sig);
 #ifndef SIG_IGN
-static RETSIGTYPE SIG_IGN(int sig);
+static void SIG_IGN(int sig);
 #endif
 
 
@@ -256,7 +255,7 @@ void init_signals(void)
 }
 
 #ifndef SIG_IGN
-static RETSIGTYPE SIG_IGN(int sig)
+static void SIG_IGN(int sig)
 {
     setsighandler(sig, SIG_IGN);  /* restore handler (POSIX) */
 }
@@ -310,7 +309,7 @@ int suspend(void)
 }
 
 
-static RETSIGTYPE core_handler(int sig)
+static void core_handler(int sig)
 {
     FILE *dumpfile;
     setsighandler(sig, core_handler);  /* restore handler (POSIX) */
@@ -410,7 +409,7 @@ static char initial_dir[PATH_MAX+1] = "."; /* default: many users never chdir */
 static void coremsg(FILE *dumpfile)
 {
     fputs("Also describe what you were doing in tf when this\r\n", stderr);
-    fputs("occured, and whether you can repeat it.\r\n\n", stderr);
+    fputs("occurred, and whether you can repeat it.\r\n\n", stderr);
     fprintf(dumpfile, "> %.512s\r\n", version);
     if (*sysname) fprintf(dumpfile, "> %.256s\r\n", sysname);
     fprintf(dumpfile, "> %.256s\r\n", featurestr->data);
@@ -506,9 +505,9 @@ static const char *get_exename(pid_t pid)
     while (1) {
 	len = strcspn(dir, ":\0");
 	if (*dir == '/')
-	    sprintf(exebuf, "%.*s/%s", len, dir, argv0);
+	    sprintf(exebuf, "%.*s/%s", (int) len, dir, argv0);
 	else
-	    sprintf(exebuf, "%s/%.*s/%s", initial_dir, len, dir, argv0);
+	    sprintf(exebuf, "%s/%.*s/%s", initial_dir, (int) len, dir, argv0);
 	if (stat(exebuf, &statbuf) == 0)
 	    return exebuf;
 	if (!dir[len])
@@ -572,14 +571,14 @@ static void terminate(int sig)
     raise(sig);
 }
 
-static RETSIGTYPE signal_scheduler(int sig)
+static void signal_scheduler(int sig)
 {
     setsighandler(sig, signal_scheduler);  /* restore handler (POSIX) */
     VEC_SET(sig, &pending_signals);        /* set flag to deal with it later */
     have_pending_signals++;
 }
 
-static RETSIGTYPE signal_jumper(int sig)
+static void signal_jumper(int sig)
 {
     fatal_signal = sig;
     longjmp(jumpenv, 1);

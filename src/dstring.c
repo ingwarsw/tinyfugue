@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: dstring.c,v 35004.49 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /*********************************************************************
  * Fugue dynamically allocated string handling                       *
@@ -245,6 +243,22 @@ String *dStrunc(String *str, int len, const char *file, int line)
     } else {
         str->len = oldlen;
     }
+    return str;
+}
+
+String *dSshift(String *str, int start, const char *file, int line)
+{
+    if (start < 0)
+        core("dSshift: start==%ld (<0)", file, line, (long)start);
+    if (start > str->len)
+        core("dSshift: start==%ld (>str->len)", file, line, (long)start);
+/*    if (start == str->len)
+        return dStrunc(str, 0, file, line); */
+    if (start == 0)
+        return str;
+    str->len = str->len - start;
+    lcheck(str, file, line); /* Don't really need this... */
+    memmove(str->data, str->data + start, str->len + 1);
     return str;
 }
 

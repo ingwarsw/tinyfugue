@@ -5,8 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-static const char RCSid[] = "$Id: history.c,v 35004.114 2007/01/13 23:12:39 kkeys Exp $";
-
 
 /****************************************************************
  * Fugue history and logging                                    *
@@ -151,7 +149,7 @@ static void save_to_log(History *hist, const conString *str)
      }
 
     if (ansi_log)
-        SStringcat(log_buffer, encode_ansi(str, 0));
+        SStringcat(log_buffer, (const conString *) encode_ansi(str, 0));
     else
         SStringcat(log_buffer, str);
         

@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: varlist.h,v 35000.78 2007/01/13 23:12:39 kkeys Exp $ */
 
 /* This keeps the constants and the array in the same place, so they can't
  * get out of sync.
@@ -71,6 +70,9 @@ varenum(VAR_binary_eol,	"binary_eol",	EOL_LF,		NULL,	enum_eol)
 varflag(VAR_borg,	"borg",		TRUE,		NULL)
 varenum(VAR_cecho,	"cecho",	0,		NULL,	enum_mecho)
 varstr (VAR_cecho_attr,	"cecho_attr",	"Cgreen",	ch_attr)
+#if WIDECHAR
+varstr (VAR_default_charset, "default_charset", "UTF-8", ch_default_charset)
+#endif
 varflag(VAR_cleardone,	"cleardone",	FALSE,		NULL)
 varflag(VAR_clearfull,	"clearfull",	FALSE,		NULL)
 varenum(VAR_async_conn,	"connect",	TRUE,		NULL,	enum_block)
@@ -165,6 +167,9 @@ varflag(VAR_telopt,	"telopt",	FALSE,		NULL)
 varenum(VAR_textdiv,	"textdiv",	TRUE,		NULL,	enum_textdiv)
 varstr (VAR_textdiv_str,"textdiv_str",	"=====",	NULL)
 varstr (VAR_tfhost,	"tfhost",	NULL,		NULL)
+#if TFPYTHON
+varflag(VAR_tfpy_debug,	"tfpy_debug",	FALSE,		NULL)
+#endif
 varstr (VAR_time_format,"time_format",	"%H:%M",	NULL)
 varflag(VAR_virtscreen,	"virtscreen",	TRUE,		undocumented_var)
 varflag(VAR_visual,	"visual",	-1,		ch_visual)

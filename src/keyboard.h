@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: keyboard.h,v 35004.23 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef KEYBOARD_H
 #define KEYBOARD_H

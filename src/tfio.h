@@ -5,7 +5,6 @@
  *  TinyFugue (aka "tf") is protected under the terms of the GNU
  *  General Public License.  See the file "COPYING" for details.
  ************************************************************************/
-/* $Id: tfio.h,v 35004.66 2007/01/13 23:12:39 kkeys Exp $ */
 
 #ifndef TFIO_H
 #define TFIO_H
@@ -154,6 +153,9 @@ extern void   tfprintf(TFILE *file, const char *fmt, ...)
 extern void   eprefix(String *buffer);
 extern void   eprintf(const char *fmt, ...) format_printf(1, 2);
 extern void   tf_wprintf(const char *fmt, ...) format_printf(1, 2);
+#if TFPYTHON
+extern void   tfpywprintf(const char *fmt, ...) format_printf(1, 2);
+#endif
 extern char   igetchar(void);
 extern int    handle_tfopen_func(const char *name, const char *mode);
 extern TFILE *find_tfile(const char *handle);

@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: '22 3 22 * *'
+    
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        python-version: [3.7, 3.9]
+        opts:
+          - "--enable-lua"
+          - "--enable-python"
+          - "--disable-widechar"
+#          - "--enable-lua --enable-python"
+    
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        if: runner.os == 'Linux'
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install packages on Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get install lua5.3 liblua5.3-dev
+      - name: Install packages on MacOS
+        if: runner.os == 'macOS'
+        run: |
+          brew install lua python@${{ matrix.python-version }}
+          echo "/usr/local/opt/python@${{ matrix.python-version }}/bin" >> $GITHUB_PATH
+      - name: Configure
+        run: ./configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
+      - name: Build
+        run: make
+      - name: Install
+        run: make install
+
+  build_windows:
+    runs-on: windows-latest
+    steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+      - uses: actions/checkout@v2
+      - uses: egor-tensin/setup-cygwin@v1
+        with:
+          platform: x86
+          packages: gcc-core make libpcre-devel lua liblua-devel python3-devel libintl-devel
+      - name: Create home dir
+        run: |
+          C:\tools\cygwin\bin\bash.exe --login -c 'env'
+      - name: Configure
+        run: |
+          sh configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 --enable-lua --enable-python
+      - name: Build
+        run: make
+      - name: Install
+        run: make install
