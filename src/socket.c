@@ -1392,7 +1392,6 @@ static int opensock(World *world, int flags)
 	SSL_CTX_set_verify_depth(ssl_ctx, ssl_depth);
 	ssl_mydata_index = SSL_get_ex_new_index(0, "ssl_mydata index", 
 		NULL, NULL, NULL);
-	ssl_options_t ssl_options;
 	ssl_options.verify_depth = ssl_depth;
 	ssl_options.verbose_mode = ssl_verbose;
 	ssl_options.always_continue = ssl_continue;
