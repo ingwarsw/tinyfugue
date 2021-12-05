@@ -28,8 +28,7 @@ static int tfeval_for_lua(lua_State *state)
 	String *func;
 	const char *arg = luaL_checkstring(state, 1);
 
-	(func = Stringnew(NULL, 0, 0))->links++;
-    Sprintf(func, arg);
+        (func = Stringnew(arg, -1, 0))->links++;
 	handle_eval_command(func, 0);
     
 	Stringfree(func);
