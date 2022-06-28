@@ -1,7 +1,7 @@
 TinyFugue - Rebirth
 =====================
 
-![CI](https://github.com/ingwarsw/tinyfugue/workflows/CI/badge.svg)
+[![CI](https://github.com/ingwarsw/tinyfugue/actions/workflows/build.yml/badge.svg)](https://github.com/ingwarsw/tinyfugue/actions/workflows/build.yml)
 [![GitHub Release](https://img.shields.io/github/release/ingwarsw/tinyfugue.svg?style=flat)](https://github.com/ingwarsw/tinyfugue/releases/latest)  
 
 This project is meant to give rebirth to TinyFugue MUD client.
