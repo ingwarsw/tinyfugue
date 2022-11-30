@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ '**' ]
   pull_request:
-    branches: [ master ]
+    branches: [ '**' ]
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: '22 3 22 * *'
@@ -17,10 +17,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.8, 3.9]
+        python-version: ['3.8', '3.9', '3.10']
         opts:
           - "--enable-lua"
           - "--enable-python"
+          - "--disable-widechar"
 #          - "--enable-lua --enable-python"
     
     steps:
@@ -55,7 +56,7 @@ jobs:
       - uses: egor-tensin/setup-cygwin@v1
         with:
           platform: x86
-          packages: gcc-core make libpcre-devel lua-devel python3-devel libintl-devel
+          packages: gcc-core make libpcre-devel lua liblua-devel python3-devel libintl-devel
       - name: Create home dir
         run: |
           C:\tools\cygwin\bin\bash.exe --login -c 'env'

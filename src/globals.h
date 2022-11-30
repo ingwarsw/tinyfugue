@@ -170,6 +170,9 @@ enum Vars {
 #define binary_eol	getintvar(VAR_binary_eol)
 #define borg		getintvar(VAR_borg)
 #define cecho		getintvar(VAR_cecho)
+#if WIDECHAR
+#define default_charset	getstrvar(VAR_default_charset)
+#endif
 #define cleardone	getintvar(VAR_cleardone)
 #define clearfull	getintvar(VAR_clearfull)
 #define clock_flag	getintvar(VAR_clock)
@@ -191,6 +194,9 @@ enum Vars {
 #define info_attr	getattrvar(VAR_info_attr)
 #define insert		getintvar(VAR_insert)
 #define tfinteractive	getintvar(VAR_interactive)
+#if TFPYTHON
+# define tfpy_debug	getintvar(VAR_tfpy_debug)
+#endif
 #define isize		getintvar(VAR_isize)
 #define istrip		getintvar(VAR_istrip)
 #define kbnum		getstrvar(VAR_kbnum)

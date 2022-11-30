@@ -24,6 +24,7 @@
 #include "process.h"	/* runall() */
 #include "expand.h"	/* SUB_KEYWORD */
 #include "parse.h"	/* types */
+#include "world.h"
 #include "variable.h"
 
 extern struct World   *world_decl;     /* declares struct World */

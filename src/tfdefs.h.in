@@ -10,3 +10,5 @@
 #define stringify_token(s) #s
 #define stringify_value(s) stringify_token(s)
 #define DEFAULT_TFLIBD stringify_value(DATADIR) "/@LIBNAME@"
+#define TFVERSION "@TFVERSION@"
+

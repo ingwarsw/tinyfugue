@@ -12,11 +12,11 @@
 
 # @configure_input@
 
-prefix     = ${DESTDIR}@prefix@
-exec_prefix= ${DESTDIR}@exec_prefix@
-bindir     = ${DESTDIR}@bindir@
-datadir    = ${DESTDIR}@datadir@
-mandir     = ${DESTDIR}@mandir@
+prefix     = @prefix@
+exec_prefix= @exec_prefix@
+bindir     = @bindir@
+datadir    = @datadir@
+mandir     = @mandir@
 
 TFVERSION  = @TFVERSION@
 X          = @EXEEXT@
@@ -32,12 +32,12 @@ SYMLINK    = @SYMLINK@
 # MANTYPE    = @MANTYPE@
 MODE       = @MODE@
 CC         = @CC@
-CFLAGS     = @CFLAGS@ @CPPFLAGS@ @LUA_DEFINES@ @LUA_INCLUDE@ @PYTHON_INCLUDE@
+CFLAGS     = @CFLAGS@ @CPPFLAGS@ @LUA_DEFINES@ @LUA_INCLUDE@ @PYTHON_INCLUDE@ @ICU_CFLAGS@
 LDFLAGS    = @LDFLAGS@ 
 STD_C      = @STD_C@
 STRIP      = @STRIP@
 RANLIB     = @RANLIB@
-LIBS       = @LIBS@ @LUA_LIB@ @PYTHON_LIB@
+LIBS       = @LIBS@ @LUA_LIB@ @PYTHON_LIB@ @ICU_LIBS@
 OTHER_OBJS = @OTHER_OBJS@
 
 LUA_SOURCES = @LUA_SOURCES@

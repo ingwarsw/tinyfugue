@@ -23,5 +23,6 @@ src/makehelp
 src/makehelp.dSYM/
 src/tfconfig.h
 src/tfdefs.h
+src/default
 unix/vars.mak
 Makefile

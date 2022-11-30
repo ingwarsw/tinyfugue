@@ -16,8 +16,6 @@
 # Predefined variables:
 #   O - object file suffix (e.g., "o" or "obj")
 
-TFVER=50b9
-
 SOURCE = attr.c command.c dstring.c expand.c expr.c help.c history.c \
   keyboard.c macro.c main.c malloc.c output.c process.c search.c \
   signals.c socket.c tfio.c tty.c util.c variable.c world.c \
