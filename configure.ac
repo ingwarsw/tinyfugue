@@ -417,9 +417,10 @@ if test "$enable_float" = "yes"; then
     AC_SEARCH_LIBS(sqrt, m)
 fi
 
-AC_CHECK_LIB(z, inflate)
+AC_CHECK_LIB(z, inflate, [], [AC_MSG_FAILURE([Cant find inflate in libz])])
 
-AC_CHECK_LIB(pcre, pcre_compile)
+AC_CHECK_HEADERS([pcre.h], [], [AC_MSG_FAILURE([Cant find pcre.h])])
+AC_CHECK_LIB(pcre, pcre_compile, [], [AC_MSG_FAILURE([Can't find pcre])])
 
 dnl ########### headers ############
 
