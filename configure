@@ -5480,9 +5480,29 @@ then :
 
   LIBS="-lz $LIBS"
 
+else $as_nop
+  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "Cant find inflate in libz
+See \`config.log' for more details" "$LINENO" 5; }
 fi
 
 
+       for ac_header in pcre.h
+do :
+  ac_fn_c_check_header_compile "$LINENO" "pcre.h" "ac_cv_header_pcre_h" "$ac_includes_default"
+if test "x$ac_cv_header_pcre_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_PCRE_H 1" >>confdefs.h
+
+else $as_nop
+  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "Cant find pcre.h
+See \`config.log' for more details" "$LINENO" 5; }
+fi
+
+done
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for pcre_compile in -lpcre" >&5
 printf %s "checking for pcre_compile in -lpcre... " >&6; }
 if test ${ac_cv_lib_pcre_pcre_compile+y}
@@ -5524,6 +5544,11 @@ then :
 
   LIBS="-lpcre $LIBS"
 
+else $as_nop
+  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
+printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
+as_fn_error $? "Can't find pcre
+See \`config.log' for more details" "$LINENO" 5; }
 fi
 
 
