@@ -10873,6 +10873,10 @@ worlds
 
   Information on writing Lua scripts can be found in /help lua.
 
+  calllua() is also available as a function; in that case it behaves like a normal
+  Tinyfugue function (it can take multiple parameters which are passed to
+  the lua function; a single return value is supported.)
+
 &/purgelua
 
 /purgelua

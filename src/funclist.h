@@ -19,6 +19,9 @@ funccode(atan,		1,	1,  1),
 #if ENABLE_ATCP
 funccode(atcp,		0,	1,  2),
 #endif
+#if LUA_ENABLED
+funccode(calllua,	1,	1,  (unsigned) -1),
+#endif
 funccode(char,		1,	1,  1),
 funccode(columns,	0,	0,  0),
 funccode(cos,		1,	1,  1),

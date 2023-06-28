@@ -25,5 +25,6 @@
 struct Value *handle_calllua_command(String *args, int offset);
 struct Value *handle_loadlua_command(String *args, int offset);
 struct Value *handle_purgelua_command(String *args, int offset);
+struct Value *handle_calllua_function(int n);
 
 #endif 
