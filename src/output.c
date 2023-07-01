@@ -1431,6 +1431,7 @@ static void regen_status_fields(int row)
     update_status_line(NULL);
 }
 
+
 static ListEntry *find_statusfield_by_template(StatusField *target,
     int full_comparison, const char *label)
 {
@@ -1499,6 +1500,21 @@ static void free_statusfield(StatusField *field)
     FREE(field);
 }
 
+static void
+statusfield_clear_row(int row)
+{
+	ListEntry *node;
+	StatusField *f;
+
+	if (row < 0 || row >= status_height) {
+		return;
+	}
+
+	while (statusfield_list[row]->head)
+	    free_statusfield(unlist(statusfield_list[row]->head,
+		statusfield_list[row]));
+}
+
 static int status_add(int reset, int nodup, int row, ListEntry *where,
     const char *s,
     long spacer) /* spacer>0 goes after new field, spacer<0 goes before */
@@ -1558,11 +1574,8 @@ static int status_add(int reset, int nodup, int row, ListEntry *where,
     }
 
     if (reset) {
-	/* delete old fields and clean up referents */
-	while (statusfield_list[row]->head)
-	    free_statusfield(unlist(statusfield_list[row]->head,
-		statusfield_list[row]));
-	*statusfield_list[row] = *newlist;
+        statusfield_clear_row(row);
+        *statusfield_list[row] = *newlist;
     } else {
 	/* insert new fields into list */
 	/* (We could be faster with ptr swapping, but this isn't critical) */
@@ -1580,6 +1593,28 @@ status_add_error:
     while (newlist->head)
 	free_statusfield(unlist(newlist->head, newlist));
     return 0;
+}
+
+struct Value *handle_status_clear_command(String *args, int offset)
+{
+    int row = -1, opt;
+    ValueUnion uval;
+    const char *ptr;
+
+    startopt(CS(args), "r#");
+    while ((opt = nextopt(&ptr, &uval, NULL, &offset))) {
+        switch (opt) {
+        case 'r':  row = uval.ival;     break;
+        default:   return shareval(val_zero);
+        }
+    }
+    if (row < 0)
+        return shareval(val_zero);
+
+    statusfield_clear_row(row);
+    regen_status_fields(row);
+
+    return shareval(val_one);
 }
 
 struct Value *handle_status_add_command(String *args, int offset)
