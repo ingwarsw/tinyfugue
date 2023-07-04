@@ -36,7 +36,7 @@ jobs:
       - name: Install packages on MacOS
         if: runner.os == 'macOS'
         run: |
-          brew install lua python@${{ matrix.python-version }}
+          brew install lua pcre python@${{ matrix.python-version }}
           echo "/usr/local/opt/python@${{ matrix.python-version }}/bin" >> $GITHUB_PATH
       - name: Configure
         run: ./configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
