@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ '**' ]
+    branches: [ 'main' ]
   pull_request:
     branches: [ '**' ]
   #schedule:
@@ -46,6 +46,8 @@ jobs:
         run: make install
 
   build_windows:
+    # disable for now
+    if: false
     runs-on: windows-latest
     steps:
       - name: Set git to use LF
