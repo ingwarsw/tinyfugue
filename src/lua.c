@@ -240,6 +240,6 @@ handle_calllua_function(int n)
 done:
 	/* Default */
 	free(func);
-	lua_settop(lua_state, 0);
+	lua_pop(lua_state, 1);
 	return v;
 }
