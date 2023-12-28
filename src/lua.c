@@ -4,6 +4,19 @@
 #include <lauxlib.h>
 #include <lualib.h>
 
+#include "tfconfig.h"
+#include "port.h"
+#include "tf.h"
+#include "util.h"
+#include "pattern.h"
+#include "search.h"
+#include "tfio.h"
+#include "world.h"
+#include "macro.h"
+#include "expand.h"
+#include "attr.h"
+#include "parse.h"
+
 #include "lua.h"
 
 #define myerror(str) eputs(str)
@@ -28,8 +41,7 @@ static int tfeval_for_lua(lua_State *state)
 	String *func;
 	const char *arg = luaL_checkstring(state, 1);
 
-	(func = Stringnew(NULL, 0, 0))->links++;
-    Sprintf(func, arg);
+        (func = Stringnew(arg, -1, 0))->links++;
 	handle_eval_command(func, 0);
     
 	Stringfree(func);
@@ -149,4 +161,85 @@ struct Value *handle_purgelua_command(String *args, int offset)
     }
 	myinfo("No LUA scripts loaded");
 	return newint(0);
+}
+
+struct Value *
+handle_calllua_function(int n)
+{
+	char *func;
+	int num_args;
+	struct conString *s;
+	Value *v = NULL;
+
+	if (n == 0) {
+		myerror("No function name found");
+		return newint(-1);
+	}
+
+	s = opdstr(n); n--;
+	func = strndup(s->data, s->len);
+
+	if(lua_state == NULL)
+	{
+		myerror("No script loaded");
+		free(func);
+		return newint(-1);
+	}
+
+	lua_getglobal(lua_state, func);
+
+	if(lua_isfunction(lua_state, -1) != 1)
+	{
+		myerror("No such function");
+		lua_pop(lua_state, 1);
+		free(func);
+		return newint(1);
+	}
+
+	num_args = 0;
+	for (; n; n--) {
+		s = opdstr(n);
+		lua_pushlstring(lua_state, s->data, s->len);
+		num_args++;
+	}
+
+	if(lua_pcall(lua_state, num_args, 1, 0) != 0)
+	{
+		myerror(lua_tostring(lua_state, -1));
+		v = newint(-1);
+		goto done;
+	}
+
+	/* Returned a boolean */
+	if (lua_isboolean(lua_state, -1)) {
+		v = newint((int) lua_toboolean(lua_state, -1));
+		goto done;
+	}
+
+
+	/* Returned an integer */
+	if (lua_isinteger(lua_state, -1)) {
+		v = newint(lua_tointeger(lua_state, -1));
+		goto done;
+	}
+
+
+	/* Returned a number */
+	if (lua_isnumber(lua_state, -1)) {
+		v = newfloat(lua_tonumber(lua_state, -1));
+		goto done;
+	}
+
+	/* Returned a string */
+	if (lua_isstring(lua_state, -1)) {
+		v = newstr(lua_tostring(lua_state, -1),
+		     lua_rawlen(lua_state, -1));
+		goto done;
+	}
+
+done:
+	/* Default */
+	free(func);
+	lua_pop(lua_state, 1);
+	return v;
 }

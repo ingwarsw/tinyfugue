@@ -9796,6 +9796,7 @@ Configuring the status area
   [1mstatus_fields(<[4mN[24m>)[22;0m.  
 #%status_field_defaults
 #status_rm
+#status_clear
 #status_edit
 #status_defaults
 #status_save
@@ -9803,6 +9804,7 @@ Configuring the status area
 #status_add
 #/clock
 #/status_rm
+#/status_clear
 #/status_edit
 #/status_defaults
 #/status_save
@@ -9884,6 +9886,11 @@ Configuring the status area
                   /status_add -Aclock foo:4 
                   /status_add -Afoo bar:4 
                   /status_add -Abar -s2 baz:4 
+
+  /status_clear -r<[4mN[24m>
+          Clear all of the fields in the given row.
+
+          Returns 1 if the row was cleared, 0 if the row number is invalid.
 
   /status_edit [-r<[4mN[24m>] <[4mname[24m>[:<[4mwidth[24m>[:<[4mattributes[24m>]] 
           If field <[4mname[24m> currently exists in any status row, replace it with 
@@ -10872,6 +10879,10 @@ worlds
   string argument.
 
   Information on writing Lua scripts can be found in /help lua.
+
+  calllua() is also available as a function; in that case it behaves like a normal
+  Tinyfugue function (it can take multiple parameters which are passed to
+  the lua function; a single return value is supported.)
 
 &/purgelua
 

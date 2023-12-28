@@ -38,6 +38,7 @@
 #include "history.h"    /* log_count */
 #include "world.h"      /* new_world() */
 #include "tfpython.h"
+#include "lua.h"
 
 #define STACKSIZE 512
 
@@ -991,6 +992,20 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
         case FN_atcp:
             i = handle_atcp_function(opdstr(n), (n>1 ? opdstd(n-1) : NULL));
             return newint(i);
+#endif
+
+#if LUA_ENABLED
+	case FN_calllua:
+		{
+			struct Value *rv;
+
+			rv = handle_calllua_function(n);
+			if (rv == NULL) {
+				return shareval(val_zero);
+			} else {
+				return rv;
+			}
+		}
 #endif
 
 #if ENABLE_GMCP

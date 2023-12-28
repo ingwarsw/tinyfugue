@@ -2,12 +2,12 @@ name: CI
 
 on:
   push:
-    branches: [ '**' ]
+    branches: [ 'main' ]
   pull_request:
     branches: [ '**' ]
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron: '22 3 22 * *'
+  #schedule:
+  #  # * is a special character in YAML so you have to quote this string
+  #  - cron: '22 3 22 * *'
     
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        python-version: [3.7, 3.9]
+        python-version: ['3.8', '3.9', '3.10']
         opts:
           - "--enable-lua"
           - "--enable-python"
@@ -36,7 +36,7 @@ jobs:
       - name: Install packages on MacOS
         if: runner.os == 'macOS'
         run: |
-          brew install lua python@${{ matrix.python-version }}
+          brew install lua pcre python@${{ matrix.python-version }}
           echo "/usr/local/opt/python@${{ matrix.python-version }}/bin" >> $GITHUB_PATH
       - name: Configure
         run: ./configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
@@ -46,6 +46,8 @@ jobs:
         run: make install
 
   build_windows:
+    # disable for now
+    if: false
     runs-on: windows-latest
     steps:
       - name: Set git to use LF

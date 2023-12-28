@@ -1,12 +1,12 @@
 TinyFugue - Rebirth
 =====================
 
-![CI](https://github.com/ingwarsw/tinyfugue/workflows/CI/badge.svg)
+[![CI](https://github.com/ingwarsw/tinyfugue/actions/workflows/build.yml/badge.svg)](https://github.com/ingwarsw/tinyfugue/actions/workflows/build.yml)
 [![GitHub Release](https://img.shields.io/github/release/ingwarsw/tinyfugue.svg?style=flat)](https://github.com/ingwarsw/tinyfugue/releases/latest)  
 
 This project is meant to give rebirth to TinyFugue MUD client.
 
-Because Ken Keys is not activelly developing it from 6 years and i gathered a lot of pathes over that time in thet time i decided to push them together.
+Because Ken Keys is not activelly developing it from 6 years and i gathered a lot of pathes over that time in that time i decided to push them together.
 
 # New features
 
