@@ -2298,6 +2298,9 @@ list commands
   (none)  With no option, lists all open logs.  
   (none)  With an -ligw option, same as "ON".  
 
+  The [4mlog_time_format[24m variable controls the time stamp format
+  passed into [1mftime()[22m.
+
   When logging is enabled for a [1mhistory[22;0m, lines that are normally recorded in 
   that [1mhistory[22;0m are also appended to the log file (unless the line has the "L" 
   nolog [1mattribute[22;0m).  The previously existing contents of the file, if any, are 
@@ -9237,6 +9240,12 @@ Special global variables
   [1mlogin[22m=on 
           (flag) Enable [1mautomatic login[22;0m [1mhook[22;0m.  (See: [1mautomatic login[22;0m, [1mhooks[22;0m, 
           [1m/world[22;0m) 
+
+#log_time_format
+#%log_time_format
+  [1mlog_time_format[22m=%H:%M:%S
+          Format to pass to ftime() when generating log file entries.
+          (See: [1mftime[22;0m, [1mlog[22;0m)
 
 #lp
 #%lp
