@@ -10461,7 +10461,9 @@ tfopen()
   "a"     Open a file "<[4mname[24m>" for appending.  Write operations will occur 
           after existing file contents, if any.  
   "r"     Open a file "<[4mname[24m>" for reading.  (see also: "[1m/quote '[22;0m").  
-  "p"     Execute a shell command "<[4mname[24m>" and read its output (see also: 
+  "p"     Execute a shell command "<[4mname[24m>", and read its output (see also:
+          "[1m/quote ![22;0m").  
+  "P"     Execute a shell command "<[4mname[24m>", read and write its output.
           "[1m/quote ![22;0m").  
   "q"     Open a queue for reading and writing.  The <[4mname[24m> argument will 
           appear in the output of [1m/liststreams[22;0m, but has no other meaning.  
