@@ -2908,6 +2908,7 @@ static void handle_socket_lines(void)
 
 	} else {
 	    if (borg || hilite || gag) {
+		/* Run the trigger matches against this incoming text line */
 		if (find_and_run_matches(NULL, -1, &incoming_text, xworld(),
 		    TRUE, 0))
 		{

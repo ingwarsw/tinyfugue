@@ -648,6 +648,14 @@ addworld()
           matched by the [1mtrigger[22;0m or to display the default message of a [1mhook[22;0m.  
           Default: normal.  See: [1mattributes[22;0m.  
 
+#/def -A
+#-A
+  -A[ngGLAurBbhC] 
+          Limit matching on whole-line [1mattribute[22;0m(s) (normal, [1mgag[22;0m, nohistory,
+          nolog, noactivity, underline, reverse, bold, bell, [1mhilite[22;0m, Color).
+          This should only be used with a [1mtrigger[22;0m (-t).
+          Default: none.  See: [1mattributes[22;0m.  
+
 #/def -P
 #-P
   -P[<[4mpart[24m>]<[4mattr[24m>[;[<[4mpart[24m>]<[4mattr[24m>]...  
