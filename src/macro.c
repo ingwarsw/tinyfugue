@@ -51,6 +51,8 @@ struct Macro {
     struct World *world;		/* only trig on text from world */
     int pri, num;
     attr_t attr;
+    attr_t match_attr;
+    int check_match_attr;
     int nsubattr;
     subattr_t *subattr;
     short prob, shots, invis;
@@ -223,6 +225,8 @@ static Macro *macro_spec(String *args, int offset, int *xmflag, ListOpts *listop
     VEC_ZERO(&spec->hook);
     spec->invis = 0;
     spec->attr = 0;
+    spec->match_attr = 0;
+    spec->check_match_attr = 0;
     spec->nsubattr = 0;
     spec->subattr = NULL;
     spec->flags = MACRO_TEMP;
@@ -230,7 +234,7 @@ static Macro *macro_spec(String *args, int offset, int *xmflag, ListOpts *listop
     spec->used[USED_NAME] = spec->used[USED_TRIG] =
 	spec->used[USED_HOOK] = spec->used[USED_KEY] = 0;
 
-    startopt(CS(args), "usSp#c#b:B:E:t:w:h:a:f:P:T:FiIn#1m:q" +
+    startopt(CS(args), "usSp#c#b:B:E:t:w:h:A:a:f:P:T:FiIn#1m:q" +
 	(listopts ? 0 : 3));
     while (!error && (opt = nextopt(&ptr, &uval, NULL, &offset))) {
         switch (opt) {
@@ -315,6 +319,11 @@ static Macro *macro_spec(String *args, int offset, int *xmflag, ListOpts *listop
         case 'a': case 'f':
             error = !parse_attrs(ptr, &attrs, 0);
             spec->attr = adj_attr(spec->attr, attrs);
+            break;
+        case 'A':
+            error = !parse_attrs(ptr, &attrs, 0);
+            spec->match_attr = adj_attr(spec->match_attr, attrs);
+            spec->check_match_attr = 1;
             break;
         case 'P':
             if ((error = (spec->nsubattr > 0))) {
@@ -1240,6 +1249,9 @@ static conString *print_def(TFILE *file, String *buffer, Macro *p)
     if (p->attr) {
 	Stringcat(attr2str(Stringcat(buffer, "-a"), p->attr), " ");
     }
+    if (p->check_match_attr) {
+	Stringcat(attr2str(Stringcat(buffer, "-A"), p->match_attr), " ");
+    }
     if (p->nsubattr > 0) {
 	int i;
 	mflag = MATCH_REGEXP;
@@ -1577,6 +1589,19 @@ int do_hook(int hooknum, const char *fmt, const char *argfmt, ...)
     return ran;
 }
 
+static int
+match_pattern_and_attrib_checks(String *text, Pattern *pattern, Macro *macro)
+{
+	/* If there's no check_match_attr, just match on pattern */
+	if (macro->check_match_attr == 0) {
+		return patmatch(pattern, CS(text), NULL);
+	}
+
+	/* If there's check_match_attr, match on pattern and attribute */
+	return (text->attrs == macro->match_attr)
+	    && patmatch(pattern, CS(text), NULL);
+}
+
 /* Find and run one or more matches for a hook or trig.
  * text is text to be matched; if NULL, *linep is used.
  * If %Pn subs are to be allowed, text should be NULL.
@@ -1675,7 +1700,17 @@ int find_and_run_matches(String *text, int hooknum, String **linep,
             if (!expr_condition) continue;
         }
         pattern = hooknum>=0 ? &macro->hargs : &macro->trig;
-        if ((hooknum>=0 && !macro->hargs.str) || patmatch(pattern, CS(text), NULL))
+	/* [adrian] is this it running a trigger? */
+	/* text->charattrs has attributes for each character */
+
+	/*
+	 * we would need to check it against those, or convert the string via
+	 * encode_attr() to run the match against.
+	 *
+	 * Also note: text->attrs is the whole-line attribute, text->charattrs
+	 * is the per-character attributes.
+	 */
+        if ((hooknum>=0 && !macro->hargs.str) || match_pattern_and_attrib_checks(text, pattern, macro))
 	{
 	    if (exec_list_long == 0) {
 		if (macro->fallthru) {
