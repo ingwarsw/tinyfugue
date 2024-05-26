@@ -204,7 +204,6 @@ fi
 dnl ########### programs ############
 
 AC_PROG_CC
-AC_PROG_GCC_TRADITIONAL
 dnl XXX STD_C=1, if compiler is standard
 
 dnl XXX
@@ -419,9 +418,20 @@ fi
 
 AC_CHECK_LIB(z, inflate, [], [AC_MSG_FAILURE([Cant find inflate in libz])])
 
-AC_CHECK_HEADERS([pcre.h], [], [AC_MSG_FAILURE([Cant find pcre.h])])
-AC_CHECK_LIB(pcre, pcre_compile, [], [AC_MSG_FAILURE([Can't find pcre])])
+AC_CHECK_HEADERS([pcre.h], WITH_PCRE=yes, WITH_PCRE=no)
+if test $WITH_PCRE = no ; then
+  AC_PATH_PROG([PCRE_CONFIG], [pcre-config], [false])
+  if test "$PCRE_CONFIG" != "false"; then
+    AC_MSG_NOTICE([using pcre-config to find extra flags])
+    CFLAGS="${CFLAGS} `$PCRE_CONFIG --cflags`"
+    LIBS="${LIBS} `$PCRE_CONFIG --libs`"
+    WITH_PCRE=yes
+  fi
+fi
 
+if test $WITH_PCRE = no; then
+    AC_MSG_ERROR([Cannot find pcre library.])
+fi
 dnl ########### headers ############
 
 AC_CHECK_HEADERS(unistd.h memory.h sys/select.h)
