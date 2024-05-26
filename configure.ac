@@ -419,9 +419,13 @@ AC_CHECK_LIB(z, inflate, [], [AC_MSG_FAILURE([Cant find inflate in libz])])
 
 AC_PATH_PROG([PCRE_CONFIG], [pcre-config], [false])
 if test "$PCRE_CONFIG" != "false"; then
+  PCRE_CFLAGS=`$PCRE_CONFIG --cflags`
+  PCRE_LIBS=`$PCRE_CONFIG --libs`
   AC_MSG_NOTICE([using pcre-config to find extra flags])
-  CFLAGS="${CFLAGS} `$PCRE_CONFIG --cflags`"
-  LIBS="${LIBS} `$PCRE_CONFIG --libs`"
+  CFLAGS="${CFLAGS} ${PCRE_CFLAGS}"
+  LIBS="${LIBS} ${PCRE_LIBS}"
+  AC_MSG_NOTICE([   ... CFLAGS: ${CFLAGS}])
+  AC_MSG_NOTICE([   ... LIBS: ${LIBS}])
 else
   AC_CHECK_HEADERS([pcre.h], WITH_PCRE=yes, WITH_PCRE=no)
   AC_CHECK_LIB(pcre, pcre_compile, [], [AC_MSG_FAILURE([Can't find pcre])])

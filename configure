@@ -5383,10 +5383,16 @@ fi
 
 
 if test "$PCRE_CONFIG" != "false"; then
+  PCRE_CFLAGS=`$PCRE_CONFIG --cflags`
+  PCRE_LIBS=`$PCRE_CONFIG --libs`
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: using pcre-config to find extra flags" >&5
 printf "%s\n" "$as_me: using pcre-config to find extra flags" >&6;}
-  CFLAGS="${CFLAGS} `$PCRE_CONFIG --cflags`"
-  LIBS="${LIBS} `$PCRE_CONFIG --libs`"
+  CFLAGS="${CFLAGS} ${PCRE_CFLAGS}"
+  LIBS="${LIBS} ${PCRE_LIBS}"
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}:    ... CFLAGS: ${CFLAGS}" >&5
+printf "%s\n" "$as_me:    ... CFLAGS: ${CFLAGS}" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}:    ... LIBS: ${LIBS}" >&5
+printf "%s\n" "$as_me:    ... LIBS: ${LIBS}" >&6;}
 else
          for ac_header in pcre.h
 do :
