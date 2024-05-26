@@ -11,13 +11,12 @@ on:
     
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python-version: ['3.8', '3.9', '3.10']
+        python-version: ['3.8','3.10', '3.12']
         opts:
           - "--enable-lua"
           - "--enable-python"
@@ -25,16 +24,35 @@ jobs:
 #          - "--enable-lua --enable-python"
     
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
-        if: runner.os == 'Linux'
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install packages on Linux
-        if: runner.os == 'Linux'
-        run: sudo apt-get install lua5.3 liblua5.3-dev
+        run: sudo apt-get install lua5.4 liblua5.4-dev
+      - name: Configure
+        run: ./configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
+      - name: Build
+        run: make
+      - name: Install
+        run: make install
+
+  build-maxos:
+    runs-on: macos-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.8','3.10', '3.12']
+        opts:
+#          - "--enable-lua"
+          - "--enable-python"
+          - "--disable-widechar"
+    #          - "--enable-lua --enable-python"
+
+    steps:
+      - uses: actions/checkout@v4
       - name: Install packages on MacOS
-        if: runner.os == 'macOS'
         run: |
           brew install lua pcre python@${{ matrix.python-version }}
           echo "/usr/local/opt/python@${{ matrix.python-version }}/bin" >> $GITHUB_PATH
@@ -45,6 +63,7 @@ jobs:
       - name: Install
         run: make install
 
+  # disable for now
   build_windows:
     # disable for now
     if: false
