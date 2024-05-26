@@ -16,6 +16,7 @@
 #include "expand.h"
 #include "attr.h"
 #include "parse.h"
+#include "variable.h"
 
 #include "lua.h"
 
@@ -25,14 +26,123 @@
 static int getvar_for_lua(lua_State *state)
 {
 	const char *arg;
-    const char *value;
+	const char *value;
 
-    arg = luaL_checkstring(state, 1);
-    if (arg == NULL || *arg == '\0')
-        return luaL_argerror(state, 1, "name must not be empty");
-    value = getvar(arg);
-    lua_pushstring(state, value);
+	arg = luaL_checkstring(state, 1);
+	if (arg == NULL || *arg == '\0')
+		return luaL_argerror(state, 1, "name must not be empty");
+
+	value = getvar(arg);
+	lua_pushstring(state, value);
 	return 1;
+}
+
+/*
+ * Set global TF variables from lua
+ *
+ * Requires two arguments - variable and contents.
+ *
+ * Contents type can be int, float, string, bool or nil.
+ * If contents type is nil, then unset the variable.
+ */
+static int setvar_for_lua(lua_State *state)
+{
+	const char *arg;
+	Var *var;
+
+	/* Get the argument */
+	arg = luaL_checkstring(state, 1);
+	if (arg == NULL || *arg == '\0')
+		return luaL_argerror(state, 1, "name must not be empty");
+
+	/*
+	 * Get the variable - will return a lua error, finish/terminate
+	 * the luaC call here
+	 */
+	luaL_checkany(state, 2);
+
+	/*
+	 * Find or create the global variable.
+	 */
+	var = findorcreateglobalvar(arg);
+
+	/* Set the variable contents based on the lua variable type */
+	switch (lua_type(state, 2)) {
+	case LUA_TNUMBER:
+		{
+			/* handle integer or number (float) */
+			if (lua_isinteger(state, 2)) {
+				lua_Integer i;
+
+				i = luaL_checkinteger(state, 2);
+				set_int_var_direct(var, TYPE_INT, (int) i);
+			} else {
+				lua_Number i;
+
+				i = luaL_checknumber(state, 2);
+				set_float_var_direct(var, TYPE_FLOAT, (float) i);
+			}
+			break;
+		}
+	case LUA_TBOOLEAN:
+		{
+			int i;
+
+			i = lua_toboolean(state, 2);
+			set_int_var_direct(var, TYPE_INT, (int) i);
+			break;
+		}
+	case LUA_TSTRING:
+		{
+			const char *s;
+
+			s = luaL_checkstring(state, 2);
+			set_str_var_direct(var, TYPE_STR,
+			    CS(Stringnew(s, -1, 0)));
+			break;
+		}
+	case LUA_TNIL:
+		/* Setting it to nil == just straight unset */
+		(void) unsetvar(var);
+		break;
+	default:
+		return luaL_argerror(state, 2, "unknown arg type");
+	}
+
+	lua_pushboolean(state, 1);
+	return 1;
+}
+
+/*
+ * Unset a global variable.
+ *
+ * Useful for things that are eg exported as environment variables,
+ * on the status line, etc.
+ *
+ * Takes one lua arg - the variable name.
+ *
+ * Returns: lua bool = true if success, false if failure
+ */
+static int unsetvar_for_lua(lua_State *state)
+{
+	const char *arg;
+	int ret;
+	Var *val;
+
+	arg = luaL_checkstring(state, 1);
+	if (arg == NULL || *arg == '\0')
+		return luaL_argerror(state, 1, "name must not be empty");
+
+	val = ffindglobalvar(arg);
+
+	if (val == NULL) {
+		lua_pushboolean(state, 0);
+		return 0;
+	}
+
+	ret = unsetvar(val);
+	lua_pushboolean(state, !! ret == 1);
+	return ret == 1;
 }
 
 // it's the function that Lua scripts will see as "tfexec"
@@ -48,6 +158,102 @@ static int tfeval_for_lua(lua_State *state)
 
 	return 0;
 }
+
+/*
+ * send() for lua code.
+ *
+ * This takes three parameters:
+ *
+ * string - required, the string to echo
+ * world - optional, may be nil, blank or the world
+ * flags - optiona, may be nil, blank or flags
+ *
+ * Returns 1 if the send was successful, 0 otherwise.
+ */
+static int tfsendstr_for_lua(lua_State *state)
+{
+	String *func;
+	const char *world = NULL;
+	const char *flags = NULL;
+	const char *str = luaL_checkstring(state, 1);
+	int ret;
+
+	/*
+	 * world and flags are optional
+	 *
+	 * Check that they're a string before using them.
+	 * Calling lua_tolstring() on a number field will
+	 * convert it to a string first and that may break
+	 * things like iterators.
+	 */
+	if (lua_type(state, 2) == LUA_TSTRING) {
+		world = lua_tolstring(state, 2, NULL);
+	}
+	if (lua_type(state, 3) == LUA_TSTRING) {
+		flags = lua_tolstring(state, 3, NULL);
+	}
+
+	(func = Stringnew(str, -1, 0))->links++;
+	ret = handle_send_function(CS(func),
+	    world ? world : "" ,
+	    flags ? flags : "" );
+	Stringfree(func);
+
+	lua_pushinteger(state, ret);
+
+	return ret;
+}
+
+/*
+ * send() for lua code, but with a variable, not a string.
+ *
+ * Useful if send() is to send a string with attributes.
+ *
+ * This takes three parameters:
+ *
+ * var - required, the variable to echo
+ * world - optional, may be nil, blank or the world
+ * flags - optiona, may be nil, blank or flags
+ *
+ * Returns 1 if the send was successful, 0 otherwise.
+ */
+static int tfsendvar_for_lua(lua_State *state)
+{
+	Var *var;
+	const char *world = NULL;
+	const char *flags = NULL;
+	int ret;
+
+	var = ffindglobalvar(luaL_checkstring(state, 1));
+	if (var == NULL) {
+		return luaL_argerror(state, 1, "non-existent variable");
+	}
+
+	/*
+	 * world and flags are optional
+	 *
+	 * Check that they're a string before using them.
+	 * Calling lua_tolstring() on a number field will
+	 * convert it to a string first and that may break
+	 * things like iterators.
+	 */
+	if (lua_type(state, 2) == LUA_TSTRING) {
+		world = lua_tolstring(state, 2, NULL);
+	}
+	if (lua_type(state, 3) == LUA_TSTRING) {
+		flags = lua_tolstring(state, 2, NULL);
+	}
+
+	ret = handle_send_function(valstr(&var->val),
+	    world ? world : "" ,
+	    flags ? flags : "" );
+
+	lua_pushinteger(state, ret);
+
+	return ret;
+}
+
+
 
 lua_State *lua_state = NULL;
 
@@ -134,8 +340,11 @@ struct Value *handle_loadlua_command(String *args, int offset)
 
 		// add our tf_eval() function for Lua scripts to call
 		lua_register(lua_state, "tf_eval", tfeval_for_lua);
-		// add tf_getvar() function
-        lua_register(lua_state, "tf_getvar", getvar_for_lua);
+		lua_register(lua_state, "tf_getvar", getvar_for_lua);
+		lua_register(lua_state, "tf_setvar", setvar_for_lua);
+		lua_register(lua_state, "tf_unsetvar", unsetvar_for_lua);
+		lua_register(lua_state, "tf_sendstr", tfsendstr_for_lua);
+		lua_register(lua_state, "tf_sendvar", tfsendvar_for_lua);
 	}
 
 	// now read and execute the scripts that user asked for
