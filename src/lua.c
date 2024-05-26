@@ -26,13 +26,14 @@
 static int getvar_for_lua(lua_State *state)
 {
 	const char *arg;
-    const char *value;
+	const char *value;
 
-    arg = luaL_checkstring(state, 1);
-    if (arg == NULL || *arg == '\0')
-        return luaL_argerror(state, 1, "name must not be empty");
-    value = getvar(arg);
-    lua_pushstring(state, value);
+	arg = luaL_checkstring(state, 1);
+	if (arg == NULL || *arg == '\0')
+		return luaL_argerror(state, 1, "name must not be empty");
+
+	value = getvar(arg);
+	lua_pushstring(state, value);
 	return 1;
 }
 
