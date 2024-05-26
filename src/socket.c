@@ -3530,6 +3530,24 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                 continue;  /* avoid non-telnet processing */
 
             } else if (xsock->fsastate == TN_SB) {
+                    /*
+                     * Flush existing data before handling subnegotiation.
+                     *
+                     * This is needed for the handful of situations where
+                     * things like GMCP/ATCP messages happen to be wrapping
+                     * the incoming text lines rather than a purely out of
+                     * band notification.
+                     *
+                     * Ideally the server would send an EOR or GA here,
+                     * but MUDs use that to terminate the prompt line.
+                     */
+#if WIDECHAR
+		    inbound_decode_str(xsock->buffer, incomingposttelnet,
+                        incomingFSM, 0);
+#endif
+		    handle_socket_input_queue_lines(xsock);
+		    flushxsock();
+
 		if (xsock->subbuffer->len > RECEIVELIMIT) {
 		    /* It shouldn't take this long; server is broken.  Abort. */
 		    SStringcat(xsock->buffer, CS(xsock->subbuffer));
