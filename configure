@@ -5333,21 +5333,7 @@ esac
 fi
 
 
-       for ac_header in pcre.h
-do :
-  ac_fn_c_check_header_compile "$LINENO" "pcre.h" "ac_cv_header_pcre_h" "$ac_includes_default"
-if test "x$ac_cv_header_pcre_h" = xyes
-then :
-  printf "%s\n" "#define HAVE_PCRE_H 1" >>confdefs.h
- WITH_PCRE=yes
-else case e in #(
-  e) WITH_PCRE=no ;;
-esac
-fi
-
-done
-if test $WITH_PCRE = no ; then
-  # Extract the first word of "pcre-config", so it can be a program name with args.
+# Extract the first word of "pcre-config", so it can be a program name with args.
 set dummy pcre-config; ac_word=$2
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 printf %s "checking for $ac_word... " >&6; }
@@ -5394,18 +5380,84 @@ printf "%s\n" "no" >&6; }
 fi
 
 
-  if test "$PCRE_CONFIG" != "false"; then
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: using pcre-config to find extra flags" >&5
+if test "$PCRE_CONFIG" != "false"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: using pcre-config to find extra flags" >&5
 printf "%s\n" "$as_me: using pcre-config to find extra flags" >&6;}
-    CFLAGS="${CFLAGS} `$PCRE_CONFIG --cflags`"
-    LIBS="${LIBS} `$PCRE_CONFIG --libs`"
-    WITH_PCRE=yes
-  fi
+  CFLAGS="${CFLAGS} `$PCRE_CONFIG --cflags`"
+  LIBS="${LIBS} `$PCRE_CONFIG --libs`"
+else
+         for ac_header in pcre.h
+do :
+  ac_fn_c_check_header_compile "$LINENO" "pcre.h" "ac_cv_header_pcre_h" "$ac_includes_default"
+if test "x$ac_cv_header_pcre_h" = xyes
+then :
+  printf "%s\n" "#define HAVE_PCRE_H 1" >>confdefs.h
+ WITH_PCRE=yes
+else case e in #(
+  e) WITH_PCRE=no ;;
+esac
 fi
 
-if test $WITH_PCRE = no; then
-    as_fn_error $? "Cannot find pcre library." "$LINENO" 5
+done
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for pcre_compile in -lpcre" >&5
+printf %s "checking for pcre_compile in -lpcre... " >&6; }
+if test ${ac_cv_lib_pcre_pcre_compile+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) ac_check_lib_save_LIBS=$LIBS
+LIBS="-lpcre  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.
+   The 'extern "C"' is for builds by C++ compilers;
+   although this is not generally supported in C code supporting it here
+   has little cost and some practical benefit (sr 110532).  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char pcre_compile (void);
+int
+main (void)
+{
+return pcre_compile ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  ac_cv_lib_pcre_pcre_compile=yes
+else case e in #(
+  e) ac_cv_lib_pcre_pcre_compile=no ;;
+esac
 fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_pcre_pcre_compile" >&5
+printf "%s\n" "$ac_cv_lib_pcre_pcre_compile" >&6; }
+if test "x$ac_cv_lib_pcre_pcre_compile" = xyes
+then :
+  printf "%s\n" "#define HAVE_LIBPCRE 1" >>confdefs.h
+
+  LIBS="-lpcre $LIBS"
+
+else case e in #(
+  e) { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in '$ac_pwd':" >&5
+printf "%s\n" "$as_me: error: in '$ac_pwd':" >&2;}
+as_fn_error $? "Can't find pcre
+See 'config.log' for more details" "$LINENO" 5; } ;;
+esac
+fi
+
+fi
+
 
 ac_fn_c_check_header_compile "$LINENO" "unistd.h" "ac_cv_header_unistd_h" "$ac_includes_default"
 if test "x$ac_cv_header_unistd_h" = xyes
