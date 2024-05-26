@@ -667,6 +667,8 @@ LUA_PLATFORM
 LUA_SHORT_VERSION
 LUA_VERSION
 LUA
+SED
+GREP
 OTHER_OBJS
 ICU_LIBS
 ICU_CXXFLAGS
@@ -6672,6 +6674,157 @@ CPPFLAGS="${CPPFLAGS} -DDATADIR=\${datadir}"
 if test "$enable_lua" = "yes"; then
 	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: LUA scripting enabled." >&5
 printf "%s\n" "$as_me: LUA scripting enabled." >&6;}
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for grep that handles long lines and -e" >&5
+printf %s "checking for grep that handles long lines and -e... " >&6; }
+if test ${ac_cv_path_GREP+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) if test -z "$GREP"; then
+  ac_path_GREP_found=false
+  # Loop through the user's path and test for each of PROGNAME-LIST
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH$PATH_SEPARATOR/usr/xpg4/bin
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_prog in grep ggrep
+   do
+    for ac_exec_ext in '' $ac_executable_extensions; do
+      ac_path_GREP="$as_dir$ac_prog$ac_exec_ext"
+      as_fn_executable_p "$ac_path_GREP" || continue
+# Check for GNU ac_path_GREP and select it if it is found.
+  # Check for GNU $ac_path_GREP
+case `"$ac_path_GREP" --version 2>&1` in #(
+*GNU*)
+  ac_cv_path_GREP="$ac_path_GREP" ac_path_GREP_found=:;;
+#(
+*)
+  ac_count=0
+  printf %s 0123456789 >"conftest.in"
+  while :
+  do
+    cat "conftest.in" "conftest.in" >"conftest.tmp"
+    mv "conftest.tmp" "conftest.in"
+    cp "conftest.in" "conftest.nl"
+    printf "%s\n" 'GREP' >> "conftest.nl"
+    "$ac_path_GREP" -e 'GREP$' -e '-(cannot match)-' < "conftest.nl" >"conftest.out" 2>/dev/null || break
+    diff "conftest.out" "conftest.nl" >/dev/null 2>&1 || break
+    as_fn_arith $ac_count + 1 && ac_count=$as_val
+    if test $ac_count -gt ${ac_path_GREP_max-0}; then
+      # Best one so far, save it but keep looking for a better one
+      ac_cv_path_GREP="$ac_path_GREP"
+      ac_path_GREP_max=$ac_count
+    fi
+    # 10*(2^10) chars as input seems more than enough
+    test $ac_count -gt 10 && break
+  done
+  rm -f conftest.in conftest.tmp conftest.nl conftest.out;;
+esac
+
+      $ac_path_GREP_found && break 3
+    done
+  done
+  done
+IFS=$as_save_IFS
+  if test -z "$ac_cv_path_GREP"; then
+    as_fn_error $? "no acceptable grep could be found in $PATH$PATH_SEPARATOR/usr/xpg4/bin" "$LINENO" 5
+  fi
+else
+  ac_cv_path_GREP=$GREP
+fi
+ ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_path_GREP" >&5
+printf "%s\n" "$ac_cv_path_GREP" >&6; }
+ GREP="$ac_cv_path_GREP"
+
+
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for a sed that does not truncate output" >&5
+printf %s "checking for a sed that does not truncate output... " >&6; }
+if test ${ac_cv_path_SED+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e)           ac_script=s/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb/
+     for ac_i in 1 2 3 4 5 6 7; do
+       ac_script="$ac_script$as_nl$ac_script"
+     done
+     echo "$ac_script" 2>/dev/null | sed 99q >conftest.sed
+     { ac_script=; unset ac_script;}
+     if test -z "$SED"; then
+  ac_path_SED_found=false
+  # Loop through the user's path and test for each of PROGNAME-LIST
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_prog in sed gsed
+   do
+    for ac_exec_ext in '' $ac_executable_extensions; do
+      ac_path_SED="$as_dir$ac_prog$ac_exec_ext"
+      as_fn_executable_p "$ac_path_SED" || continue
+# Check for GNU ac_path_SED and select it if it is found.
+  # Check for GNU $ac_path_SED
+case `"$ac_path_SED" --version 2>&1` in #(
+*GNU*)
+  ac_cv_path_SED="$ac_path_SED" ac_path_SED_found=:;;
+#(
+*)
+  ac_count=0
+  printf %s 0123456789 >"conftest.in"
+  while :
+  do
+    cat "conftest.in" "conftest.in" >"conftest.tmp"
+    mv "conftest.tmp" "conftest.in"
+    cp "conftest.in" "conftest.nl"
+    printf "%s\n" '' >> "conftest.nl"
+    "$ac_path_SED" -f conftest.sed < "conftest.nl" >"conftest.out" 2>/dev/null || break
+    diff "conftest.out" "conftest.nl" >/dev/null 2>&1 || break
+    as_fn_arith $ac_count + 1 && ac_count=$as_val
+    if test $ac_count -gt ${ac_path_SED_max-0}; then
+      # Best one so far, save it but keep looking for a better one
+      ac_cv_path_SED="$ac_path_SED"
+      ac_path_SED_max=$ac_count
+    fi
+    # 10*(2^10) chars as input seems more than enough
+    test $ac_count -gt 10 && break
+  done
+  rm -f conftest.in conftest.tmp conftest.nl conftest.out;;
+esac
+
+      $ac_path_SED_found && break 3
+    done
+  done
+  done
+IFS=$as_save_IFS
+  if test -z "$ac_cv_path_SED"; then
+    as_fn_error $? "no acceptable sed could be found in \$PATH" "$LINENO" 5
+  fi
+else
+  ac_cv_path_SED=$SED
+fi
+ ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_cv_path_SED" >&5
+printf "%s\n" "$ac_cv_path_SED" >&6; }
+ SED="$ac_cv_path_SED"
+  rm -f conftest.sed
+
+
+
+
 
 
 
@@ -6734,21 +6887,35 @@ test -n "$LUA" || LUA=":"
 fi
     ax_display_LUA='lua'
 
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if $LUA is a Lua interpreter" >&5
+    if test "x$LUA" != 'x:'
+then :
+           { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if $LUA is a Lua interpreter" >&5
 printf %s "checking if $LUA is a Lua interpreter... " >&6; }
 
-    if $LUA -e "print('Hello ' .. _VERSION .. '!')" >/dev/null 2>&1
+      _ax_lua_factorial=`$LUA 2>/dev/null -e '
+    -- a simple factorial
+    function fact (n)
+      if n == 0 then
+        return 1
+      else
+        return n * fact(n-1)
+      end
+    end
+    print("fact(5) is " .. fact(5))'`
+  if test "$_ax_lua_factorial" = 'fact(5) is 120'
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 else case e in #(
   e)  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-        as_fn_error $? "not a Lua interpreter" "$LINENO" 5
-       ;;
+            as_fn_error $? "not a Lua interpreter" "$LINENO" 5
+           ;;
 esac
 fi
 
+
+fi
 
 
   if test "x$LUA" = 'x:'
@@ -6762,7 +6929,11 @@ if test ${ax_cv_lua_version+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
-  e)  ax_cv_lua_version=`$LUA -e 'print(_VERSION:match "(%d+%.%d+)")'`  ;;
+  e)                  ax_cv_lua_version=`$LUA -e '
+          -- return a version number in X.Y format
+          local _, _, ver = string.find(_VERSION, "^Lua (%d+%.%d+)")
+          print(ver)'`
+       ;;
 esac
 fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ax_cv_lua_version" >&5
@@ -6773,7 +6944,7 @@ then :
 fi
     LUA_VERSION=$ax_cv_lua_version
 
-    LUA_SHORT_VERSION=`echo "$LUA_VERSION" | sed 's|\.||'`
+    LUA_SHORT_VERSION=`echo "$LUA_VERSION" | $SED 's|\.||'`
 
 
                 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ax_display_LUA platform" >&5
@@ -6782,7 +6953,7 @@ if test ${ax_cv_lua_platform+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
-  e) ax_cv_lua_platform=`$LUA -e "print('unknown')"` ;;
+  e) ax_cv_lua_platform=`$LUA -e 'print("unknown")'` ;;
 esac
 fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ax_cv_lua_platform" >&5
@@ -6813,27 +6984,38 @@ fi
 
 
 
-  ax_lua_prefixed_path=''
-  _ax_package_paths=`$LUA -e 'print(package.path)' 2>/dev/null | sed 's|;|\n|g'`
-    for _ax_package_path in $_ax_package_paths; do
-        _ax_path_parts=`echo "$_ax_package_path" | sed 's|/|\n|g'`
-    _ax_reassembled=''
-    for _ax_path_part in $_ax_path_parts; do
-      echo "$_ax_path_part" | grep '\?' >/dev/null && break
-      _ax_reassembled="$_ax_reassembled/$_ax_path_part"
-    done
-        _ax_package_path=$_ax_reassembled
-    if echo "$_ax_package_path" | grep "^$ax_lua_prefix" >/dev/null; then
-            ax_lua_prefixed_path=$_ax_package_path
-      break
-    fi
-  done
+  ax_lua_prefixed_path=`$LUA -e '
+    -- get the path based on search type
+    local searchtype = "script"
+    local paths = ""
+    if searchtype == "script" then
+      paths = (package and package.path) or LUA_PATH
+    elseif searchtype == "module" then
+      paths = (package and package.cpath) or LUA_CPATH
+    end
+    -- search for the prefix
+    local prefix = "'$ax_lua_prefix'"
+    local minpath = ""
+    local mindepth = 1e9
+    string.gsub(paths, "([^;]+)",
+      function (path)
+        path = string.gsub(path, "%?.*$", "")
+        path = string.gsub(path, "/[^/]*$", "")
+        if string.find(path, prefix) then
+          local depth = string.len(string.gsub(path, "[^/]", ""))
+          if depth < mindepth then
+            minpath = path
+            mindepth = depth
+          end
+        end
+      end)
+    print(minpath)'`
 
         if test "x$ax_lua_prefixed_path" != 'x'
 then :
-             _ax_strip_prefix=`echo "$ax_lua_prefix" | sed 's|.|.|g'`
+             _ax_strip_prefix=`echo "$ax_lua_prefix" | $SED 's|.|.|g'`
           ax_cv_lua_luadir=`echo "$ax_lua_prefixed_path" | \
-            sed "s,^$_ax_strip_prefix,$LUA_PREFIX,"`
+            $SED "s|^$_ax_strip_prefix|$LUA_PREFIX|"`
 
 fi
        ;;
@@ -6864,27 +7046,38 @@ fi
 
 
 
-  ax_lua_prefixed_path=''
-  _ax_package_paths=`$LUA -e 'print(package.cpath)' 2>/dev/null | sed 's|;|\n|g'`
-    for _ax_package_path in $_ax_package_paths; do
-        _ax_path_parts=`echo "$_ax_package_path" | sed 's|/|\n|g'`
-    _ax_reassembled=''
-    for _ax_path_part in $_ax_path_parts; do
-      echo "$_ax_path_part" | grep '\?' >/dev/null && break
-      _ax_reassembled="$_ax_reassembled/$_ax_path_part"
-    done
-        _ax_package_path=$_ax_reassembled
-    if echo "$_ax_package_path" | grep "^$ax_lua_exec_prefix" >/dev/null; then
-            ax_lua_prefixed_path=$_ax_package_path
-      break
-    fi
-  done
+  ax_lua_prefixed_path=`$LUA -e '
+    -- get the path based on search type
+    local searchtype = "module"
+    local paths = ""
+    if searchtype == "script" then
+      paths = (package and package.path) or LUA_PATH
+    elseif searchtype == "module" then
+      paths = (package and package.cpath) or LUA_CPATH
+    end
+    -- search for the prefix
+    local prefix = "'$ax_lua_exec_prefix'"
+    local minpath = ""
+    local mindepth = 1e9
+    string.gsub(paths, "([^;]+)",
+      function (path)
+        path = string.gsub(path, "%?.*$", "")
+        path = string.gsub(path, "/[^/]*$", "")
+        if string.find(path, prefix) then
+          local depth = string.len(string.gsub(path, "[^/]", ""))
+          if depth < mindepth then
+            minpath = path
+            mindepth = depth
+          end
+        end
+      end)
+    print(minpath)'`
 
         if test "x$ax_lua_prefixed_path" != 'x'
 then :
-             _ax_strip_prefix=`echo "$ax_lua_exec_prefix" | sed 's|.|.|g'`
+             _ax_strip_prefix=`echo "$ax_lua_exec_prefix" | $SED 's|.|.|g'`
           ax_cv_lua_luaexecdir=`echo "$ax_lua_prefixed_path" | \
-            sed "s,^$_ax_strip_prefix,$LUA_EXEC_PREFIX,"`
+            $SED "s|^$_ax_strip_prefix|$LUA_EXEC_PREFIX|"`
 
 fi
        ;;
@@ -7185,10 +7378,11 @@ return lua_load ();
 }
 _ACEOF
 for ac_lib in ''  lua$LUA_VERSION \
-                     lua$LUA_SHORT_VERSION \
-                     lua-$LUA_VERSION \
-                     lua-$LUA_SHORT_VERSION \
-                     lua
+        lua$LUA_SHORT_VERSION \
+        lua-$LUA_VERSION \
+        lua-$LUA_SHORT_VERSION \
+        lua \
+
 do
   if test -z "$ac_lib"; then
     ac_res="none required"
@@ -7266,7 +7460,7 @@ fi
 
 
 
-    LUA_SHORT_VERSION=`echo "$LUA_VERSION" | sed 's|\.||'`
+    LUA_SHORT_VERSION=`echo "$LUA_VERSION" | $SED 's|\.||'`
 
 
     _ax_lua_saved_cppflags=$CPPFLAGS
@@ -7302,6 +7496,7 @@ fi
          test "x$ac_cv_header_lua_h" != 'xyes'
 then :
          for _ax_include_path in  /usr/include/lua$LUA_VERSION \
+      /usr/include/lua-$LUA_VERSION \
       /usr/include/lua/$LUA_VERSION \
       /usr/include/lua$LUA_SHORT_VERSION \
       /usr/local/include/lua$LUA_VERSION \
@@ -7360,81 +7555,81 @@ fi
 
 fi
 
-  if test "x$ac_cv_header_lua_h" = 'xyes' && test "x$cross_compiling" != 'xyes'
+  if test "x$ac_cv_header_lua_h" = 'xyes'
 then :
 
-      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Lua header version" >&5
+      if test "x$cross_compiling" != 'xyes'
+then :
+   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Lua header version" >&5
 printf %s "checking for Lua header version... " >&6; }
 if test ${ax_cv_lua_header_version+y}
 then :
   printf %s "(cached) " >&6
 else case e in #(
   e)  _ax_lua_saved_cppflags=$CPPFLAGS
-          CPPFLAGS="$CPPFLAGS $LUA_INCLUDE"
-          if test "$cross_compiling" = yes
-then :
-  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in '$ac_pwd':" >&5
-printf "%s\n" "$as_me: error: in '$ac_pwd':" >&2;}
-as_fn_error $? "cannot run test program while cross compiling
-See 'config.log' for more details" "$LINENO" 5; }
-else case e in #(
-  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
+              CPPFLAGS="$CPPFLAGS $LUA_INCLUDE"
+              if ac_fn_c_compute_int "$LINENO" "LUA_VERSION_NUM/100" "ax_cv_lua_header_version_major"        "$ac_includes_default
 #include <lua.h>
-#include <stdlib.h>
-#include <stdio.h>
-int main(int argc, char ** argv)
-{
-  if(argc > 1) printf("%s", LUA_VERSION);
-  exit(EXIT_SUCCESS);
-}
-
-
-_ACEOF
-if ac_fn_c_try_run "$LINENO"
+"
 then :
-   ax_cv_lua_header_version=`./conftest$EXEEXT p | \
-                sed "s|^Lua \(.*\)|\1|" | \
-                grep -E -o "^[0-9]+\.[0-9]+"`
 
 else case e in #(
-  e) ax_cv_lua_header_version='unknown' ;;
-esac
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext ;;
+  e) ax_cv_lua_header_version_major=unknown ;;
 esac
 fi
 
-          CPPFLAGS=$_ax_lua_saved_cppflags
-         ;;
+              if ac_fn_c_compute_int "$LINENO" "LUA_VERSION_NUM%100" "ax_cv_lua_header_version_minor"        "$ac_includes_default
+#include <lua.h>
+"
+then :
+
+else case e in #(
+  e) ax_cv_lua_header_version_minor=unknown ;;
+esac
+fi
+
+              if test "x$ax_cv_lua_header_version_major" = xunknown || test "x$ax_cv_lua_header_version_minor" = xunknown
+then :
+
+                ax_cv_lua_header_version=unknown
+
+else case e in #(
+  e)
+                ax_cv_lua_header_version="$ax_cv_lua_header_version_major.$ax_cv_lua_header_version_minor"
+               ;;
+esac
+fi
+              CPPFLAGS=$_ax_lua_saved_cppflags
+             ;;
 esac
 fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ax_cv_lua_header_version" >&5
 printf "%s\n" "$ax_cv_lua_header_version" >&6; }
 
-            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if Lua header version matches $LUA_VERSION" >&5
+                    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if Lua header version matches $LUA_VERSION" >&5
 printf %s "checking if Lua header version matches $LUA_VERSION... " >&6; }
-      if test "x$ax_cv_lua_header_version" = "x$LUA_VERSION"
+          if test "x$ax_cv_lua_header_version" = "x$LUA_VERSION"
 then :
    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
-          ax_header_version_match='yes'
+              ax_header_version_match='yes'
 
 else case e in #(
   e)  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-          ax_header_version_match='no'
-         ;;
+              ax_header_version_match='no'
+             ;;
 esac
 fi
 
 else case e in #(
-  e)
-        ax_header_version_match='yes'
-     ;;
+  e)  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: cross compiling so assuming header version number matches" >&5
+printf "%s\n" "$as_me: WARNING: cross compiling so assuming header version number matches" >&2;}
+          ax_header_version_match='yes'
+         ;;
 esac
+fi
+
 fi
 
     if test "x$ax_header_version_match" != 'xyes' &&

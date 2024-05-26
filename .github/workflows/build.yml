@@ -32,7 +32,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install packages on Linux
         if: runner.os == 'Linux'
-        run: sudo apt-get install lua5.3 liblua5.3-dev
+        run: sudo apt-get install lua5.4 liblua5.4-dev
       - name: Install packages on MacOS
         if: runner.os == 'macOS'
         run: |
