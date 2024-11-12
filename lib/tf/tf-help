@@ -8462,10 +8462,12 @@ Protocols
     /set ssl_continue
     /set ssl_depth
     /set ssl_verbose
+    /set ssl_insecure
 
   See: [1mprotocols[22;0m, [1mfeatures[22;0m, [1mconnect[22;0m, [1maddworld[22;0m, [1mworlds[22;0m, [1mfields[22;0m, [1mlistsockets[22;0m, 
   [1mspecial variables[22;0m, [1mssl_ca_dir[22;0m, [1mssl_ca_file[22;0m, [1mssl_continue[22;0m, [1mssl_depth[22;0m, 
-  [1mssl_verbose[22;0m
+  [1mssl_verbose[22;0m, [1mssl_insecure[22;0m
+
 
 &firewall
 &proxy
@@ -9550,6 +9552,11 @@ Special global variables
 #%ssl_verbose
   [1mssl_verbose[22m=on
           Show cert chain when connecting.
+
+#ssl_insecure
+#%ssl_insecure
+  [1mssl_insecure[22m=on
+          Allow older less secure TLSv1 routines.
 
 #start_color
 #%start_color
