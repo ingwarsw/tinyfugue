@@ -247,6 +247,7 @@ enum Vars {
 #define ssl_continue	getintvar(VAR_ssl_continue)
 #define ssl_depth	getintvar(VAR_ssl_depth)
 #define ssl_verbose	getintvar(VAR_ssl_verbose)
+#define ssl_insecure getintvar(VAR_ssl_insecure)
 #define status_attr	getattrvar(VAR_stat_attr)
 #define status_fields	getstdvar(VAR_stat_fields)
 #define status_height	getintvar(VAR_stat_height)

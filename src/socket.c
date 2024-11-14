@@ -677,10 +677,17 @@ static void init_ssl(void)
     SSL_load_error_strings();
     SSL_library_init();
     /* XXX seed PRNG */
+    if( ssl_insecure ) {
+    ssl_ctx = SSL_CTX_new(TLSv1_client_method());
+    } else {
     ssl_ctx = SSL_CTX_new(SSLv23_client_method());
+    }
     if (!ssl_ctx) {
 	ssl_err("SSL_CTX_new");
 	return;
+    }
+    if( ssl_insecure ) {
+        SSL_CTX_set_security_level(ssl_ctx,0);
     }
     if (!SSL_CTX_set_cipher_list(ssl_ctx, "ALL")) {
 	ssl_err("SSL_CTX_set_cipher_list");
