@@ -201,7 +201,7 @@ static struct Value* pyvar_to_tfvar( PyObject *pRc )
 {
 	struct Value *rc;
 	char *cstr;
-	int len; // Py_ssize_t len;
+	long int len; // Py_ssize_t len;
 
 	// can be null if exception was thrown
 	if( !pRc ) {
