@@ -466,7 +466,7 @@ struct Value *handle_python_command( String *args, int offset )
 	return pyvar_to_tfvar( pRc );
 }
 
-struct Value *handle_python_function( conString *args, int offset )
+struct Value *handle_python_function( conString *args )
 {
 	PyObject *pRc;
 

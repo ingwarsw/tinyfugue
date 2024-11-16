@@ -974,7 +974,7 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
 #ifdef TFPYTHON
         case FN_python:
 		{
-			struct Value *rv = handle_python_function( opdstr(n-0), 0 );
+			struct Value *rv = handle_python_function( opdstr(n-0) );
 			if( !rv ) {
 				return shareval(val_zero);
 			} else {
