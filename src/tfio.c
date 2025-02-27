@@ -176,6 +176,7 @@ void free_screen(Screen *screen)
 /* tfopen - opens a TFILE.
  * Mode "q" will create a TF_QUEUE.
  * Mode "p" will open a command pipe for reading.
+ * Mode "P" will open a command pipe for reading and writing.
  * Modes "w", "r", and "a" open a regular file for read, write, or append.
  * If mode is "r", and the file is not found, will look for a compressed copy.
  * If tfopen() fails, it will return NULL with errno set as in fopen();
@@ -214,7 +215,7 @@ TFILE *tfopen(const char *name, const char *mode)
         return NULL;
     }
 
-    if (*mode == 'p') {
+    if (*mode == 'p' || *mode == 'P') {
 #ifdef __CYGWIN32__
         eprintf("TF does not support pipes under cygwin32.");
         errno = EPIPE;
@@ -224,12 +225,20 @@ TFILE *tfopen(const char *name, const char *mode)
 	    errno = EPERM;
 	    return NULL;
 	}
-        if (!(fp = popen(name, "r"))) return NULL;
+        if (*mode == 'P') {
+          if (!(fp = popen(name, "r+"))) return NULL;
+        } else {
+          if (!(fp = popen(name, "r"))) return NULL;
+        }
         result = (TFILE *)XMALLOC(sizeof(TFILE));
         result->type = TF_PIPE;
         result->name = STRDUP(name);
         result->id = -1;
-        result->mode = S_IRUSR;
+        if (*mode == 'P') {
+          result->mode = S_IRUSR | S_IWUSR;
+        } else {
+          result->mode = S_IRUSR;
+        }
         result->tfmode = *mode;
         result->autoflush = 1;
         result->node = NULL;
@@ -918,7 +927,7 @@ int handle_tfopen_func(const char *name, const char *mode)
         return -1;
     }
 
-    if (mode[1] || !strchr("rwapq", mode[0])) {
+    if (mode[1] || !strchr("rwaPpq", mode[0])) {
         eprintf("invalid mode '%s'", mode);
         return -1;
     }
