@@ -1,6 +1,12 @@
 Only the most recent version will have detailed changes described.
 Some fixes are followed by the version in which the problem first appeared.
 
+5.1 - Moving over code from tinyfugue5-msdp!
++----------
++Negotiates MSDP with remote server.
++Added /msdp command to send MSDP frames to server
++MSDP responses cause triggers and update variables
+
 5.0
 ---
 If you have not yet read all changes since 4.0 stable 1, please do now.

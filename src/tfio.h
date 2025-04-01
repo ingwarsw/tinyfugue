@@ -9,6 +9,8 @@
 #ifndef TFIO_H
 #define TFIO_H
 
+#include "tf.h"
+
 #ifdef _POSIX_VERSION
 # include <sys/types.h>
 # define MODE_T mode_t
@@ -19,6 +21,7 @@
 #include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "pattern.h"
 #ifndef S_IROTH
 # define S_IWUSR 00200
 # define S_IRUSR 00400

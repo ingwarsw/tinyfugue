@@ -66,6 +66,7 @@ defcmd("LOADLUA"     , handle_loadlua_command    , 0)
 #endif
 defcmd("LOCALECHO"   , handle_localecho_command   , 0)
 defcmd("LOG"         , handle_log_command         , 0)
+defcmd("MSDP"        , handle_msdp_command        , 0)
 defcmd("PS"          , handle_ps_command          , 0)
 defcmd("PURGE"       , handle_purge_command       , 0)
 #if LUA_ENABLED

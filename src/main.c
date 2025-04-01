@@ -47,7 +47,7 @@ const char sysname[] = UNAME;
  */
 const char version[] = TFVERSION;
 
-const char mods[] = "Ingwar Swenson (ingwar@ingwar.eu.org) +ansi_log +log_timestamp +lua +gmcp +ATCP +GMCP +option102";
+const char mods[] = "Ingwar Swenson (ingwar@ingwar.eu.org) +ansi_log +log_timestamp +lua +gmcp +ATCP +GMCP +option102 +MSDP support written by Harik <git@harik.welp.gs>";
 
 const char copyright[] =
     "Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 Ken Keys (kenkeys@users.sourceforge.net)";

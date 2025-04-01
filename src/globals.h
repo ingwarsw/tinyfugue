@@ -220,6 +220,7 @@ enum Vars {
 #define mecho		getintvar(VAR_mecho)
 #define mecho_attr	getattrvar(VAR_mecho_attr)
 #define meta_esc	getintvar(VAR_meta_esc)
+#define msdp_dbg    getintvar(VAR_msdp_dbg)
 #define more		getintvar(VAR_more)
 #define mprefix		getstrvar(VAR_mprefix)
 #define oldslash	getintvar(VAR_oldslash)
