@@ -900,8 +900,8 @@ static int complete_macro(Macro *spec, unsigned int hash, int num,
     }
     spec->attr &= ~F_NONE;
     if (spec->nsubattr) {
-	int n;
-    pcre_fullinfo(spec->trig.ri->re, NULL, PCRE_INFO_CAPTURECOUNT, &n);
+    uint32_t n = 0;
+    pcre2_pattern_info(spec->trig.ri->re, PCRE2_INFO_CAPTURECOUNT, &n);
 	for (i = 0; i < spec->nsubattr; i++) {
 	    spec->subattr[i].attr &= ~F_NONE;
 	    if (spec->subattr[i].subexp > n) {
@@ -1840,7 +1840,7 @@ static void apply_attrs_of_match(
     {
 	int i, x, offset = 0;
 	int start, end;
-	int *saved_ovector = NULL;
+	PCRE2_SIZE *saved_ovector = NULL;
 
 	if (text)
 	    old = new_reg_scope(ri, text);

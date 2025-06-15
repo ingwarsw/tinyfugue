@@ -191,7 +191,7 @@ tags: *.[ch]
 
 dep: *.c
 	gcc -E -MM *.c \
-		| sed 's;pcre[^ ]*/pcre.h ;;' \
+		| sed 's;pcre[^ ]*/pcre2.h ;;' \
 		| sed '/[^\\]$$/s/$$/ $$(BUILDERS)/' \
 		> dep
 
