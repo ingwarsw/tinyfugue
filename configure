@@ -5335,8 +5335,8 @@ esac
 fi
 
 
-# Extract the first word of "pcre-config", so it can be a program name with args.
-set dummy pcre-config; ac_word=$2
+# Extract the first word of "pcre2-config", so it can be a program name with args.
+set dummy pcre2-config; ac_word=$2
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
 printf %s "checking for $ac_word... " >&6; }
 if test ${ac_cv_path_PCRE_CONFIG+y}
@@ -5384,9 +5384,9 @@ fi
 
 if test "$PCRE_CONFIG" != "false"; then
   PCRE_CFLAGS=`$PCRE_CONFIG --cflags`
-  PCRE_LIBS=`$PCRE_CONFIG --libs`
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: using pcre-config to find extra flags" >&5
-printf "%s\n" "$as_me: using pcre-config to find extra flags" >&6;}
+  PCRE_LIBS=`$PCRE_CONFIG --libs8`
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: using pcre2-config to find extra flags" >&5
+printf "%s\n" "$as_me: using pcre2-config to find extra flags" >&6;}
   CFLAGS="${CFLAGS} ${PCRE_CFLAGS}"
   LIBS="${LIBS} ${PCRE_LIBS}"
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}:    ... CFLAGS: ${CFLAGS}" >&5
@@ -5394,9 +5394,9 @@ printf "%s\n" "$as_me:    ... CFLAGS: ${CFLAGS}" >&6;}
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}:    ... LIBS: ${LIBS}" >&5
 printf "%s\n" "$as_me:    ... LIBS: ${LIBS}" >&6;}
 else
-         for ac_header in pcre.h
+         for ac_header in pcre2.h
 do :
-  ac_fn_c_check_header_compile "$LINENO" "pcre.h" "ac_cv_header_pcre_h" "$ac_includes_default"
+  ac_fn_c_check_header_compile "$LINENO" "pcre2.h" "ac_cv_header_pcre_h" "$ac_includes_default"
 if test "x$ac_cv_header_pcre_h" = xyes
 then :
   printf "%s\n" "#define HAVE_PCRE_H 1" >>confdefs.h

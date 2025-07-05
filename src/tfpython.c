@@ -201,7 +201,7 @@ static struct Value* pyvar_to_tfvar( PyObject *pRc )
 {
 	struct Value *rc;
 	char *cstr;
-	int len; // Py_ssize_t len;
+	long int len; // Py_ssize_t len;
 
 	// can be null if exception was thrown
 	if( !pRc ) {
@@ -401,7 +401,7 @@ struct Value *handle_python_call_command( String *args, int offset )
 	// Okay, so now it's callable, give it the string.
 	// We go through all this because otherwise the quoting problem is insane.
 	arglist = Py_BuildValue( "(s)", argstr );
-	pRc = PyEval_CallObject( function, arglist );
+	pRc = PyObject_CallObject( function, arglist );
 
 bail:
 	Py_XDECREF( function );

@@ -37,7 +37,7 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
 
 void reset_pattern_locale(void)
 {
-    re_tables = pcre_maketables();
+    re_tables = pcre2_maketables(NULL);
 }
 
 int regmatch_in_scope(Value *val, const char *pattern, String *str)
@@ -115,14 +115,17 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     const char *file, int line)
 {
     RegInfo *ri;
-    const char *emsg, *s;
-    int eoffset, n;
-    /* PCRE_DOTALL optimizes patterns starting with ".*" */
-    int options = PCRE_DOLLAR_ENDONLY | PCRE_DOTALL | PCRE_CASELESS;
+    const char *s;
+    unsigned char emsg[128] = {0};
+    int ecode;
+    uint32_t n;
+    PCRE2_SIZE eoffset;
+    pcre2_compile_context *context;
+    /* PCRE2_DOTALL optimizes patterns starting with ".*" */
+    int options = PCRE2_DOLLAR_ENDONLY | PCRE2_DOTALL | PCRE2_CASELESS;
 
     ri = dmalloc(NULL, sizeof(RegInfo), file, line);
     if (!ri) return NULL;
-    ri->extra = NULL;
     ri->ovector = NULL;
     ri->Str = NULL;
     ri->links = 1;
@@ -137,30 +140,25 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
 	if (*s == '\\') {
 	    if (s[1]) s++;
 	} else if (is_upper(*s)) {
-	    options &= ~PCRE_CASELESS;
+	    options &= ~PCRE2_CASELESS;
 	    break;
 	}
     }
 
-    ri->re = pcre_compile((char*)pattern, options, &emsg, &eoffset, re_tables);
+    context = pcre2_compile_context_create(NULL);
+    pcre2_set_character_tables(context, re_tables);
+    ri->re = pcre2_compile(pattern, PCRE2_ZERO_TERMINATED, options, &ecode, &eoffset, context);
+    pcre2_compile_context_free(context);
     if (!ri->re) {
-	/* don't trust emsg to be non-NULL or NUL-terminated */
-	eprintf("regexp error: character %d: %.128s", eoffset,
-	    emsg ? emsg : "unknown error");
+	    pcre2_get_error_message(ecode, emsg, sizeof(emsg));
+    eprintf("regexp error: character %d: %s", eoffset, emsg);
 	goto tf_reg_compile_error;
     }
-    pcre_fullinfo(ri->re, NULL, PCRE_INFO_CAPTURECOUNT, &n);
-    if (n < 0) goto tf_reg_compile_error;
+    ecode = pcre2_pattern_info(ri->re, PCRE2_INFO_CAPTURECOUNT, &n);
+    if (ecode < 0) goto tf_reg_compile_error;
     ri->ovecsize = 3 * (n + 1);
-    ri->ovector = dmalloc(NULL, sizeof(int) * ri->ovecsize, file, line);
+    ri->ovector = dmalloc(NULL, sizeof(PCRE2_SIZE) * ri->ovecsize, file, line);
     if (!ri->ovector) goto tf_reg_compile_error;
-    if (optimize) {
-	ri->extra = pcre_study(ri->re, 0, &emsg);
-	if (emsg) {
-	    eprintf("regexp study error: %.128s", emsg);
-	    goto tf_reg_compile_error;
-	}
-    }
     return ri;
 
 tf_reg_compile_error:
@@ -174,10 +172,13 @@ int tf_reg_exec(RegInfo *ri,
     int startoffset)
 {
     int result, len;
+    pcre2_match_data *md;
+    uint32_t count;
+    uint32_t n = 1;
 
     /* If ovector was stolen by find_and_run_matches(), make a new one. */
     if (!ri->ovector) {
-	ri->ovector = MALLOC(sizeof(int) * ri->ovecsize);
+	ri->ovector = MALLOC(sizeof(PCRE2_SIZE) * ri->ovecsize);
 	if (!ri->ovector) return 0;
     }
 
@@ -193,14 +194,16 @@ int tf_reg_exec(RegInfo *ri,
     } else {
 	len = strlen(str);
     }
-    result = pcre_exec(ri->re, ri->extra, str, len, startoffset,
-	startoffset ? PCRE_NOTBOL : 0, ri->ovector, ri->ovecsize);
-    if (result < 0) {
+    md = pcre2_match_data_create_from_pattern(ri->re, NULL);
+    result = pcre2_match(ri->re, str, len, startoffset, startoffset ? PCRE2_NOTBOL : 0, md, NULL);
+    if (result < 1) {
 	result = 0;
     } else {
-	if (result == 0) result = 1; /* shouldn't happen, with ovector */
+        count = pcre2_get_ovector_count(md);
+        memcpy(ri->ovector, pcre2_get_ovector_pointer(md), sizeof(PCRE2_SIZE) * count * 2);
 	if (Sstr) (ri->Str = Sstr)->links++;	/* save, for regsubstr() */
     }
+    pcre2_match_data_free(md);
     return result;
 }
 
@@ -208,8 +211,7 @@ void tf_reg_free(RegInfo *ri)
 {
     if (--ri->links > 0) return;
     if (ri->ovector) FREE(ri->ovector);
-    if (ri->re) pcre_free(ri->re);
-    if (ri->extra) pcre_free(ri->extra);
+    if (ri->re) pcre2_code_free(ri->re);
     if (ri->Str) conStringfree(ri->Str);
     FREE(ri);
 }
