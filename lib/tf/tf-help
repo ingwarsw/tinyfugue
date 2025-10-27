@@ -9555,7 +9555,7 @@ Special global variables
 
 #ssl_insecure
 #%ssl_insecure
-  [1mssl_insecure[22m=on
+  [1mssl_insecure[22m=off
           Allow older less secure TLSv1 routines.
 
 #start_color
