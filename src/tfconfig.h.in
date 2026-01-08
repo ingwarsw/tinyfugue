@@ -12,6 +12,11 @@
  * comment causes problems too.)
  */
 
+/* Enable POSIX functions like strdup() */
+#ifndef _DEFAULT_SOURCE
+#define _DEFAULT_SOURCE
+#endif
+
 #define PLATFORM_UNIX 1
 
 #undef MAILDIR

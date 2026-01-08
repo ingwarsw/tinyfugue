@@ -9,6 +9,11 @@
 #ifndef PORT_H
 #define PORT_H
 
+/* Enable POSIX functions like strdup() */
+#ifndef _DEFAULT_SOURCE
+#define _DEFAULT_SOURCE
+#endif
+
 #ifdef __hpux__
 # ifndef _HPUX_SOURCE
 #  define _HPUX_SOURCE    /* Enables some "extensions" on HPUX. */
@@ -86,6 +91,7 @@ extern int errno;  /* Some systems don't declare errno in errno.h. Duh. */
 #if STDC_HEADERS
 # include <stdlib.h>
 # include <string.h>
+# include <strings.h>
 #else
 extern void free();
 # if HAVE_MEMORY_H
