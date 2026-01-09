@@ -9,11 +9,6 @@
 #ifndef PORT_H
 #define PORT_H
 
-/* Enable POSIX functions like strdup() */
-#ifndef _DEFAULT_SOURCE
-#define _DEFAULT_SOURCE
-#endif
-
 #ifdef __hpux__
 # ifndef _HPUX_SOURCE
 #  define _HPUX_SOURCE    /* Enables some "extensions" on HPUX. */
