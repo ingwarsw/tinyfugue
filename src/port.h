@@ -86,6 +86,7 @@ extern int errno;  /* Some systems don't declare errno in errno.h. Duh. */
 #if STDC_HEADERS
 # include <stdlib.h>
 # include <string.h>
+# include <strings.h>
 #else
 extern void free();
 # if HAVE_MEMORY_H
