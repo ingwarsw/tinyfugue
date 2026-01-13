@@ -26,6 +26,10 @@
 #include "cmdlist.h"
 #include "variable.h"	/* unsetvar() */
 
+#if WIDECHAR
+#include <unicode/utext.h>
+#endif
+
 static int literal_next = FALSE;
 static TrieNode *keynode = NULL;	/* current node matched by input */
 static int kbnum_internal = 0;
@@ -69,6 +73,40 @@ static const char *efunc_table[] = {
 
 #define kbnumval	(kbnum ? atoi(kbnum->data) : 1)
 
+#if WIDECHAR
+/* Find the byte position of the previous UTF-8 character before 'pos' in 'str'.
+ * Returns the position of the start of the previous character, or 0 if at start.
+ */
+static int prev_char_pos(const char *str, int len, int pos)
+{
+    UText *ut = NULL;
+    UErrorCode err = U_ZERO_ERROR;
+    int prev_pos;
+    
+    if (pos <= 0) return 0;
+    if (pos > len) pos = len;
+    
+    /* Open UText for the string */
+    ut = utext_openUTF8(ut, str, len, &err);
+    if (!U_SUCCESS(err)) {
+        /* If UTF-8 parsing fails, fall back to single byte deletion */
+        return pos - 1;
+    }
+    
+    /* Move to the position */
+    utext_setNativeIndex(ut, pos);
+    
+    /* Move to the previous character */
+    UTEXT_PREVIOUS32(ut);
+    
+    /* Get the new position */
+    prev_pos = (int)utext_getNativeIndex(ut);
+    
+    utext_close(ut);
+    
+    return prev_pos;
+}
+#endif
 
 void init_keyboard(void)
 {
@@ -180,7 +218,18 @@ int handle_keyboard_input(int read_flag)
             } else if (s[key_start] == '\b' || s[key_start] == '\177') {
                 handle_input_string(s + input_start, key_start - input_start);
                 place = input_start = ++key_start;
+#if WIDECHAR
+                /* Delete characters, not bytes */
+                int del_pos = keyboard_pos;
+                int n = kbnumval;
+                while (n > 0 && del_pos > 0) {
+                    del_pos = prev_char_pos(keybuf->data, keybuf->len, del_pos);
+                    n--;
+                }
+                do_kbdel(del_pos);
+#else
                 do_kbdel(keyboard_pos - kbnumval);
+#endif
 		reset_kbnum();
             } else if (kbnum && is_digit(s[key_start]) &&
 		key_start == input_start)
