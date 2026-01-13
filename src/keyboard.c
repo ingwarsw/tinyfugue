@@ -82,7 +82,7 @@ static int prev_char_pos_n(const char *str, int len, int pos, int count)
 {
     UText *ut = NULL;
     UErrorCode err = U_ZERO_ERROR;
-    int prev_pos = pos;
+    int prev_pos;
     
     if (pos <= 0) return 0;
     if (pos > len) pos = len;
@@ -91,7 +91,10 @@ static int prev_char_pos_n(const char *str, int len, int pos, int count)
     /* Open UText for the string */
     ut = utext_openUTF8(ut, str, len, &err);
     if (!U_SUCCESS(err)) {
-        /* If UTF-8 parsing fails, fall back to byte-based deletion */
+        /* If UTF-8 parsing fails, fall back to byte-based deletion.
+         * This handles the case where the input buffer contains invalid UTF-8.
+         * While not perfect, it's better than doing nothing.
+         */
         if (ut) utext_close(ut);
         prev_pos = pos - count;
         return prev_pos < 0 ? 0 : prev_pos;
