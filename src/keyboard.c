@@ -95,7 +95,7 @@ static int prev_char_pos_n(const char *str, int len, int pos, int count)
          * This handles the case where the input buffer contains invalid UTF-8.
          * While not perfect, it's better than doing nothing.
          */
-        if (ut) utext_close(ut);
+        utext_close(ut);  /* utext_close safely handles NULL */
         prev_pos = pos - count;
         return prev_pos < 0 ? 0 : prev_pos;
     }
