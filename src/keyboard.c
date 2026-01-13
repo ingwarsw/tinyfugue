@@ -74,10 +74,11 @@ static const char *efunc_table[] = {
 #define kbnumval	(kbnum ? atoi(kbnum->data) : 1)
 
 #if WIDECHAR
-/* Find the byte position of the previous UTF-8 character before 'pos' in 'str'.
- * Returns the position of the start of the previous character, or 0 if at start.
+/* Find the byte position after deleting 'count' UTF-8 characters backwards from 'pos'.
+ * Returns the position of the start of the character that is 'count' positions before 'pos',
+ * or 0 if we reach the start of the string.
  */
-static int prev_char_pos(const char *str, int len, int pos)
+static int prev_char_pos_n(const char *str, int len, int pos, int count)
 {
     UText *ut = NULL;
     UErrorCode err = U_ZERO_ERROR;
@@ -85,19 +86,24 @@ static int prev_char_pos(const char *str, int len, int pos)
     
     if (pos <= 0) return 0;
     if (pos > len) pos = len;
+    if (count <= 0) return pos;
     
     /* Open UText for the string */
     ut = utext_openUTF8(ut, str, len, &err);
     if (!U_SUCCESS(err)) {
-        /* If UTF-8 parsing fails, fall back to single byte deletion */
-        return pos - 1;
+        /* If UTF-8 parsing fails, fall back to byte-based deletion */
+        prev_pos = pos - count;
+        return prev_pos < 0 ? 0 : prev_pos;
     }
     
     /* Move to the position */
     utext_setNativeIndex(ut, pos);
     
-    /* Move to the previous character */
-    UTEXT_PREVIOUS32(ut);
+    /* Move back 'count' characters */
+    while (count > 0 && utext_getNativeIndex(ut) > 0) {
+        UTEXT_PREVIOUS32(ut);
+        count--;
+    }
     
     /* Get the new position */
     prev_pos = (int)utext_getNativeIndex(ut);
@@ -220,13 +226,7 @@ int handle_keyboard_input(int read_flag)
                 place = input_start = ++key_start;
 #if WIDECHAR
                 /* Delete characters, not bytes */
-                int del_pos = keyboard_pos;
-                int n = kbnumval;
-                while (n > 0 && del_pos > 0) {
-                    del_pos = prev_char_pos(keybuf->data, keybuf->len, del_pos);
-                    n--;
-                }
-                do_kbdel(del_pos);
+                do_kbdel(prev_char_pos_n(keybuf->data, keybuf->len, keyboard_pos, kbnumval));
 #else
                 do_kbdel(keyboard_pos - kbnumval);
 #endif
