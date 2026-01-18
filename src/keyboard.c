@@ -26,6 +26,10 @@
 #include "cmdlist.h"
 #include "variable.h"	/* unsetvar() */
 
+#if WIDECHAR
+#include <unicode/utext.h>
+#endif
+
 static int literal_next = FALSE;
 static TrieNode *keynode = NULL;	/* current node matched by input */
 static int kbnum_internal = 0;
@@ -69,6 +73,50 @@ static const char *efunc_table[] = {
 
 #define kbnumval	(kbnum ? atoi(kbnum->data) : 1)
 
+#if WIDECHAR
+/* Find the byte position after deleting 'count' UTF-8 characters backwards from 'pos'.
+ * Returns the position of the start of the character that is 'count' positions before 'pos',
+ * or 0 if we reach the start of the string.
+ */
+static int prev_char_pos_n(const char *str, int len, int pos, int count)
+{
+    UText *ut = NULL;
+    UErrorCode err = U_ZERO_ERROR;
+    int prev_pos;
+    
+    if (pos <= 0) return 0;
+    if (pos > len) pos = len;
+    if (count <= 0) return pos;
+    
+    /* Open UText for the string */
+    ut = utext_openUTF8(ut, str, len, &err);
+    if (!U_SUCCESS(err)) {
+        /* If UTF-8 parsing fails, fall back to byte-based deletion.
+         * This handles the case where the input buffer contains invalid UTF-8.
+         * While not perfect, it's better than doing nothing.
+         */
+        utext_close(ut);  /* utext_close safely handles NULL */
+        prev_pos = pos - count;
+        return prev_pos < 0 ? 0 : prev_pos;
+    }
+    
+    /* Move to the position */
+    utext_setNativeIndex(ut, pos);
+    
+    /* Move back 'count' characters */
+    while (count > 0 && utext_getNativeIndex(ut) > 0) {
+        UTEXT_PREVIOUS32(ut);
+        count--;
+    }
+    
+    /* Get the new position */
+    prev_pos = (int)utext_getNativeIndex(ut);
+    
+    utext_close(ut);
+    
+    return prev_pos;
+}
+#endif
 
 void init_keyboard(void)
 {
@@ -180,7 +228,12 @@ int handle_keyboard_input(int read_flag)
             } else if (s[key_start] == '\b' || s[key_start] == '\177') {
                 handle_input_string(s + input_start, key_start - input_start);
                 place = input_start = ++key_start;
+#if WIDECHAR
+                /* Delete characters, not bytes */
+                do_kbdel(prev_char_pos_n(keybuf->data, keybuf->len, keyboard_pos, kbnumval));
+#else
                 do_kbdel(keyboard_pos - kbnumval);
+#endif
 		reset_kbnum();
             } else if (kbnum && is_digit(s[key_start]) &&
 		key_start == input_start)
