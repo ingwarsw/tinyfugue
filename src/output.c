@@ -2457,15 +2457,87 @@ void inewline(void)
     bufflush();
 }
 
+#if WIDECHAR
+/* Count the number of visual characters in a UTF-8 byte range.
+ * This is needed because multi-byte UTF-8 characters occupy multiple bytes
+ * but only one or two screen positions.
+ */
+static int count_visual_chars(const char *str, int start, int end)
+{
+    UText *ut = NULL;
+    UErrorCode err = U_ZERO_ERROR;
+    UChar32 c;
+    UEastAsianWidth ea;
+    int visual_count = 0;
+    
+    if (start < 0) start = 0;
+    if (end < start) {
+        /* Swap if backwards */
+        int temp = start;
+        start = end;
+        end = temp;
+    }
+    
+    /* Open UText for the string */
+    ut = utext_openUTF8(ut, str, -1, &err);
+    if (!U_SUCCESS(err)) {
+        /* Fall back to byte count */
+        return end - start;
+    }
+    
+    /* Move to start position */
+    utext_setNativeIndex(ut, start);
+    
+    /* Count visual characters from start to end */
+    while (utext_getNativeIndex(ut) < end) {
+        c = UTEXT_NEXT32(ut);
+        if (c == U_SENTINEL) break;
+        
+        /* Get character width */
+        ea = (UEastAsianWidth)u_getIntPropertyValue(c, UCHAR_EAST_ASIAN_WIDTH);
+        switch (ea) {
+            case U_EA_FULLWIDTH:
+            case U_EA_WIDE:
+                visual_count += 2;
+                break;
+            default:
+                visual_count += 1;
+                break;
+        }
+    }
+    
+    utext_close(ut);
+    
+    return visual_count;
+}
+#endif
+
 /* idel() assumes place is in bounds and != keyboard_pos. */
 void idel(int place)
 {
     int len;
     int oiey = iendy;
+#if WIDECHAR
+    int visual_len;  /* Number of visual characters (not bytes) */
+#endif
 
     if ((len = place - keyboard_pos) < 0) keyboard_pos = place;
     if (!sockecho()) return;
+    
+#if WIDECHAR
+    /* Calculate visual character count for cursor positioning */
+    if (len < 0) {
+        visual_len = -count_visual_chars(keybuf->data, keyboard_pos, place);
+        ix += visual_len;
+    } else if (len > 0) {
+        visual_len = count_visual_chars(keybuf->data, keyboard_pos, place);
+        ix += visual_len;
+    } else {
+        visual_len = 0;
+    }
+#else
     if (len < 0) ix += len;
+#endif
     
     if (!visual) {
 	int prompt_len = prompt ? prompt->len % Wrap : 0;
@@ -2478,7 +2550,11 @@ void idel(int place)
             physical_refresh();
             return;
         }
+#if WIDECHAR
+        if (visual_len < 0) { bufputnc('\010', -visual_len);  cx += visual_len; }
+#else
         if (len < 0) { bufputnc('\010', -len);  cx += len; }
+#endif
 
     } else {
         /* visual */
@@ -2493,18 +2569,32 @@ void idel(int place)
         physical_refresh();
     }
 
+#if WIDECHAR
+    if (visual_len < 0) visual_len = -visual_len;
+#else
     if (len < 0) len = -len;
+#endif
 
     if (visual && delete_char &&
+#if WIDECHAR
+        keybuf->len - keyboard_pos > 3 && visual_len < Wrap/3)
+#else
         keybuf->len - keyboard_pos > 3 && len < Wrap/3)
+#endif
     {
         /* hardware method */
         int i, space, pos;
 
         iendy = iy;
+#if WIDECHAR
+        if (ix + visual_len <= Wrap) {
+            for (i = visual_len; i; i--) tp(delete_char);
+            iendx = Wrap + 1 - visual_len;
+#else
         if (ix + len <= Wrap) {
             for (i = len; i; i--) tp(delete_char);
             iendx = Wrap + 1 - len;
+#endif
         } else {
             iendx = ix;
         }
@@ -2514,8 +2604,13 @@ void idel(int place)
             if ((space = Wrap - iendx + 1) <= 0) {
                 if (iendy == lines) break;   /* at end of window */
                 xy(iendx = 1, ++iendy);
+#if WIDECHAR
+                for (i = visual_len; i; i--) tp(delete_char);
+                space = Wrap - visual_len;
+#else
                 for (i = len; i; i--) tp(delete_char);
                 space = Wrap - len;
+#endif
                 if (space > keybuf->len - pos) space = keybuf->len - pos;
             } else {
                 xy(iendx, iendy);
@@ -2539,6 +2634,19 @@ void idel(int place)
         ioutputs(keybuf->data + keyboard_pos, keybuf->len - keyboard_pos);
 
         /* erase tail */
+#if WIDECHAR
+        int erase_len = visual_len;
+        if (erase_len > Wrap - cx + 1) erase_len = Wrap - cx + 1;
+        if (visual && clear_to_eos && (erase_len > 2 || cy < oiey)) {
+            tp(clear_to_eos);
+        } else if (clear_to_eol && erase_len > 2) {
+            tp(clear_to_eol);
+            if (visual && cy < oiey) clear_lines(cy + 1, oiey);
+        } else {
+            bufputnc(' ', erase_len);  cx += erase_len;
+            if (visual && cy < oiey) clear_lines(cy + 1, oiey);
+        }
+#else
         if (len > Wrap - cx + 1) len = Wrap - cx + 1;
         if (visual && clear_to_eos && (len > 2 || cy < oiey)) {
             tp(clear_to_eos);
@@ -2549,6 +2657,7 @@ void idel(int place)
             bufputnc(' ', len);  cx += len;
             if (visual && cy < oiey) clear_lines(cy + 1, oiey);
         }
+#endif
     }
     
     /* restore cursor */
