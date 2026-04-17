@@ -2469,6 +2469,7 @@ static int count_visual_chars(const char *str, int start, int end)
     UChar32 c;
     UEastAsianWidth ea;
     int visual_count = 0;
+    int64_t current_index;
     
     if (start < 0) start = 0;
     if (end < start) {
@@ -2489,9 +2490,14 @@ static int count_visual_chars(const char *str, int start, int end)
     utext_setNativeIndex(ut, start);
     
     /* Count visual characters from start to end */
-    while (utext_getNativeIndex(ut) < end) {
+    while ((current_index = utext_getNativeIndex(ut)) < end) {
         c = UTEXT_NEXT32(ut);
         if (c == U_SENTINEL) break;
+        
+        /* Check if we went past the end boundary */
+        if (utext_getNativeIndex(ut) > end) {
+            break;
+        }
         
         /* Get character width */
         ea = (UEastAsianWidth)u_getIntPropertyValue(c, UCHAR_EAST_ASIAN_WIDTH);
@@ -2519,6 +2525,7 @@ void idel(int place)
     int oiey = iendy;
 #if WIDECHAR
     int visual_len;  /* Number of visual characters (not bytes) */
+    int erase_len;   /* For erase tail section */
 #endif
 
     if ((len = place - keyboard_pos) < 0) keyboard_pos = place;
@@ -2635,7 +2642,7 @@ void idel(int place)
 
         /* erase tail */
 #if WIDECHAR
-        int erase_len = visual_len;
+        erase_len = visual_len;
         if (erase_len > Wrap - cx + 1) erase_len = Wrap - cx + 1;
         if (visual && clear_to_eos && (erase_len > 2 || cy < oiey)) {
             tp(clear_to_eos);
