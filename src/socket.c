@@ -382,6 +382,7 @@ static void  do_naws(Sock *sock);
 static void  telnet_debug(const char *dir, const char *str, int len);
 static void  preferred_telnet_options(void);
 static void  killsock(Sock *sock);
+static void  clear_fd_sets(int fd);
 #if HAVE_SSL
 static int   ssl_check_cert_verify(Sock *sock);
 static int   ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx);
@@ -1062,6 +1063,14 @@ int is_active(int fd)
     return FD_ISSET(fd, &active);
 }
 
+static void clear_fd_sets(int fd)
+{
+    FD_CLR(fd, &readers);
+    FD_CLR(fd, &active);
+    FD_CLR(fd, &writers);
+    FD_CLR(fd, &connected);
+}
+
 void readers_clear(int fd)
 {
     FD_CLR(fd, &readers);
@@ -1561,8 +1570,11 @@ static void setupnextconn(Sock *sock)
 {
     struct addrinfo *ai, *next = sock->addr;
 
-    if (sock->fd >= 0)
+    if (sock->fd >= 0) {
+	clear_fd_sets(sock->fd);
 	close(sock->fd);
+	sock->fd = -1;
+    }
 retry:
     next = next->ai_next;
     /* if next address is a duplicate of one we've already done, skip it */
@@ -1602,7 +1614,7 @@ static int openconn(Sock *sock)
     if (xsock->constate == SS_RESOLVING) {
 	nbgai_hdr_t info = { 0, 0 };
 	struct addrinfo *ai;
-        FD_CLR(xsock->fd, &readers);
+        clear_fd_sets(xsock->fd);
         if (read(xsock->fd, &info, sizeof(info)) < 0 || info.err != 0) {
             if (!info.err)
                 CONFAIL(xsock, "read", strerror(errno));
@@ -1626,6 +1638,7 @@ static int openconn(Sock *sock)
 	    read(xsock->fd, (char*)xsock->addrs, info.size);
 	}
         close(xsock->fd);
+        xsock->fd = -1;
 # ifdef PLATFORM_UNIX
         if (xsock->pid >= 0)
             if (waitpid(xsock->pid, NULL, 0) < 0)
@@ -2242,8 +2255,7 @@ static void killsock(Sock *sock)
     }
 #endif
     if (sock->fd >= 0) {
-        FD_CLR(sock->fd, &readers);
-        FD_CLR(sock->fd, &writers);
+        clear_fd_sets(sock->fd);
         close(sock->fd);
         sock->fd = -1;
     }
