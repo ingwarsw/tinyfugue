@@ -123,6 +123,22 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     pcre2_compile_context *context;
     /* PCRE2_DOTALL optimizes patterns starting with ".*" */
     int options = PCRE2_DOLLAR_ENDONLY | PCRE2_DOTALL | PCRE2_CASELESS;
+#if WIDECHAR
+    /*
+     * With WIDECHAR (ICU) the incoming server text is converted to UTF-8
+     * before triggers are matched, so patterns must be matched as UTF-8
+     * too.  PCRE2_UTF interprets both pattern and subject as UTF-8, and
+     * PCRE2_UCP makes PCRE2_CASELESS fold case for non-ASCII letters
+     * (e.g. Polish a-ogonek).  PCRE2_MATCH_INVALID_UTF (PCRE2 >= 10.34)
+     * lets matching tolerate invalid UTF-8 in the subject instead of
+     * failing; it is optional and guarded below.
+     */
+    int utf_options = PCRE2_UTF | PCRE2_UCP;
+#ifdef PCRE2_MATCH_INVALID_UTF
+    utf_options |= PCRE2_MATCH_INVALID_UTF;
+#endif
+    options |= utf_options;
+#endif
 
     ri = dmalloc(NULL, sizeof(RegInfo), file, line);
     if (!ri) return NULL;
@@ -148,6 +164,20 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     context = pcre2_compile_context_create(NULL);
     pcre2_set_character_tables(context, re_tables);
     ri->re = pcre2_compile(pattern, PCRE2_ZERO_TERMINATED, options, &ecode, &eoffset, context);
+#if WIDECHAR
+    /*
+     * If the pattern itself is not valid UTF-8 (e.g. a legacy script saved
+     * in ISO-8859-2), PCRE2 reports a UTF error at compile time.  Retry
+     * without the UTF options so such patterns keep working in byte mode,
+     * for backward compatibility.
+     */
+    if (!ri->re && ecode >= PCRE2_ERROR_UTF8_ERR21
+		 && ecode <= PCRE2_ERROR_UTF8_ERR1) {
+	options &= ~utf_options;
+	ri->re = pcre2_compile(pattern, PCRE2_ZERO_TERMINATED, options,
+			       &ecode, &eoffset, context);
+    }
+#endif
     pcre2_compile_context_free(context);
     if (!ri->re) {
 	    pcre2_get_error_message(ecode, emsg, sizeof(emsg));
