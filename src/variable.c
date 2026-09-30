@@ -579,9 +579,16 @@ Var *setintvar(Var *var, long ival, int exportflag)
 char *spanvar(const char *start)
 {
     const char *p;
-    /* Restrict variable names to alphanumerics and underscores, like POSIX.2 */
+    /* Restrict variable names to alphanumerics and underscores, like POSIX.2.
+     * In widechar builds also allow high-bit bytes, so that UTF-8 multibyte
+     * characters (e.g. Polish letters in a name derived from mud output) are
+     * accepted as part of a variable name. */
     for (p = start; *p; p++) {
-        if (!(is_alpha(*p) || *p == '_' || (p != start && is_digit(*p))))
+        if (!(is_alpha(*p) || *p == '_' || (p != start && is_digit(*p))
+#if WIDECHAR
+              || (unsigned char)*p >= 0x80
+#endif
+             ))
             return (char *)p;
     }
     return (char *)p;
