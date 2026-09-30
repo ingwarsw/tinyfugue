@@ -1014,6 +1014,12 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
             return newint(i);
 #endif
 
+#if ENABLE_MSDP
+        case FN_msdp:
+            i = handle_msdp_function(opdstr(n), (n>1 ? opdstd(n-1) : NULL));
+            return newint(i);
+#endif
+
 #if ENABLE_OPTION102
         case FN_option102:
             i = handle_option102_function(opdstr(n), (n>1 ? opdstd(n-1) : NULL));

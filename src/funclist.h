@@ -66,6 +66,9 @@ funccode(mod,		1,	2,  2),
 funccode(morepaused,	0,	0,  1),
 funccode(morescroll,	0,	1,  1),
 funccode(moresize,	0,	0,  2),
+#if ENABLE_MSDP
+funccode(msdp,		0,	1,  2),
+#endif
 funccode(nactive,	0,	0,  1),
 funccode(nlog,		0,	0,  0),
 funccode(nmail,		0,	0,  0),

@@ -99,6 +99,7 @@
 #define WIDECHAR 0
 #define ENABLE_ATCP 0
 #define ENABLE_GMCP 0
+#define ENABLE_MSDP 0
 #define ENABLE_OPTION102 0
 
 #define HAVE_MCCP (HAVE_ZLIB_H && HAVE_LIBZ)

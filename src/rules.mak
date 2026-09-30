@@ -105,3 +105,11 @@ world.$(O): world.c tfconfig.h tfdefs.h port.h tf.h malloc.h dstring.h \
   globals.h varlist.h enumlist.h hooklist.h util.h pattern.h \
   search.h tfio.h history.h world.h process.h macro.h \
   cmdlist.h socket.h output.h $(BUILDERS)
+
+# MSDP support (optional; enabled with --enable-msdp).
+# msdp-tok.c is generated from msdp-tok.l by flex.
+msdp-tok.c: msdp-tok.l $(BUILDERS)
+	$(LEX) -o msdp-tok.c msdp-tok.l
+msdp-tok.$(O): msdp-tok.c msdp-tok.h $(BUILDERS)
+msdp.$(O): msdp.c tfconfig.h tfdefs.h port.h tf.h malloc.h dstring.h \
+  msdp.h msdp-tok.h $(BUILDERS)
