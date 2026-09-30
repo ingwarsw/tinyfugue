@@ -369,7 +369,14 @@ int smatch(const char *pat, const char *str)
 
         case '?':
             if (!*str || (inword && is_space(*str))) return 1;
+#if WIDECHAR
+            /* advance past a whole UTF-8 multibyte sequence */
             str++;
+            while ((unsigned char)*str >= 0x80 && (unsigned char)*str < 0xC0)
+                str++;
+#else
+            str++;
+#endif
             pat++;
             break;
 
@@ -406,7 +413,25 @@ int smatch(const char *pat, const char *str)
 
         case '[':
             if (inword && is_space(*str)) return 1;
+#if WIDECHAR
+            {
+                /* Match the character class against the first byte of the
+                 * character in str, then advance str past the whole UTF-8
+                 * multibyte sequence so pattern and subject stay in sync.
+                 * UTF-8 lead bytes are distinct per character, so distinct
+                 * multibyte characters in a class are distinguished. */
+                int utf8len = 1;
+                if ((unsigned char)*str >= 0xC0) {
+                    const char *p = str + 1;
+                    while ((unsigned char)*p >= 0x80 && (unsigned char)*p < 0xC0)
+                        { p++; utf8len++; }
+                }
+                if (!(pat = cmatch(pat, (unsigned char)*str))) return 1;
+                str += utf8len;
+            }
+#else
             if (!(pat = cmatch(pat, *str++))) return 1;
+#endif
             break;
 
         case '{':
