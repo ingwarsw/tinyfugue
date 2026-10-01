@@ -2686,15 +2686,17 @@ int handle_msdp_function(conString *string, const char *world)
 {
     Sock *old_xsock = xsock;
     conString *encoded;
+    int sent = 0;
 
     xsock = (!world || !*world) ? xsock : find_sock(world);
     if (xsock) {
         encoded = msdp_encode(string->data);
         transmit(encoded->data, encoded->len);
         telnet_debug("sent", encoded->data, encoded->len);
+        sent = 1;
     }
     xsock = old_xsock;
-    return xsock ? 1 : 0;
+    return sent;
 }
 #endif
 
