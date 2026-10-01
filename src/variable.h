@@ -41,6 +41,28 @@ extern Var *setintvar(Var *var, long ival, int exportflag);
 extern int  unsetvar(Var *var);
 extern void freevar(Var *var);
 extern char *spanvar(const char *start);
+
+/* Characters allowed in a variable name.  Names are alphanumerics and '_'
+ * like POSIX.2; under widechar, high-bit bytes are also allowed so that a
+ * UTF-8 multibyte character (e.g. a Polish letter in a name derived from mud
+ * output) can be part of a name.  is_namechar_first() is for the first
+ * character (no digits), is_namechar() for subsequent ones. */
+static inline int is_namechar_first(int c)
+{
+    return is_alpha(c) || c == '_'
+#if WIDECHAR
+	|| (unsigned char)c >= 0x80
+#endif
+	;
+}
+static inline int is_namechar(int c)
+{
+    return is_alnum(c) || c == '_'
+#if WIDECHAR
+	|| (unsigned char)c >= 0x80
+#endif
+	;
+}
 extern int  setdelim(const char **pp);
 extern int  do_set(const char *name, unsigned int hash, conString *value,
 	    int offset, int exportflag, int localflag);
