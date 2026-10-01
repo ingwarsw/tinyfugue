@@ -63,6 +63,12 @@
 </pre>
 
 <p>
+  The structure is conveyed by the <b>[</b> <b>]</b> <b>{</b> <b>}</b> and
+  <b>=</b> markers.  Scalar values are passed through as-is, without quoting
+  or escaping, so a value that itself contains spaces or these characters is
+  not self-delimiting; parse the markers if you need the exact structure.
+
+<p>
   A simple way to see everything the server sends:
 
 <pre>
