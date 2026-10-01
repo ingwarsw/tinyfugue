@@ -30,6 +30,9 @@ static const unsigned char *re_tables = NULL;
 static const char *cmatch(const char *pat, int ch);
 static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     const char *file, int line);
+#if WIDECHAR
+static int utf8_getcp(const char **pp);
+#endif
 
 #define tf_reg_compile(pat, opt) \
     tf_reg_compile_fl(pat, opt, __FILE__, __LINE__)
@@ -155,6 +158,18 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     for (s = pattern; *s; s++) {
 	if (*s == '\\') {
 	    if (s[1]) s++;
+#if WIDECHAR
+	} else if ((unsigned char)*s >= 0x80) {
+	    /* decode a whole UTF-8 character so smart-case works for
+	     * non-ASCII upper-case letters too */
+	    const char *cs = s;
+	    int cp = utf8_getcp(&cs);
+	    if (iswupper((wint_t)cp)) {
+		options &= ~PCRE2_CASELESS;
+		break;
+	    }
+	    s = cs - 1;	/* for-loop will ++ */
+#endif
 	} else if (is_upper(*s)) {
 	    options &= ~PCRE2_CASELESS;
 	    break;
@@ -323,30 +338,82 @@ int patmatch(
     return 0;
 }
 
+#if WIDECHAR
+/* Decode one UTF-8 code point from *pp and advance *pp past it.  On an
+ * invalid lead/continuation byte, consume a single byte so callers always
+ * make progress.  Returns the code point (or the raw byte on error). */
+static int utf8_getcp(const char **pp)
+{
+    const unsigned char *p = (const unsigned char *)*pp;
+    int c = *p, cp, n;
+    if (c < 0x80)        { *pp += 1; return c; }
+    else if (c < 0xC0)   { *pp += 1; return c; } /* stray continuation */
+    else if (c < 0xE0)   { cp = c & 0x1F; n = 1; }
+    else if (c < 0xF0)   { cp = c & 0x0F; n = 2; }
+    else if (c < 0xF8)   { cp = c & 0x07; n = 3; }
+    else                 { *pp += 1; return c; } /* invalid lead */
+    for (int i = 1; i <= n; i++) {
+        if ((p[i] & 0xC0) != 0x80) { *pp += 1; return c; } /* truncated */
+        cp = (cp << 6) | (p[i] & 0x3F);
+    }
+    *pp += n + 1;
+    return cp;
+}
+
+/* Lower-case a code point (Unicode-aware under widechar). */
+# define cp_lcase(cp)	((int)towlower((wint_t)(cp)))
+
+/* Advance a string pointer past one whole UTF-8 multibyte character. */
+static void utf8_skip(const char **pp)
+{
+    const char *p = *pp;
+    p++;
+    while ((unsigned char)*p >= 0x80 && (unsigned char)*p < 0xC0)
+        p++;
+    *pp = p;
+}
+#else
+# define cp_lcase(cp)	lcase(cp)
+#endif /* WIDECHAR */
+
 /* class is a pointer to a string of the form "[...]..."
  * ch is compared against the character class described by class.
  * If ch matches, cmatch() returns a pointer to the char after ']' in class;
  * otherwise, cmatch() returns NULL.
+ *
+ * ch is a (possibly multibyte) character; under widechar the subject and the
+ * class entries are decoded as UTF-8 code points, so distinct non-ASCII
+ * characters that happen to share a UTF-8 lead byte (e.g. the Polish letters
+ * s-acute and l-stroke) are distinguished.
  */
 static const char *cmatch(const char *class, int ch)
 {
     int not;
 
-    ch = lcase(ch);
+    ch = cp_lcase(ch);
     if ((not = (*++class == '^'))) ++class;
 
     while (1) {
+        int lo, hi;
         if (*class == ']') return (char*)(not ? class + 1 : NULL);
         if (*class == '\\') ++class;
-        if (class[1] == '-' && class[2] != ']') {
-            char lo = *class;
-            class += 2;
+#if WIDECHAR
+        lo = cp_lcase(utf8_getcp(&class));
+#else
+        lo = cp_lcase((unsigned char)*class++);
+#endif
+        if (*class == '-' && class[1] != ']') {
+            ++class;
             if (*class == '\\') ++class;
-            if (ch >= lcase(lo) && ch <= lcase(*class)) break;
-        } else if (lcase(*class) == ch) break;
-        ++class;
+#if WIDECHAR
+            hi = cp_lcase(utf8_getcp(&class));
+#else
+            hi = cp_lcase((unsigned char)*class++);
+#endif
+            if (ch >= lo && ch <= hi) break;
+        } else if (lo == ch) break;
     }
-    return not ? NULL : (estrchr(++class, ']', '\\') + 1);
+    return not ? NULL : (estrchr(class, ']', '\\') + 1);
 }
 
 /* smatch_check() should be used on pat to check pattern syntax before
@@ -370,10 +437,7 @@ int smatch(const char *pat, const char *str)
         case '?':
             if (!*str || (inword && is_space(*str))) return 1;
 #if WIDECHAR
-            /* advance past a whole UTF-8 multibyte sequence */
-            str++;
-            while ((unsigned char)*str >= 0x80 && (unsigned char)*str < 0xC0)
-                str++;
+            utf8_skip(&str);	/* advance past a whole UTF-8 character */
 #else
             str++;
 #endif
@@ -384,7 +448,11 @@ int smatch(const char *pat, const char *str)
             while (*pat == '*' || *pat == '?') {
                 if (*pat == '?') {
                     if (!*str || (inword && is_space(*str))) return 1;
+#if WIDECHAR
+                    utf8_skip(&str);
+#else
                     str++;
+#endif
                 }
                 pat++;
             }
@@ -415,22 +483,14 @@ int smatch(const char *pat, const char *str)
             if (inword && is_space(*str)) return 1;
 #if WIDECHAR
             {
-                /* Match the character class against the first byte of the
-                 * character in str, then advance str past the whole UTF-8
-                 * multibyte sequence so pattern and subject stay in sync.
-                 * UTF-8 lead bytes are distinct per character, so distinct
-                 * multibyte characters in a class are distinguished. */
-                int utf8len = 1;
-                if ((unsigned char)*str >= 0xC0) {
-                    const char *p = str + 1;
-                    while ((unsigned char)*p >= 0x80 && (unsigned char)*p < 0xC0)
-                        { p++; utf8len++; }
-                }
-                if (!(pat = cmatch(pat, (unsigned char)*str))) return 1;
-                str += utf8len;
+                /* Decode a whole UTF-8 code point from str and match it
+                 * against the class, so distinct multibyte characters are
+                 * distinguished (cmatch decodes the class the same way). */
+                int cp = utf8_getcp(&str);
+                if (!(pat = cmatch(pat, cp))) return 1;
             }
 #else
-            if (!(pat = cmatch(pat, *str++))) return 1;
+            if (!(pat = cmatch(pat, (unsigned char)*str++))) return 1;
 #endif
             break;
 
