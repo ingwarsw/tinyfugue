@@ -159,6 +159,7 @@ enum Vars {
 #define alert_time	gettimevar(VAR_alert_time)
 #define atcp		getintvar(VAR_atcp)
 #define gmcp		getintvar(VAR_gmcp)
+#define msdp		getintvar(VAR_msdp)
 #define OPTION102	getintvar(VAR_OPTION102)
 #define	ansi_log	getintvar(VAR_ansi_log)
 #define auto_fg		getintvar(VAR_auto_fg)

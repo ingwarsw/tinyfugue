@@ -21,6 +21,7 @@ jobs:
           - "--enable-lua"
           - "--enable-python"
           - "--disable-widechar"
+          - "--enable-msdp"
 #          - "--enable-lua --enable-python"
     
     steps:
@@ -29,7 +30,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install packages on Linux
-        run: sudo apt-get install lua5.4 liblua5.4-dev libpcre3-dev
+        run: sudo apt-get install lua5.4 liblua5.4-dev libpcre3-dev flex
       - name: Configure
         run: ./configure --enable-version --enable-symlink --enable-atcp --enable-gmcp --enable-option102 ${{ matrix.opts }}
       - name: Build
@@ -48,6 +49,7 @@ jobs:
 #          - "--enable-lua"
           - "--enable-python"
           - "--disable-widechar"
+          - "--enable-msdp"
     #          - "--enable-lua --enable-python"
 
     steps:

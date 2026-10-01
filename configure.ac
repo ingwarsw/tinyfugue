@@ -88,6 +88,9 @@ AC_ARG_ENABLE(atcp,
 AC_ARG_ENABLE(gmcp,
 [  --enable-gmcp     enable GMCP support],
     , enable_gmcp=no)
+AC_ARG_ENABLE(msdp,
+[  --enable-msdp     enable MSDP support],
+    , enable_msdp=no)
 AC_ARG_ENABLE(option102,
 [  --enable-option102     enable 102 option support],
     , enable_option102=no)
@@ -718,6 +721,17 @@ dnl ### write variables
 if test "$enable_inet6"   = "yes"; then AC_DEFINE([ENABLE_INET6], [1], [inet6 enabled])  fi
 if test "$enable_atcp"    = "yes"; then AC_DEFINE([ENABLE_ATCP], [1], [atcp enabled])  fi
 if test "$enable_gmcp"    = "yes"; then AC_DEFINE([ENABLE_GMCP], [1], [gmcp enabled])  fi
+if test "$enable_msdp"    = "yes"; then
+    AC_PROG_LEX
+    if test "x$LEX" = "x:" || test -z "$LEX"; then
+        AC_MSG_ERROR([MSDP support requires flex (lex); install flex or use --disable-msdp])
+    fi
+    AC_DEFINE([ENABLE_MSDP], [1], [msdp enabled])
+    MSDP_SOURCES="msdp.c msdp-tok.c"
+    MSDP_OBJECTS="msdp.$OBJEXT msdp-tok.$OBJEXT"
+fi
+AC_SUBST(MSDP_SOURCES)
+AC_SUBST(MSDP_OBJECTS)
 if test "$enable_option102"  = "yes"; then AC_DEFINE([ENABLE_OPTION102], [1], [option102 enabled])  fi
 if test "$enable_history" = "no"; then AC_DEFINE([NO_HISTORY], [1], [history disabled])  fi
 if test "$enable_process" = "no"; then AC_DEFINE([NO_PROCESS], [1], [process disabled])  fi

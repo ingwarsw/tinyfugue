@@ -33,6 +33,9 @@ gencode(LOG,		0),
 gencode(LOGIN,		0),
 gencode(MAIL,		HT_ALERT),
 gencode(MORE,		0),
+#if ENABLE_MSDP
+gencode(MSDP,		0),
+#endif
 gencode(NOMACRO,	0),
 #if ENABLE_OPTION102
 gencode(OPTION102,	0),
