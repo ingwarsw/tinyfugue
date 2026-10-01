@@ -1,0 +1,114 @@
+<title>TinyFugue: msdp</title>
+<!--"@msdp"-->
+<h1>MSDP</h1>
+
+<p>
+  MSDP (Mud Server Data Protocol) lets a server send structured data (such
+  as health, room, and opponent information) to the client, and lets the
+  client request which variables the server should report.  See the
+  <a href="https://tintin.mudhalla.net/protocols/msdp/">MSDP specification</a>.
+
+<p>
+  MSDP must be compiled in (<code>--enable-msdp</code>) and enabled at
+  runtime with:
+
+<p>
+  <b>/set msdp on</b>
+
+<p>
+  The setting is read when a connection negotiates telnet options, so set it
+  before connecting (or reconnect after setting it).  When enabled, tf asks
+  the server to turn on MSDP.
+
+<h2>Sending MSDP commands</h2>
+
+<p>
+  Use the <b>msdp</b>() function.  Its argument is a command in a simple,
+  human readable syntax; the optional second argument selects a world (the
+  current world is used by default).  Values assigned to a variable use
+  '=', tables use [ ], and arrays use { }:
+
+<pre>
+  /test msdp("LIST=COMMANDS")
+  /test msdp("SEND=ROOM_VNUM")
+  /test msdp("REPORT={ ROOM_VNUM ROOM_NAME HEALTH }")
+  /test msdp("UNREPORT=HEALTH")
+</pre>
+
+<p>
+  For convenience you can wrap the function in a command:
+
+<pre>
+  /def msdp = /test msdp({*})
+</pre>
+
+<p>
+  after which you can simply type, e.g.:
+
+<pre>
+  /msdp REPORT={ ROOM_VNUM ROOM_NAME }
+</pre>
+
+<h2>Receiving MSDP data</h2>
+
+<p>
+  Incoming data is delivered to the <a href="../commands/hook.html">MSDP
+  hook</a> (no variables are set automatically).  The hook text is the
+  decoded data in the same syntax accepted by <b>msdp</b>(), for example:
+
+<pre>
+  ROOM_VNUM=1234
+  COMMANDS= { LIST REPORT RESET SEND UNREPORT }
+  ROOM= [ VNUM=1234 NAME=The void EXITS= [ n=1235 ] ]
+</pre>
+
+<p>
+  The structure is conveyed by the <b>[</b> <b>]</b> <b>{</b> <b>}</b> and
+  <b>=</b> markers.  Scalar values are passed through as-is, without quoting
+  or escaping, so a value that itself contains spaces or these characters is
+  not self-delimiting; parse the markers if you need the exact structure.
+
+<p>
+  A simple way to see everything the server sends:
+
+<pre>
+  /def -h"MSDP *" msdp_show = /echo -- MSDP: %*
+</pre>
+
+<p>
+  To capture a single value into a variable:
+
+<pre>
+  /def -msimple -h'MSDP ROOM_VNUM=*' = /set vnum=%{P1}
+</pre>
+
+<p>
+  then use it normally:
+
+<pre>
+  /echo You are in room vnum=%vnum
+</pre>
+
+<h2>Discovering variables</h2>
+
+<p>
+  Ask the server what it supports:
+
+<pre>
+  /test msdp("LIST=REPORTABLE_VARIABLES")
+</pre>
+
+<p>
+  and watch the MSDP hook for the REPORTABLE_VARIABLES array.  Other useful
+  lists include CONFIGURABLE_VARIABLES, SENDABLE_VARIABLES, and
+  REPORTED_VARIABLES.
+
+<p>
+  See also: <a href="../commands/hook.html">hook</a>,
+  <a href="../topics/protocols.html">protocols</a>
+
+<p>
+<!-- END -->
+<hr>
+  <a href="./">Back to index</a><br>
+  <a href="http://tinyfugue.sourceforge.net/">Back to tf home page</a>

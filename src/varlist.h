@@ -52,6 +52,11 @@ varflag(VAR_gmcp,	"gmcp",		TRUE,		NULL)
 #else
 varenum(VAR_gmcp,	"gmcp",		FALSE,		NULL,	enum_off)
 #endif
+#if ENABLE_MSDP
+varflag(VAR_msdp,	"msdp",		TRUE,		NULL)
+#else
+varenum(VAR_msdp,	"msdp",		FALSE,		NULL,	enum_off)
+#endif
 #if ENABLE_OPTION102
 varflag(VAR_OPTION102,	"option102",	TRUE,		NULL)
 #else

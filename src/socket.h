@@ -48,6 +48,9 @@ extern int     handle_atcp_function(conString *string, const char *world);
 #if ENABLE_GMCP
 extern int     handle_gmcp_function(conString *string, const char *world);
 #endif
+#if ENABLE_MSDP
+extern int     handle_msdp_function(conString *string, const char *world);
+#endif
 #if ENABLE_OPTION102
 extern int     handle_option102_function(conString *string, const char *world);
 #endif

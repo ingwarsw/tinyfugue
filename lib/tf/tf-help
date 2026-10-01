@@ -11503,4 +11503,68 @@ TF Python
   See the included [1mtf-lib/urlwatch.py[22;0m and [1mtf-lib/config.py[22;0m for fairly complex
   examples.
 
+&msdp
+MSDP
+
+  MSDP (Mud Server Data Protocol) lets a server send structured data (such
+  as health, room, and opponent information) to the client, and lets the
+  client request which variables the server should report.  See:
+  https://tintin.mudhalla.net/protocols/msdp/
+
+  MSDP must be compiled in ([1m--enable-msdp[22;0m) and enabled at runtime with:
+
+    [1m/set msdp on[22;0m
+
+  The setting is read when a connection negotiates telnet options, so set it
+  before connecting (or reconnect after setting it).  When enabled, tf asks
+  the server to turn on MSDP.
+
+  [1mSending MSDP commands[22;0m: use the [1mmsdp[22;0m() function.  Its argument is a
+  command in a simple, human readable syntax; the optional second argument
+  selects a world (the current world is used by default).  Values assigned
+  to a variable use '=', tables use [ ], and arrays use { }:
+
+    [1m/test[22;0m msdp("LIST=COMMANDS")
+    [1m/test[22;0m msdp("SEND=ROOM_VNUM")
+    [1m/test[22;0m msdp("REPORT={ ROOM_VNUM ROOM_NAME HEALTH }")
+    [1m/test[22;0m msdp("UNREPORT=HEALTH")
+
+  For convenience you can wrap the function in a command:
+
+    [1m/def[22;0m msdp = [1m/test[22;0m msdp({*})
+
+  after which you can simply type, e.g.:
+
+    [1m/msdp[22;0m REPORT={ ROOM_VNUM ROOM_NAME }
+
+  [1mReceiving MSDP data[22;0m: incoming data is delivered to the [1mMSDP[22;0m
+  [1mhook[22;0m (no variables are set automatically).  The hook text is the
+  decoded data in the same syntax accepted by [1mmsdp[22;0m(), for example:
+
+    ROOM_VNUM=1234
+    COMMANDS= { LIST REPORT RESET SEND UNREPORT }
+    ROOM= [ VNUM=1234 NAME=The void EXITS= [ n=1235 ] ]
+
+  A simple way to see everything the server sends:
+
+    [1m/def[22;0m -h"MSDP *" msdp_show = [1m/echo[22;0m -- MSDP: %*
+
+  To capture a single value into a variable:
+
+    [1m/def[22;0m -msimple -h'MSDP ROOM_VNUM=*' = [1m/set[22;0m vnum=%{P1}
+
+  then use it normally:
+
+    [1m/echo[22;0m You are in room vnum=%vnum
+
+  [1mDiscovering variables[22;0m: ask the server what it supports:
+
+    [1m/test[22;0m msdp("LIST=REPORTABLE_VARIABLES")
+
+  and watch the [1mMSDP[22;0m hook for the REPORTABLE_VARIABLES array.  Other
+  useful lists include CONFIGURABLE_VARIABLES, SENDABLE_VARIABLES, and
+  REPORTED_VARIABLES.
+
+  See also: [1m/help[22;0m gmcp, [1m/help[22;0m hook, [1m/help[22;0m protocols
+
 &
