@@ -60,7 +60,6 @@ conString *msdp_encode(const char *cmd)
 			case '{': Stringadd(buf, MSDP_ARRAY_OPEN); state = MSDP_VAL; array_depth++; continue;
 			case '}': Stringadd(buf, MSDP_ARRAY_CLOSE); state = MSDP_VAR; if (array_depth) array_depth--; continue;
 			case '=': Stringadd(buf, MSDP_VAL); state = MSDP_VAL; continue;
-			case ' ': continue; /* eat spaces */
 			default: break;	    /* single char identifier, fall through */
 			}
 		}

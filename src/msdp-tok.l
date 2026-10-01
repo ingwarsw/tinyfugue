@@ -10,8 +10,8 @@
 
 %%
 [\[\{}\]=]		return 1;
-[a-zA-Z0-9_]*		return 1;
-[ \t]*			return 1;
+[a-zA-Z0-9_]+		return 1;
+[ \t]+			;	/* ignore whitespace between tokens */
 \"(\\.|[^\\"])*\"	return 1;
 %%
 
