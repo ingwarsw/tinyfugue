@@ -429,6 +429,7 @@ STATIC_BUFFER(telbuf);
 static const char *enum_charset[] = {
     "UTF-8",
     "ISO-8859-1", /* No real support; code passes all chars */
+    "ISO-8859-2", /* Latin-2 (Central European); converted via ICU */
     "US-ASCII",
     "" /* Null-terminated list, so we can loop */
 };
