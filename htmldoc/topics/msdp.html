@@ -69,10 +69,12 @@
   not self-delimiting; parse the markers if you need the exact structure.
 
 <p>
-  A simple way to see everything the server sends:
+  A simple way to see everything the server sends (<b>-mglob</b> is given
+  explicitly so the pattern works regardless of your <b>%{matching}</b>
+  setting):
 
 <pre>
-  /def -h"MSDP *" msdp_show = /echo -- MSDP: %*
+  /def -mglob -h"MSDP *" msdp_show = /echo -- MSDP: %*
 </pre>
 
 <p>

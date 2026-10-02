@@ -11545,9 +11545,9 @@ MSDP
     COMMANDS= { LIST REPORT RESET SEND UNREPORT }
     ROOM= [ VNUM=1234 NAME=The void EXITS= [ n=1235 ] ]
 
-  A simple way to see everything the server sends:
+  A simple way to see everything the server sends (-mglob is explicit so it works regardless of your matching setting):
 
-    [1m/def[22;0m -h"MSDP *" msdp_show = [1m/echo[22;0m -- MSDP: %*
+    [1m/def[22;0m -mglob -h"MSDP *" msdp_show = [1m/echo[22;0m -- MSDP: %*
 
   To capture a single value into a variable:
 
