@@ -30,6 +30,9 @@ static const unsigned char *re_tables = NULL;
 static const char *cmatch(const char *pat, int ch);
 static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     const char *file, int line);
+#if WIDECHAR
+static int utf8_getcp(const char **pp);
+#endif
 
 #define tf_reg_compile(pat, opt) \
     tf_reg_compile_fl(pat, opt, __FILE__, __LINE__)
@@ -123,6 +126,22 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     pcre2_compile_context *context;
     /* PCRE2_DOTALL optimizes patterns starting with ".*" */
     int options = PCRE2_DOLLAR_ENDONLY | PCRE2_DOTALL | PCRE2_CASELESS;
+#if WIDECHAR
+    /*
+     * With WIDECHAR (ICU) the incoming server text is converted to UTF-8
+     * before triggers are matched, so patterns must be matched as UTF-8
+     * too.  PCRE2_UTF interprets both pattern and subject as UTF-8, and
+     * PCRE2_UCP makes PCRE2_CASELESS fold case for non-ASCII letters
+     * (e.g. Polish a-ogonek).  PCRE2_MATCH_INVALID_UTF (PCRE2 >= 10.34)
+     * lets matching tolerate invalid UTF-8 in the subject instead of
+     * failing; it is optional and guarded below.
+     */
+    int utf_options = PCRE2_UTF | PCRE2_UCP;
+#ifdef PCRE2_MATCH_INVALID_UTF
+    utf_options |= PCRE2_MATCH_INVALID_UTF;
+#endif
+    options |= utf_options;
+#endif
 
     ri = dmalloc(NULL, sizeof(RegInfo), file, line);
     if (!ri) return NULL;
@@ -139,6 +158,18 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     for (s = pattern; *s; s++) {
 	if (*s == '\\') {
 	    if (s[1]) s++;
+#if WIDECHAR
+	} else if ((unsigned char)*s >= 0x80) {
+	    /* decode a whole UTF-8 character so smart-case works for
+	     * non-ASCII upper-case letters too */
+	    const char *cs = s;
+	    int cp = utf8_getcp(&cs);
+	    if (iswupper((wint_t)cp)) {
+		options &= ~PCRE2_CASELESS;
+		break;
+	    }
+	    s = cs - 1;	/* for-loop will ++ */
+#endif
 	} else if (is_upper(*s)) {
 	    options &= ~PCRE2_CASELESS;
 	    break;
@@ -148,6 +179,20 @@ static RegInfo *tf_reg_compile_fl(const char *pattern, int optimize,
     context = pcre2_compile_context_create(NULL);
     pcre2_set_character_tables(context, re_tables);
     ri->re = pcre2_compile(pattern, PCRE2_ZERO_TERMINATED, options, &ecode, &eoffset, context);
+#if WIDECHAR
+    /*
+     * If the pattern itself is not valid UTF-8 (e.g. a legacy script saved
+     * in ISO-8859-2), PCRE2 reports a UTF error at compile time.  Retry
+     * without the UTF options so such patterns keep working in byte mode,
+     * for backward compatibility.
+     */
+    if (!ri->re && ecode >= PCRE2_ERROR_UTF8_ERR21
+		 && ecode <= PCRE2_ERROR_UTF8_ERR1) {
+	options &= ~utf_options;
+	ri->re = pcre2_compile(pattern, PCRE2_ZERO_TERMINATED, options,
+			       &ecode, &eoffset, context);
+    }
+#endif
     pcre2_compile_context_free(context);
     if (!ri->re) {
 	    pcre2_get_error_message(ecode, emsg, sizeof(emsg));
@@ -293,30 +338,82 @@ int patmatch(
     return 0;
 }
 
+#if WIDECHAR
+/* Decode one UTF-8 code point from *pp and advance *pp past it.  On an
+ * invalid lead/continuation byte, consume a single byte so callers always
+ * make progress.  Returns the code point (or the raw byte on error). */
+static int utf8_getcp(const char **pp)
+{
+    const unsigned char *p = (const unsigned char *)*pp;
+    int c = *p, cp, n;
+    if (c < 0x80)        { *pp += 1; return c; }
+    else if (c < 0xC0)   { *pp += 1; return c; } /* stray continuation */
+    else if (c < 0xE0)   { cp = c & 0x1F; n = 1; }
+    else if (c < 0xF0)   { cp = c & 0x0F; n = 2; }
+    else if (c < 0xF8)   { cp = c & 0x07; n = 3; }
+    else                 { *pp += 1; return c; } /* invalid lead */
+    for (int i = 1; i <= n; i++) {
+        if ((p[i] & 0xC0) != 0x80) { *pp += 1; return c; } /* truncated */
+        cp = (cp << 6) | (p[i] & 0x3F);
+    }
+    *pp += n + 1;
+    return cp;
+}
+
+/* Lower-case a code point (Unicode-aware under widechar). */
+# define cp_lcase(cp)	((int)towlower((wint_t)(cp)))
+
+/* Advance a string pointer past one whole UTF-8 multibyte character. */
+static void utf8_skip(const char **pp)
+{
+    const char *p = *pp;
+    p++;
+    while ((unsigned char)*p >= 0x80 && (unsigned char)*p < 0xC0)
+        p++;
+    *pp = p;
+}
+#else
+# define cp_lcase(cp)	lcase(cp)
+#endif /* WIDECHAR */
+
 /* class is a pointer to a string of the form "[...]..."
  * ch is compared against the character class described by class.
  * If ch matches, cmatch() returns a pointer to the char after ']' in class;
  * otherwise, cmatch() returns NULL.
+ *
+ * ch is a (possibly multibyte) character; under widechar the subject and the
+ * class entries are decoded as UTF-8 code points, so distinct non-ASCII
+ * characters that happen to share a UTF-8 lead byte (e.g. the Polish letters
+ * s-acute and l-stroke) are distinguished.
  */
 static const char *cmatch(const char *class, int ch)
 {
     int not;
 
-    ch = lcase(ch);
+    ch = cp_lcase(ch);
     if ((not = (*++class == '^'))) ++class;
 
     while (1) {
+        int lo, hi;
         if (*class == ']') return (char*)(not ? class + 1 : NULL);
         if (*class == '\\') ++class;
-        if (class[1] == '-' && class[2] != ']') {
-            char lo = *class;
-            class += 2;
+#if WIDECHAR
+        lo = cp_lcase(utf8_getcp(&class));
+#else
+        lo = cp_lcase((unsigned char)*class++);
+#endif
+        if (*class == '-' && class[1] != ']') {
+            ++class;
             if (*class == '\\') ++class;
-            if (ch >= lcase(lo) && ch <= lcase(*class)) break;
-        } else if (lcase(*class) == ch) break;
-        ++class;
+#if WIDECHAR
+            hi = cp_lcase(utf8_getcp(&class));
+#else
+            hi = cp_lcase((unsigned char)*class++);
+#endif
+            if (ch >= lo && ch <= hi) break;
+        } else if (lo == ch) break;
     }
-    return not ? NULL : (estrchr(++class, ']', '\\') + 1);
+    return not ? NULL : (estrchr(class, ']', '\\') + 1);
 }
 
 /* smatch_check() should be used on pat to check pattern syntax before
@@ -339,7 +436,11 @@ int smatch(const char *pat, const char *str)
 
         case '?':
             if (!*str || (inword && is_space(*str))) return 1;
+#if WIDECHAR
+            utf8_skip(&str);	/* advance past a whole UTF-8 character */
+#else
             str++;
+#endif
             pat++;
             break;
 
@@ -347,7 +448,11 @@ int smatch(const char *pat, const char *str)
             while (*pat == '*' || *pat == '?') {
                 if (*pat == '?') {
                     if (!*str || (inword && is_space(*str))) return 1;
+#if WIDECHAR
+                    utf8_skip(&str);
+#else
                     str++;
+#endif
                 }
                 pat++;
             }
@@ -376,7 +481,17 @@ int smatch(const char *pat, const char *str)
 
         case '[':
             if (inword && is_space(*str)) return 1;
-            if (!(pat = cmatch(pat, *str++))) return 1;
+#if WIDECHAR
+            {
+                /* Decode a whole UTF-8 code point from str and match it
+                 * against the class, so distinct multibyte characters are
+                 * distinguished (cmatch decodes the class the same way). */
+                int cp = utf8_getcp(&str);
+                if (!(pat = cmatch(pat, cp))) return 1;
+            }
+#else
+            if (!(pat = cmatch(pat, (unsigned char)*str++))) return 1;
+#endif
             break;
 
         case '{':

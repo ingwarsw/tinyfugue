@@ -1940,8 +1940,8 @@ static int primary_expr(Program *prog, int could_be_div_or_macro)
         Stringfree(str);
         if (error) return 0;
         code_add(prog, OP_PUSH, val);
-    } else if (is_alpha(*ip) || *ip == '_') {
-        for (end = ip + 1; is_alnum(*end) || *end == '_'; end++);
+    } else if (is_namechar_first(*ip)) {
+        for (end = ip + 1; is_namechar(*end); end++);
         val = newid(ip, end - ip);
         ip = end;
         code_add(prog, OP_PUSH, val);

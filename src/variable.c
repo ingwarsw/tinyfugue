@@ -579,9 +579,11 @@ Var *setintvar(Var *var, long ival, int exportflag)
 char *spanvar(const char *start)
 {
     const char *p;
-    /* Restrict variable names to alphanumerics and underscores, like POSIX.2 */
+    /* Restrict variable names to alphanumerics and underscores, like POSIX.2
+     * (see is_namechar* in variable.h, which under widechar also accept
+     * UTF-8 multibyte characters). */
     for (p = start; *p; p++) {
-        if (!(is_alpha(*p) || *p == '_' || (p != start && is_digit(*p))))
+        if (!(p == start ? is_namechar_first(*p) : is_namechar(*p)))
             return (char *)p;
     }
     return (char *)p;

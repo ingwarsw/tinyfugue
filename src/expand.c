@@ -2097,10 +2097,10 @@ int varsub(Program *prog, int sub_warn, int in_expr)
         Stringtrunc(selector, 0);
         if ((n < 0 && !star) || (bracket && (ell || pee))) {
             /* is non-special, or could be non-special if followed by alnum_ */
-            if (is_alnum(*ip) || (*ip == '_')) {
+            if (is_namechar(*ip)) {
                 ell = pee = FALSE;
                 n = -1;
-                do ip++; while (is_alnum(*ip) || *ip == '_');
+                do ip++; while (is_namechar(*ip));
                 Stringncpy(selector, start, ip - start);
             }
         }
@@ -2180,7 +2180,11 @@ int varsub(Program *prog, int sub_warn, int in_expr)
 		    if (!backsub(prog, dest)) goto varsub_exit;
 		}
             } else {
-                for (start = ip++; *ip && is_alnum(*ip); ip++);
+                for (start = ip++; *ip && (is_alnum(*ip)
+#if WIDECHAR
+                                           || (unsigned char)*ip >= 0x80
+#endif
+                                          ); ip++);
 		SStringoncat(dest, prog->src, start - prog->src->data,
 		    ip - start);
             }
