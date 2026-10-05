@@ -180,7 +180,27 @@ int handle_keyboard_input(int read_flag)
             } else if (s[key_start] == '\b' || s[key_start] == '\177') {
                 handle_input_string(s + input_start, key_start - input_start);
                 place = input_start = ++key_start;
+#if WIDECHAR
+                {   /* Delete whole UTF-8 characters, not bytes: for each of
+                     * the kbnumval characters to remove, step back at least
+                     * one byte and then past any continuation bytes
+                     * (0x80-0xBF) to the start of the character.  Otherwise a
+                     * stray lead byte would be left in the input line and
+                     * later sent to the mud, and a counted backspace
+                     * (kbnumval > 1) would remove too few characters. */
+                    int del = keyboard_pos;
+                    int n = kbnumval;
+                    while (n-- > 0 && del > 0) {
+                        del--;
+                        while (del > 0 &&
+                               ((unsigned char)keybuf->data[del] & 0xC0) == 0x80)
+                            del--;
+                    }
+                    do_kbdel(del);
+                }
+#else
                 do_kbdel(keyboard_pos - kbnumval);
+#endif
 		reset_kbnum();
             } else if (kbnum && is_digit(s[key_start]) &&
 		key_start == input_start)
