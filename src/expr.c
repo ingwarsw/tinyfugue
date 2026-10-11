@@ -71,6 +71,57 @@ enum func_id {
 };
 
 
+#if WIDECHAR
+/*
+ * In widechar builds strings are UTF-8, but the string functions used to
+ * count bytes, so e.g. substr("północ",0,4) cut a multibyte character in
+ * half.  These helpers convert between character and byte offsets so the
+ * string functions can work in characters.  Invalid sequences count each
+ * stray byte as one character, so the helpers always make progress.
+ */
+
+/* Length in bytes of the UTF-8 character starting at s (at most avail). */
+static int u8_clen(const char *s, int avail)
+{
+    int n = 1;
+    if ((unsigned char)*s >= 0xC0)
+        while (n < avail && ((unsigned char)s[n] & 0xC0) == 0x80)
+            n++;
+    return n;
+}
+
+/* Number of characters in the first len bytes of s. */
+static int u8_nchars(const char *s, int len)
+{
+    int b = 0, c = 0;
+    while (b < len) { b += u8_clen(s + b, len - b); c++; }
+    return c;
+}
+
+/* Byte offset of character number coff in s (clamped to len). */
+static int u8_byteoff(const char *s, int len, int coff)
+{
+    int b = 0;
+    while (coff-- > 0 && b < len) b += u8_clen(s + b, len - b);
+    return b;
+}
+
+/* Is the character c (clen bytes) one of the characters in set? */
+static int u8_inset(const char *c, int clen, const char *set)
+{
+    int slen = strlen(set), b = 0;
+    while (b < slen) {
+        int l = u8_clen(set + b, slen - b);
+        if (l == clen && memcmp(set + b, c, clen) == 0) return 1;
+        b += l;
+    }
+    return 0;
+}
+# define STRLEN_C(s, len)	u8_nchars((s), (len))
+#else
+# define STRLEN_C(s, len)	(len)
+#endif
+
 static int comma_expr(Program *prog);
 static int assignment_expr(Program *prog);
 static int conditional_expr(Program *prog);
@@ -1343,11 +1394,13 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
 
         case FN_pad:
             for (Sstr2 = Stringnew(NULL, 0, 0); n > 0; n -= 2) {
+                int clen;
                 constr = opdstr(n);
+                clen = STRLEN_C(constr->data, constr->len);
                 i = (n > 1) ? opdint(n-1) : 0;
-                if (i > constr->len) Stringnadd(Sstr2, ' ', i - constr->len);
+                if (i > clen) Stringnadd(Sstr2, ' ', i - clen);
                 SStringcat(Sstr2, constr);
-                if (-i > constr->len) Stringnadd(Sstr2, ' ', -i - constr->len);
+                if (-i > clen) Stringnadd(Sstr2, ' ', -i - clen);
             }
             return newSstr(CS(Sstr2));
 
@@ -1362,7 +1415,7 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
 
         case FN_strlen:
             constr = opdstr(1);
-            return newint(constr->len);
+            return newint(STRLEN_C(constr->data, constr->len));
 
 
 #define bound_check(var, maxval) \
@@ -1388,31 +1441,86 @@ static Value *function_switch(const ExprFunc *func, int n, const char *parent)
         case FN_substr:
             constr = opdstr(n);
             i = opdint(n - 1);
+#if WIDECHAR
+            {   /* offsets and length are in characters */
+                int clen = u8_nchars(constr->data, constr->len);
+                int bs, be;
+                bound_check(i, clen);
+                optional_int_arg(j, n, 3, clen - i, clen - i);
+                bs = u8_byteoff(constr->data, constr->len, i);
+                be = u8_byteoff(constr->data, constr->len, i + j);
+                Sstr2 = Stringnew(NULL, be - bs, 0);
+                return newSstr(CS(SStringoncat(Sstr2, constr, bs, be - bs)));
+            }
+#else
             bound_check(i, constr->len);
             optional_int_arg(j, n, 3, constr->len - i, constr->len - i);
             Sstr2 = Stringnew(NULL, j, 0);
             return newSstr(CS(SStringoncat(Sstr2, constr, i, j)));
+#endif
 
         case FN_strstr:
             constr = opdstr(n);
+#if WIDECHAR
+            {   /* start offset and result are in characters */
+                int clen = u8_nchars(constr->data, constr->len);
+                optional_int_arg(j, n, 3, clen, 0);
+                ptr = strstr(constr->data +
+                    u8_byteoff(constr->data, constr->len, j), opdstd(n-1));
+                return newint(ptr ?
+                    u8_nchars(constr->data, ptr - constr->data) : -1);
+            }
+#else
             optional_int_arg(j, n, 3, constr->len, 0);
             ptr = strstr(constr->data + j, opdstd(n-1));
             return newint(ptr ? (ptr - constr->data) : -1);
+#endif
 
         case FN_strchr:
             constr = opdstr(n);
+#if WIDECHAR
+            {   /* find the first character that is one of the (possibly
+                 * multibyte) characters in the set; offsets in characters */
+                int clen = u8_nchars(constr->data, constr->len);
+                int b, l;
+                ptr = opdstd(n-1);
+                optional_int_arg(j, n, 3, clen, 0);
+                b = u8_byteoff(constr->data, constr->len, j);
+                for (; b < constr->len; b += l, j++) {
+                    l = u8_clen(constr->data + b, constr->len - b);
+                    if (u8_inset(constr->data + b, l, ptr))
+                        return newint(j);
+                }
+                return newint(-1);
+            }
+#else
             optional_int_arg(j, n, 3, constr->len, 0);
             i = strcspn(constr->data + j, opdstd(n-1));
             return newint(constr->data[i+j] ? i+j : -1);
+#endif
 
         case FN_strrchr:
             constr = opdstr(n);
             ptr = opdstd(n-1);
+#if WIDECHAR
+            {   /* as strchr, searching backwards; offsets in characters */
+                int clen = u8_nchars(constr->data, constr->len);
+                optional_int_arg(i, n, 3, clen - 1, clen - 1);
+                for ( ; i >= 0; i--) {
+                    int b = u8_byteoff(constr->data, constr->len, i);
+                    int l = u8_clen(constr->data + b, constr->len - b);
+                    if (u8_inset(constr->data + b, l, ptr))
+                        return newint(i);
+                }
+                return newint(-1);
+            }
+#else
             optional_int_arg(i, n, 3, constr->len - 1, constr->len - 1);
             for ( ; i >= 0; i--)
                 if (strchr(ptr, constr->data[i]))
                     return newint(i);
             return newint(-1);
+#endif
 
         case FN_replace: {
             conString *old, *new;
