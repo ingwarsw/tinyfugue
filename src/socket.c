@@ -364,6 +364,7 @@ static int   establish(Sock *new);
 static void  fg_live_sock(void);
 #endif
 static void  nuke_dead_socks(void);
+static void  clear_socket_queue(Sock *sock);
 static void  nukesock(Sock *sock);
 static void  handle_prompt(String *str, int offset, int confirmed);
 static void  handle_implicit_prompt(void);
@@ -381,13 +382,14 @@ static int   transmit(const char *s, unsigned int len);
 static void  telnet_send(String *cmd);
 static void  telnet_subnegotiation(void);
 static void  f_telnet_recv(int cmd, int opt);
-static int   is_quiet(const char *str);
-static int   is_bamf(const char *str);
+static int   is_quiet(Sock *sock, const char *str);
+static int   is_bamf(Sock *sock, unsigned long generation, const char *str);
 static void  do_naws(Sock *sock);
 static void  telnet_debug(const char *dir, const char *str, int len);
 static void  preferred_telnet_options(void);
 static void  killsock(Sock *sock);
 static void  clear_fd_sets(int fd);
+static int   socket_input_current(Sock *sock, unsigned long generation);
 static int   socket_input_live(Sock *sock, unsigned long generation);
 #if HAVE_SSL
 static int   ssl_check_cert_verify(Sock *sock);
@@ -1353,6 +1355,8 @@ static int opensock(World *world, int flags)
 	if (world->sock->constate == SS_DEAD)
 	    dead_socks--;
         xsock = world->sock;
+	xsock->generation++;
+	clear_socket_queue(xsock);
 #if HAVE_SSL
 	if (xsock->ssl) {
 	    SSL_free(xsock->ssl); /* killsock() closed it, but didn't free it */
@@ -2291,19 +2295,29 @@ static void killsock(Sock *sock)
 	update_status_field(NULL, STAT_WORLD);
 }
 
+static void clear_socket_queue(Sock *sock)
+{
+    conString *line;
+
+    if (!sock->queue.list.head) return;
+    socks_with_lines--;
+    while ((line = dequeue(&sock->queue)))
+	conStringfree(line);
+}
+
+
 /* nukesock
  * Remove socket from list and free memory.  Should only be called on a
  * Sock which is known to have no references other than the socket list.
  */
 static void nukesock(Sock *sock)
 {
-    if (sock->queue.list.head) {
+    if (sock->queue.list.head)
 	internal_error(__FILE__, __LINE__, "socket %s has unprocessed lines",
 	    !sock ? "!sock" :
 	    !sock->world ? "!sock->world" :
 	    sock->world->name);
-	socks_with_lines--;
-    }
+    clear_socket_queue(sock);
     if (sock == xsock) xsock = NULL;
     sock->world->sock = NULL;
     killsock(sock);
@@ -2756,23 +2770,27 @@ int handle_fake_recv_function(conString *string, const char *world,
 /* transmit bytes to current socket */
 static int transmit(const char *str, unsigned int numtowrite)
 {
+    Sock *sock;
+    unsigned long generation;
     int numwritten, err;
 
     if (!xsock || xsock->constate != SS_CONNECTED)
         return 0;
+    sock = xsock;
+    generation = sock->generation;
     while (numtowrite) {
 #if HAVE_SSL
-	if (xsock->ssl) {
-	    numwritten = SSL_write(xsock->ssl, str, numtowrite);
+	if (sock->ssl) {
+	    numwritten = SSL_write(sock->ssl, str, numtowrite);
 	    if (numwritten <= 0) {
-		zombiesock(xsock); /* before hook, so sock state is correct */
-		ssl_io_err(xsock, numwritten, H_DISCONNECT);
+		zombiesock(sock); /* before hook, so sock state is correct */
+		ssl_io_err(sock, numwritten, H_DISCONNECT);
 		return 0;
 	    }
 	} else
 #endif /* HAVE_SSL */
 	{
-	    numwritten = send(xsock->fd, str, numtowrite, 0);
+	    numwritten = send(sock->fd, str, numtowrite, 0);
 	    if (numwritten < 0) {
 		err = errno;
 		/* Socket is blocking; EAGAIN and EWOULDBLOCK are impossible. */
@@ -2780,19 +2798,20 @@ static int transmit(const char *str, unsigned int numtowrite)
 		    return 0;
 		} else if (err == EHOSTUNREACH || err == ENETUNREACH) {
 		    /* XXX there should be an UNREACHABLE hook here */
-		    eprintf("%s: send: %s", xsock->world->name, strerror(err));
+		    eprintf("%s: send: %s", sock->world->name, strerror(err));
 		    return 0;
 		} else {
 		    flushxsock();
-		    zombiesock(xsock); /* before hook, so state is correct */
-		    DISCON(xsock->world->name, "send", strerror(err));
+		    if (!socket_input_live(sock, generation)) return 0;
+		    zombiesock(sock); /* before hook, so state is correct */
+		    DISCON(sock->world->name, "send", strerror(err));
 		    return 0;
 		}
 	    }
 	}
         numtowrite -= numwritten;
         str += numwritten;
-        gettime(&xsock->time[SOCK_SEND]);
+        gettime(&sock->time[SOCK_SEND]);
     }
     return 1;
 }
@@ -2932,64 +2951,98 @@ int send_line(const char *src, unsigned int len, int eol_flag)
 static void handle_socket_lines(void)
 {
     static int depth = 0;
+    Sock *sock;
+    unsigned long generation;
     conString *line;
-    int is_prompt;
+    int is_prompt, matched, gag_line;
+    int owns_incoming = 0;
 
     if (depth) return;	/* don't recurse */
-    if (!(line = dequeue(&xsock->queue)))
+    sock = xsock;
+    generation = sock->generation;
+    if (!(line = dequeue(&sock->queue)))
 	return;
     depth++;
     do {
-	if (!xsock->queue.list.head) /* just dequeued the last line */
+	if (!sock->queue.list.head) /* just dequeued the last line */
 	    socks_with_lines--;
 
-	if (line->attrs & (F_TFPROMPT)) {
-	    incoming_text = (String *) line;
+	if (line->attrs & F_TFPROMPT) {
+	    incoming_text = (String *)line;
+	    line = NULL;	/* handle_prompt() consumes the queue reference */
 	    handle_prompt(incoming_text, 0, TRUE);
+	    incoming_text = NULL;
+	    if (!socket_input_current(sock, generation)) goto done;
 	    continue;
 	}
 
-	incoming_text = decode_ansi(line->data, xsock->attrs, emulation,
-	    &xsock->attrs);
+	incoming_text = decode_ansi(line->data, sock->attrs, emulation,
+	    &sock->attrs);
 	incoming_text->time = line->time;
 	is_prompt = line->attrs & F_SERVPROMPT;
 	conStringfree(line);
+	line = NULL;
 	incoming_text->links++;
+	owns_incoming = 1;
 
 	if (is_prompt) {
-	    if (do_hook(H_PROMPT, NULL, "%S", incoming_text)) {
+	    matched = do_hook(H_PROMPT, NULL, "%S", incoming_text);
+	    if (!socket_input_current(sock, generation)) goto done;
+	    if (matched) {
 		Stringfree(incoming_text);
+		incoming_text = NULL;
+		owns_incoming = 0;
 	    } else {
+		owns_incoming = 0; /* handle_prompt() consumes the reference */
 		handle_prompt(incoming_text, 0, TRUE);
+		incoming_text = NULL;
+		if (!socket_input_current(sock, generation)) goto done;
 	    }
 
 	} else {
 	    if (borg || hilite || gag) {
 		/* Run the trigger matches against this incoming text line */
-		if (find_and_run_matches(NULL, -1, &incoming_text, xworld(),
-		    TRUE, 0))
-		{
-		    if (xsock != fsock)
-			do_hook(H_BGTRIG, "%% Trigger in world %s", "%s %S",
-			    xsock->world->name, incoming_text);
+		matched = find_and_run_matches(NULL, -1, &incoming_text,
+		    sock->world, TRUE, 0);
+		if (!socket_input_current(sock, generation)) goto done;
+		if (matched && sock != fsock) {
+		    do_hook(H_BGTRIG, "%% Trigger in world %s", "%s %S",
+			sock->world->name, incoming_text);
+		    if (!socket_input_current(sock, generation)) goto done;
 		}
 	    }
 
-	    if (is_bamf(incoming_text->data) || is_quiet(incoming_text->data) ||
-		is_watchdog(xsock->world->history, incoming_text) ||
-		is_watchname(xsock->world->history, incoming_text))
+	    gag_line = is_bamf(sock, generation, incoming_text->data);
+	    if (!socket_input_current(sock, generation)) goto done;
+	    if (!gag_line && (is_quiet(sock, incoming_text->data) ||
+		is_watchdog(sock->world->history, incoming_text) ||
+		is_watchname(sock->world->history, incoming_text)))
 	    {
-		incoming_text->attrs |= F_GAG;
+		gag_line = TRUE;
 	    }
+	    if (gag_line)
+		incoming_text->attrs |= F_GAG;
 
-	    world_output(xsock->world, CS(incoming_text));
+	    world_output(sock->world, CS(incoming_text));
 	    Stringfree(incoming_text);
+	    incoming_text = NULL;
+	    owns_incoming = 0;
+	    if (!socket_input_current(sock, generation)) goto done;
 	}
-    } while ((line = dequeue(&xsock->queue)));
+    } while ((line = dequeue(&sock->queue)));
+
+done:
+    if (line)
+	conStringfree(line);
+    if (owns_incoming) {
+	Stringfree(incoming_text);
+	incoming_text = NULL;
+    }
     depth--;
 
-    /* We just emptied the queue; there may be a partial line pending */
-    test_prompt();
+    /* We just emptied the queue; there may be a partial line pending. */
+    if (socket_input_live(sock, generation))
+	test_prompt();
 }
 
 /* log, record, and display line as if it came from sock */
@@ -3065,20 +3118,38 @@ int handle_prompt_func(conString *str)
 
 static void handle_prompt(String *str, int offset, int confirmed)
 {
-    runall(1, xsock->world);	/* run prompted processes */
-    if (xsock->prompt) {
-        unprompt(xsock, 0);
-    }
-    assert(str->links == 1);
-    xsock->prompt = CS(str);
+    Sock *sock = xsock;
+    unsigned long generation = sock->generation;
+    String *prompt = str;
+    int tracks_incoming = incoming_text == str;
+
+    if (!socket_input_live(sock, generation)) goto abandon;
+
+    str->links++;		/* /substitute may replace and free str */
+    runall(1, sock->world);	/* run prompted processes */
+    if (tracks_incoming)
+	prompt = incoming_text;
+    Stringfree(str);		/* release the reference held across runall() */
+
+    if (!socket_input_live(sock, generation)) goto abandon;
+    if (sock->prompt)
+	unprompt(sock, 0);
+    assert(prompt->links == 1);
+    sock->prompt = CS(prompt);
     /* Old versions did trigger checking here.  Removing it breaks
      * compatibility, but I doubt many users will care.  Leaving
      * it in would not be right for /prompt.
      */
-    if (xsock == fsock) update_prompt(xsock->prompt, 1);
-    if (confirmed) xsock->flags |= SOCKPROMPT;
-    else xsock->flags &= ~SOCKPROMPT;
-    xsock->numquiet = 0;
+    if (sock == fsock) update_prompt(sock->prompt, 1);
+    if (confirmed) sock->flags |= SOCKPROMPT;
+    else sock->flags &= ~SOCKPROMPT;
+    sock->numquiet = 0;
+    if (tracks_incoming) incoming_text = NULL;
+    return;
+
+abandon:
+    if (tracks_incoming) incoming_text = NULL;
+    Stringfree(prompt);
 }
 
 static void handle_implicit_prompt(void)
@@ -3115,9 +3186,14 @@ static void schedule_prompt(Sock *sock)
     }
 }
 
+static int socket_input_current(Sock *sock, unsigned long generation)
+{
+    return xsock == sock && sock->generation == generation;
+}
+
 static int socket_input_live(Sock *sock, unsigned long generation)
 {
-    return xsock == sock && sock->generation == generation &&
+    return socket_input_current(sock, generation) &&
 	sock->constate < SS_ZOMBIE;
 }
 
@@ -3967,25 +4043,22 @@ static void handle_socket_input_queue_lines(Sock *sock)
     Stringtrunc(nextline, 0);
 }
 
-static int is_quiet(const char *str)
+static int is_quiet(Sock *sock, const char *str)
 {
-    if (!xsock->numquiet) return 0;
-    if (!--xsock->numquiet) return 1;
+    if (!sock->numquiet) return 0;
+    if (!--sock->numquiet) return 1;
     /* This should not be hard coded. */
     if ((strncmp("Use the WHO command", str, 19) == 0) ||
         (strcmp("### end of messages ###", str) == 0))
-            xsock->numquiet = 0;
+            sock->numquiet = 0;
     return 1;
 }
 
-static int is_bamf(const char *str)
+static int is_bamf(Sock *sock, unsigned long generation, const char *str)
 {
     smallstr name, host, port;
     STATIC_BUFFER(buffer);
     World *world;
-    Sock *callingsock;  /* like find_and_run_matches(), we must restore xsock */
-
-    callingsock = xsock;
 
     if (!bamf || restriction >= RESTRICT_WORLD) return 0;
     if (sscanf(str,
@@ -3997,20 +4070,21 @@ static int is_bamf(const char *str)
     if (bamf == BAMF_UNTER) Stringadd(buffer, '@');
     Stringcat(buffer, name);
     if (!(world = find_world(buffer->data))) {
-        if (bamf == BAMF_UNTER && xsock) {
-            world = new_world(buffer->data, xsock->world->type,
-		host, port, xsock->world->character, xsock->world->pass,
-		xsock->world->mfile, WORLD_TEMP, xsock->world->myhost);
+        if (bamf == BAMF_UNTER) {
+            world = new_world(buffer->data, sock->world->type,
+		host, port, sock->world->character, sock->world->pass,
+		sock->world->mfile, WORLD_TEMP, sock->world->myhost);
         } else {
             world = new_world(buffer->data,"",host,port,"","","",WORLD_TEMP,"");
         }
     }
 
     do_hook(H_BAMF, "%% Bamfing to %s", "%s", name);
-    if (bamf == BAMF_UNTER && xsock) killsock(xsock);
+    if (!socket_input_current(sock, generation)) return 1;
+    if (bamf == BAMF_UNTER) killsock(sock);
     if (!opensock(world, CONN_AUTOLOGIN))
         eputs("% Connection through portal failed.");
-    xsock = callingsock;
+    xsock = sock;
     return 1;
 }
 
@@ -4104,8 +4178,8 @@ static void telnet_debug(const char *dir, const char *str, int len)
 
 static void telnet_send(String *cmd)
 {
-    transmit(cmd->data, cmd->len);
-    telnet_debug("sent", cmd->data, cmd->len);
+    if (transmit(cmd->data, cmd->len))
+	telnet_debug("sent", cmd->data, cmd->len);
 }
 
 int local_echo(int flag)
