@@ -3013,12 +3013,15 @@ static void handle_socket_lines(void)
 	    }
 
 	    gag_line = is_bamf(sock, generation, incoming_text->data);
-	    if (!socket_input_current(sock, generation)) goto done;
-	    if (!gag_line && (is_quiet(sock, incoming_text->data) ||
-		is_watchdog(sock->world->history, incoming_text) ||
-		is_watchname(sock->world->history, incoming_text)))
-	    {
-		gag_line = TRUE;
+	    if (socket_input_current(sock, generation)) {
+		if (!gag_line && (is_quiet(sock, incoming_text->data) ||
+		    is_watchdog(sock->world->history, incoming_text) ||
+		    is_watchname(sock->world->history, incoming_text)))
+		{
+		    gag_line = TRUE;
+		}
+	    } else if (!gag_line) {
+		goto done;
 	    }
 	    if (gag_line)
 		incoming_text->attrs |= F_GAG;
