@@ -290,6 +290,7 @@ typedef enum {
     SS_DEAD		/* connection dead, and all text has been seen */
 } constate_t;
 
+
 /* flags */
 #define SOCKLOGIN	0x01	/* autologin requested by user */
 #define SOCKPROMPT	0x02	/* last prompt was definitely a prompt */
@@ -314,7 +315,7 @@ typedef struct Sock {		/* an open connection to a server */
     telnet_opts tn_them;	/* server's telnet options */
     telnet_opts tn_them_tog;	/* server's telnet options we want changed */
     constate_t constate;	/* connection state */
-    unsigned long generation;	/* changes when parsing state is retired */
+    unsigned long generation;	/* changes when parser state is retired or replaced */
     unsigned char flags;	/* SOCK* flags */
     short numquiet;		/* # of lines to gag after connecting */
     struct World *world;	/* world to which socket is connected */
@@ -550,6 +551,14 @@ do { \
 #define ROUND_UP_LENGTH(len)	((len + 7) & -8)
 
 #if HAVE_SSL
+typedef struct {
+    int ssl_error;
+    int ret;
+    int saved_errno;
+    char *world;
+    String *messages;
+} ssl_error_info_t;
+
 static void ssl_err(const char *str)
 {
     unsigned long e;
@@ -557,69 +566,169 @@ static void ssl_err(const char *str)
 	eprintf("%s: %s", str, ERR_error_string(e, NULL));
 }
 
-static void ssl_io_err(Sock *sock, int ret, int hook)
+static void capture_ssl_error_messages(ssl_error_info_t *info)
 {
-    /* NB: sock->addr may have already been changed by setupnextconn() */
-    int err;
-    const char *fmt;
+    unsigned long code;
+    char text[256];
 
-    flushxsock();
+    while ((code = ERR_get_error())) {
+	if (!info->messages)
+	    (info->messages = Stringnew(NULL, 0, 0))->links++;
+	ERR_error_string_n(code, text, sizeof(text));
+	Stringfncat(info->messages, text, strlen(text) + 1);
+    }
+}
 
+static void capture_ssl_error(Sock *sock, SSL *ssl, int ret, int saved_errno,
+    ssl_error_info_t *info)
+{
+    memset(info, 0, sizeof(*info));
+    info->ret = ret;
+    info->ssl_error = SSL_get_error(ssl, ret);
+    capture_ssl_error_messages(info);
+    info->world = STRDUP(sock->world->name);
+    info->saved_errno = saved_errno;
+}
+
+static void free_ssl_error(ssl_error_info_t *info)
+{
+    if (info->messages) Stringfree(info->messages);
+    FREE(info->world);
+}
+
+static int report_ssl_error(Sock *sock, unsigned long generation,
+    const ssl_error_info_t *info, int hook)
+{
+    const char *fmt, *what = NULL, *why = NULL;
+    int offset;
+
+    if (!socket_input_current(sock, generation)) return 0;
     switch (hook) {
     case H_CONFAIL: fmt = CONFAIL_fmt; break;
     case H_ICONFAIL: fmt = ICONFAIL_fmt; break;
     case H_DISCONNECT: fmt = "%% Connection to %s closed: %s: %s"; break;
+    default: return 0;
     }
 
-#define ssl_io_err_hook(what, why) \
-    do_hook(hook, fmt, "%s %s %s", xsock->world->name, what, why);
+#define report_ssl_error_hook(reason) \
+    do { \
+	do_hook(hook, fmt, "%s %s %s", info->world, what, reason); \
+	if (!socket_input_current(sock, generation)) return 0; \
+    } while (0)
 
-    err = SSL_get_error(sock->ssl, ret);
-    switch (err) {
-    case SSL_ERROR_NONE:
-	break;
-    case SSL_ERROR_ZERO_RETURN:
-	ssl_io_err_hook("SSL", "SSL_ERROR_ZERO_RETURN");
-	break;
-    case SSL_ERROR_WANT_READ:
-	ssl_io_err_hook("SSL", "SSL_ERROR_WANT_READ");
-	break;
-    case SSL_ERROR_WANT_WRITE:
-	ssl_io_err_hook("SSL", "SSL_ERROR_WANT_WRITE");
-	break;
-    case SSL_ERROR_WANT_CONNECT:
-	ssl_io_err_hook("SSL", "SSL_ERROR_WANT_CONNECT");
-	break;
+    switch (info->ssl_error) {
+    case SSL_ERROR_NONE:		break;
+    case SSL_ERROR_ZERO_RETURN:		why = "SSL_ERROR_ZERO_RETURN"; break;
+    case SSL_ERROR_WANT_READ:		why = "SSL_ERROR_WANT_READ"; break;
+    case SSL_ERROR_WANT_WRITE:		why = "SSL_ERROR_WANT_WRITE"; break;
+    case SSL_ERROR_WANT_CONNECT:	why = "SSL_ERROR_WANT_CONNECT"; break;
     case SSL_ERROR_SYSCALL:
-	if (ret == 0) {
-	    ssl_io_err_hook("SSL/system", "invalid EOF");
-	} else if (ret == -1) {
-	    ssl_io_err_hook("SSL/system", strerror(errno));
-	} else {
-	    while ((err = ERR_get_error())) {
-		ssl_io_err_hook("SSL/system", ERR_error_string(err, NULL));
-	    }
-	}
+	what = "SSL/system";
+	if (info->ret == 0)
+	    why = "invalid EOF";
+	else if (info->ret == -1)
+	    why = strerror(info->saved_errno);
 	break;
-    case SSL_ERROR_SSL:
-	while ((err = ERR_get_error())) {
-	    ssl_io_err_hook("SSL/lib", ERR_error_string(err, NULL));
-	}
-	break;
+    case SSL_ERROR_SSL:			what = "SSL/lib"; break;
     }
+    if (why) {
+	if (!what) what = "SSL";
+	report_ssl_error_hook(why);
+    } else if (what) {
+	for (offset = 0; info->messages && offset < info->messages->len;
+	    offset += strlen(info->messages->data + offset) + 1)
+	    report_ssl_error_hook(info->messages->data + offset);
+    }
+
+#undef report_ssl_error_hook
+    return socket_input_current(sock, generation);
 }
 
 /* 
  * cert verify, from openssl example eg:
  *    https://www.openssl.org/docs/man1.1.0/ssl/SSL_CTX_set_verify.html
  */
+typedef enum {
+    SSL_VERIFY_MSG_DEPTH,
+    SSL_VERIFY_MSG_ERROR,
+    SSL_VERIFY_MSG_CHAIN
+} ssl_verify_message_type_t;
+
+typedef struct ssl_verify_message {
+    ssl_verify_message_type_t type;
+    int value;
+    int depth;
+    char *error;
+    char *subject;
+    struct ssl_verify_message *next;
+} ssl_verify_message_t;
+
 typedef struct {
     int verbose_mode;
     int verify_depth;
     int always_continue;
+    ssl_verify_message_t *verify_messages;
+    ssl_verify_message_t *verify_messages_tail;
 } ssl_options_t;
+static int ssl_mydata_index = -1;
 static ssl_options_t ssl_options;
-static int ssl_mydata_index;
+
+static void save_ssl_verify_message(ssl_options_t *options,
+    ssl_verify_message_type_t type, int value, int depth,
+    const char *error, const char *subject)
+{
+    ssl_verify_message_t *message = XMALLOC(sizeof(*message));
+
+    message->type = type;
+    message->value = value;
+    message->depth = depth;
+    message->error = error ? STRDUP(error) : NULL;
+    message->subject = subject ? STRDUP(subject) : NULL;
+    message->next = NULL;
+    if (options->verify_messages_tail)
+	options->verify_messages_tail->next = message;
+    else
+	options->verify_messages = message;
+    options->verify_messages_tail = message;
+}
+
+static int report_ssl_verify_messages(Sock *sock, unsigned long generation)
+{
+    ssl_verify_message_t *message, *messages, *next;
+    int current = socket_input_current(sock, generation);
+
+    messages = ssl_options.verify_messages;
+    ssl_options.verify_messages = NULL;
+    ssl_options.verify_messages_tail = NULL;
+    while ((message = messages)) {
+	next = message->next;
+	if (current) {
+	    switch (message->type) {
+	    case SSL_VERIFY_MSG_DEPTH:
+		do_hook(H_PENDING,
+		    "%% SSL: cert verify depth exceeded: allowed=%d actual=%d",
+		    "%d %d", message->value, message->depth);
+		break;
+	    case SSL_VERIFY_MSG_ERROR:
+		do_hook(H_PENDING,
+		    "%% SSL: cert verify error: err=%d '%s' depth:%d cn:%s",
+		    "%d %s %d %s", message->value, message->error,
+		    message->depth, message->subject);
+		break;
+	    case SSL_VERIFY_MSG_CHAIN:
+		do_hook(H_PENDING, "%% SSL: chain: depth:%d cn:%s",
+		    "%d %s", message->depth, message->subject);
+		break;
+	    }
+	    current = socket_input_current(sock, generation);
+	}
+	if (message->error) FREE(message->error);
+	if (message->subject) FREE(message->subject);
+	FREE(message);
+	messages = next;
+    }
+    return current;
+}
 
 static int ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
 {
@@ -627,7 +736,7 @@ static int ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
     X509   *err_cert;
     int     err, depth;
     SSL    *ssl;
-    ssl_options_t *ssl_options;
+    ssl_options_t *options;
 
     err_cert = X509_STORE_CTX_get_current_cert(ctx);
     err = X509_STORE_CTX_get_error(ctx);
@@ -638,10 +747,8 @@ static int ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
      * and the application specific data stored into the SSL object.
      */
     ssl = X509_STORE_CTX_get_ex_data(ctx, SSL_get_ex_data_X509_STORE_CTX_idx());
-    ssl_options = SSL_get_ex_data(ssl, ssl_mydata_index);
-    if (ssl_options == NULL) {
-	eprintf("ssl: ssl_options null");
-    }
+    options = SSL_get_ex_data(ssl, ssl_mydata_index);
+    if (!options) return 0;
 
     X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
 
@@ -655,18 +762,19 @@ static int ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
      * additional certificates would be logged.
      */
 
-    if (depth > ssl_options->verify_depth) {
-	do_hook(H_PENDING, "%% SSL: cert verify depth exceeded: allowed=%d actual=%d", "%d %d", ssl_options->verify_depth, depth);
+    if (depth > options->verify_depth) {
+	save_ssl_verify_message(options, SSL_VERIFY_MSG_DEPTH,
+	    options->verify_depth, depth, NULL, NULL);
 	preverify_ok = 0;
 	err = X509_V_ERR_CERT_CHAIN_TOO_LONG;
 	X509_STORE_CTX_set_error(ctx, err);
-    } 
-    if (!preverify_ok) {
-	do_hook(H_PENDING, "%% SSL: cert verify error: err=%d '%s' depth:%d cn:%s", "%d %s %d %s", err, X509_verify_cert_error_string(err), depth, buf);
     }
-    else if (ssl_options->verbose_mode) {
-	// eprintf("depth=%d:%s", depth, buf);
-	do_hook(H_PENDING, "%% SSL: chain: depth:%d cn:%s", "%d %s", depth, buf);
+    if (!preverify_ok) {
+	save_ssl_verify_message(options, SSL_VERIFY_MSG_ERROR, err, depth,
+	    X509_verify_cert_error_string(err), buf);
+    } else if (options->verbose_mode) {
+	save_ssl_verify_message(options, SSL_VERIFY_MSG_CHAIN, 0, depth,
+	    NULL, buf);
     }
 
     /*
@@ -678,10 +786,25 @@ static int ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
 	eprintf("issuer= %s", buf);
     }
 
-    if (ssl_options->always_continue)
-	return 1;
-    else
-	return preverify_ok;
+    return options->always_continue ? 1 : preverify_ok;
+}
+
+static SSL *ssl_new_for_sock(Sock *sock, SSL_CTX *ctx)
+{
+    SSL *ssl;
+#if OPENSSL_VERSION_NUMBER >= 0x1000200fL
+    X509_VERIFY_PARAM *param;
+#endif
+
+    if (!(ssl = SSL_new(ctx))) return NULL;
+    SSL_set_ex_data(ssl, ssl_mydata_index, &ssl_options);
+#if OPENSSL_VERSION_NUMBER >= 0x1000200fL
+    param = SSL_get0_param(ssl);
+    X509_VERIFY_PARAM_set_hostflags(param,
+	X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
+    X509_VERIFY_PARAM_set1_host(param, sock->world->host, 0);
+#endif
+    return ssl;
 }
 
 static void init_ssl(void)
@@ -1436,22 +1559,26 @@ static int opensock(World *world, int flags)
     if ((flags & CONN_SSL) || (world->flags & WORLD_SSL)) {
 #if HAVE_SSL
 	init_ssl();
+	if (ssl_mydata_index < 0)
+	    ssl_mydata_index = SSL_get_ex_new_index(0, "ssl_mydata index",
+		NULL, NULL, NULL);
+	if (!ssl_ctx || ssl_mydata_index < 0) {
+	    killsock(xsock);
+	    return 0;
+	}
 	// Note: set_verify() needs to b ecalled *before* SSL_new()
     	SSL_CTX_set_verify(ssl_ctx, SSL_VERIFY_PEER, ssl_verify_callback);
-	xsock->ssl = SSL_new(ssl_ctx);
 	SSL_CTX_set_verify_depth(ssl_ctx, ssl_depth);
-	ssl_mydata_index = SSL_get_ex_new_index(0, "ssl_mydata index", 
-		NULL, NULL, NULL);
 	ssl_options.verify_depth = ssl_depth;
 	ssl_options.verbose_mode = ssl_verbose;
 	ssl_options.always_continue = ssl_continue;
-	SSL_set_ex_data(xsock->ssl, ssl_mydata_index, &ssl_options);
-#if OPENSSL_VERSION_NUMBER >= 0x1000200fL
-	X509_VERIFY_PARAM *param = SSL_get0_param(xsock->ssl);
-	X509_VERIFY_PARAM_set_hostflags(param, 
-		X509_CHECK_FLAG_NO_PARTIAL_WILDCARDS);
-	X509_VERIFY_PARAM_set1_host(param, xsock->world->host, 0);
-#endif
+	ERR_clear_error();
+	xsock->ssl = ssl_new_for_sock(xsock, ssl_ctx);
+	if (!xsock->ssl) {
+	    ssl_err("SSL_new");
+	    killsock(xsock);
+	    return 0;
+	}
 #else
         CONFAIL(xsock, "ssl", "not supported");
 #endif
@@ -2152,17 +2279,53 @@ static int establish(Sock *sock)
 
 #if HAVE_SSL
     if (xsock->ssl) {
-	int sslret;
-	sslret = SSL_connect(xsock->ssl);
-	if (sslret <= 0) {
-	    setupnextconn(xsock);
-	    ssl_io_err(xsock, sslret, xsock->addr ? H_ICONFAIL : H_CONFAIL);
-	    if (xsock->addr)
-		return openconn(xsock);
-	    killsock(xsock);
+	SSL *ssl = sock->ssl;
+	SSL *replacement = NULL;
+	ssl_error_info_t info;
+	unsigned long generation = sock->generation;
+	unsigned long retired_generation;
+	int err, has_next, result = 0, sslret;
+
+	ERR_clear_error();
+	sslret = SSL_connect(ssl);
+	err = errno;
+	if (!socket_input_live(sock, generation) || sock->ssl != ssl)
 	    return 0;
+	if (sslret <= 0) {
+	    capture_ssl_error(sock, ssl, sslret, err, &info);
+	    setupnextconn(sock);
+	    has_next = !!sock->addr;
+	    if (has_next) {
+		SSL_CTX *ctx = SSL_get_SSL_CTX(ssl);
+
+		ERR_clear_error();
+		replacement = ssl_new_for_sock(sock, ctx);
+		if (!replacement)
+		    has_next = 0;
+	    }
+	    sock->ssl = replacement;
+	    SSL_free(ssl);
+	    if (!report_ssl_verify_messages(sock, generation))
+		goto ssl_connect_done;
+	    flushxsock();
+	    if (!socket_input_live(sock, generation))
+		goto ssl_connect_done;
+	    if (!has_next) {
+		retired_generation = generation + 1;
+		killsock(sock);
+		if (socket_input_current(sock, retired_generation))
+		    report_ssl_error(sock, retired_generation, &info, H_CONFAIL);
+	    } else if (report_ssl_error(sock, generation, &info, H_ICONFAIL)) {
+		result = openconn(sock);
+	    }
+ssl_connect_done:
+	    free_ssl_error(&info);
+	    return result;
 	}
+	if (!report_ssl_verify_messages(sock, generation))
+	    return 0;
 	ssl_check_cert_verify(sock);
+	if (!socket_input_live(sock, generation)) return 0;
     }
 #endif
 
@@ -2267,7 +2430,7 @@ static void killsock(Sock *sock)
 #if HAVE_SSL
     if (sock->ssl) {
 	SSL_shutdown(sock->ssl);
-	/* Don't SSL_free() yet: we still need to be able to use SSL_error() */
+	/* Keep the object until the Sock is recycled or destroyed. */
     }
 #endif
     if (sock->fd >= 0) {
@@ -2781,12 +2944,32 @@ static int transmit(const char *str, unsigned int numtowrite)
     while (numtowrite) {
 #if HAVE_SSL
 	if (sock->ssl) {
-	    numwritten = SSL_write(sock->ssl, str, numtowrite);
+	    SSL *ssl = sock->ssl;
+	    ssl_error_info_t info;
+	    unsigned long retired_generation;
+
+	    ERR_clear_error();
+	    numwritten = SSL_write(ssl, str, numtowrite);
+	    err = errno;
+	    if (!socket_input_live(sock, generation) || sock->ssl != ssl)
+		return 0;
 	    if (numwritten <= 0) {
+		capture_ssl_error(sock, ssl, numwritten, err, &info);
+		sock->ssl = NULL;
+		SSL_free(ssl);
+		retired_generation = generation + 1;
 		zombiesock(sock); /* before hook, so sock state is correct */
-		ssl_io_err(sock, numwritten, H_DISCONNECT);
+		if (report_ssl_verify_messages(sock, retired_generation)) {
+		    flushxsock();
+		    if (socket_input_current(sock, retired_generation))
+			report_ssl_error(sock, retired_generation, &info,
+			    H_DISCONNECT);
+		}
+		free_ssl_error(&info);
 		return 0;
 	    }
+	    if (!report_ssl_verify_messages(sock, generation))
+		return 0;
 	} else
 #endif /* HAVE_SSL */
 	{
@@ -3515,20 +3698,45 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 	    } else
 #endif
 #if HAVE_SSL
-	    if (xsock->ssl) {
-		count = SSL_read(xsock->ssl, inbuffer, sizeof(inbuffer));
-		if (count == 0 &&
-		    SSL_get_error(xsock->ssl, 0) == SSL_ERROR_SYSCALL &&
-		    ERR_peek_error() == 0)
-		{
-		    /* Treat a count of 0 with no errors as a normal EOF */
-		    goto eof;
-		} else if (count <= 0) {
+	    if (sock->ssl) {
+		SSL *ssl = sock->ssl;
+		ssl_error_info_t info;
+		unsigned long retired_generation;
+		int ssl_errno;
+
+		ERR_clear_error();
+		count = SSL_read(ssl, inbuffer, sizeof(inbuffer));
+		ssl_errno = errno;
+		if (!socket_input_live(sock, generation) || sock->ssl != ssl)
+		    return received;
+		if (count <= 0) {
+		    capture_ssl_error(sock, ssl, count, ssl_errno, &info);
+		    if (count == 0 && info.ssl_error == SSL_ERROR_SYSCALL &&
+			!info.messages)
+		    {
+			/* Treat a count of 0 with no errors as a normal EOF */
+			free_ssl_error(&info);
+			if (!report_ssl_verify_messages(sock, generation))
+			    return received;
+			errno = ssl_errno;
+			goto eof;
+		    }
 		    /* Treat an error or a bad EOF as an error */
-		    zombiesock(xsock); /* before hook, so state is correct */
-		    ssl_io_err(xsock, count, H_DISCONNECT);
+		    sock->ssl = NULL;
+		    SSL_free(ssl);
+		    retired_generation = generation + 1;
+		    zombiesock(sock); /* before hook, so state is correct */
+		    if (report_ssl_verify_messages(sock, retired_generation)) {
+			flushxsock();
+			if (socket_input_current(sock, retired_generation))
+			    report_ssl_error(sock, retired_generation, &info,
+				H_DISCONNECT);
+		    }
+		    free_ssl_error(&info);
 		    return received;
 		}
+		if (!report_ssl_verify_messages(sock, generation))
+		    return received;
 	    } else
 #endif
 	    {
@@ -3539,33 +3747,35 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		eof:
 		if (count <= 0) {
 		    int err = errno;
-		    constate_t state = xsock->constate;
+		    constate_t state = sock->constate;
 		    if (count < 0 && errno == EINTR)
 			return 0;
 		    /* Socket is blocking; EAGAIN and EWOULDBLOCK impossible. */
 #if WIDECHAR
-		    inbound_decode_str(xsock->buffer, incomingposttelnet, 
-                        incomingFSM, 1);
+		    inbound_decode_str(sock->buffer, incomingposttelnet,
+			incomingFSM, 1);
 #endif
-		    if (xsock->buffer->len) { /* Destroy the buffers */
-			handle_socket_input_queue_lines(xsock);
-			queue_socket_line(xsock, CS(xsock->buffer), xsock->buffer->len, 0);
-			Stringtrunc(xsock->buffer, 0);
+		    if (sock->buffer->len) { /* Destroy the buffers */
+			handle_socket_input_queue_lines(sock);
+			queue_socket_line(sock, CS(sock->buffer),
+			    sock->buffer->len, 0);
+			Stringtrunc(sock->buffer, 0);
 		    }
 		    flushxsock();
-		    if (!socket_input_live(sock, generation)) return received;
+		    if (!socket_input_live(sock, generation))
+			return received;
+		    zombiesock(sock);
 		    /* On some systems, a socket that failed nonblocking connect
 		     * selects readable instead of writable.  If SS_CONNECTING,
-		     * that's what happened, so we do CONFAIL not DISCONNECT.
+		     * that's what happened, so do CONFAIL, not DISCONNECT.
 		     */
-		    zombiesock(xsock); /* before hook, so constate is correct */
 		    if (state == SS_CONNECTING)
-			CONFAIL(xsock, "recv", strerror(err));
+			CONFAIL(sock, "recv", strerror(err));
 		    else do_hook(H_DISCONNECT, (count < 0) ?
 			"%% Connection to %s closed: %s: %s" :
 			"%% Connection to %s closed by foreign host.",
 			(count < 0) ? "%s %s %s" : "%s",
-			xsock->world->name, "recv", strerror(err));
+			sock->world->name, "recv", strerror(err));
 		    return received;
 		}
 	    }
