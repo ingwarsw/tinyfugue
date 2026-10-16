@@ -290,7 +290,6 @@ typedef enum {
     SS_DEAD		/* connection dead, and all text has been seen */
 } constate_t;
 
-
 /* flags */
 #define SOCKLOGIN	0x01	/* autologin requested by user */
 #define SOCKPROMPT	0x02	/* last prompt was definitely a prompt */
@@ -300,6 +299,7 @@ typedef enum {
 #define SOCKCOMPRESS	0x20	/* server has enabled MCCP v1 or v2 */
 #define SOCKALLOCADDRS	0x40	/* addrs allocated by tf, not getaddrinfo */
 #define SOCKECHO	0x80	/* receive all sent text (loopback) */
+#define SOCKSSL		0x100	/* connection requires SSL */
 
 VEC_TYPEDEF(telnet_opts, 256);
 
@@ -316,7 +316,7 @@ typedef struct Sock {		/* an open connection to a server */
     telnet_opts tn_them_tog;	/* server's telnet options we want changed */
     constate_t constate;	/* connection state */
     unsigned long generation;	/* changes when parser state is retired or replaced */
-    unsigned char flags;	/* SOCK* flags */
+    unsigned short flags;	/* SOCK* flags */
     short numquiet;		/* # of lines to gag after connecting */
     struct World *world;	/* world to which socket is connected */
     struct Sock *next, *prev;	/* next/prev sockets in linked list */
@@ -361,6 +361,10 @@ static int   tfgetaddrinfo(const char *nodename, const char *port,
 static int   opensock(World *world, int flags);
 static int   openconn(Sock *new);
 static int   establish(Sock *new);
+static int   retire_confail(Sock *sock, unsigned long generation,
+		    const char *what, const char *why);
+static int   retire_confailhp(Sock *sock, unsigned long generation,
+		    const char *why);
 #if 0
 static void  fg_live_sock(void);
 #endif
@@ -392,6 +396,8 @@ static void  killsock(Sock *sock);
 static void  clear_fd_sets(int fd);
 static int   socket_input_current(Sock *sock, unsigned long generation);
 static int   socket_input_live(Sock *sock, unsigned long generation);
+static int   socket_establishment_current(Sock *sock,
+		    unsigned long generation);
 #if HAVE_SSL
 static int   ssl_check_cert_verify(Sock *sock);
 static int   ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx);
@@ -1115,7 +1121,9 @@ void main_loop(void)
 
 		    /* If there's a partial line that's past prompt_timeout,
 		     * make it a prompt. */
-		    if (xsock->prompt_timeout.tv_sec) {
+		    if (xsock->constate < SS_ZOMBIE &&
+			xsock->prompt_timeout.tv_sec)
+		    {
 			gettime(&now);
 			if (tvcmp(&xsock->prompt_timeout, &now) < 0) {
 			    handle_implicit_prompt();
@@ -1467,6 +1475,7 @@ int openworld(const char *name, const char *port, int flags)
 static int opensock(World *world, int flags)
 {
     int gai_err;
+    unsigned long generation;
     const char *what;
 
     if (world->sock) {
@@ -1513,6 +1522,8 @@ static int opensock(World *world, int flags)
     Stringninit(xsock->buffer, 80);  /* data must be allocated */
     Stringninit(xsock->subbuffer, 1);
     init_queue(&xsock->queue);
+    xsock->prompt_timeout = tvzero;
+    generation = xsock->generation;
     xsock->host = NULL;
     xsock->port = NULL;
     xsock->ttype = -1;
@@ -1551,13 +1562,18 @@ static int opensock(World *world, int flags)
 	xsock->numquiet = 0;
     }
 
-    if (flags & CONN_FG)
-	fg_sock(xsock, FALSE); /* XXX 2nd arg??? */
+    if (flags & CONN_FG) {
+	Sock *sock = xsock;
+
+	fg_sock(sock, FALSE); /* XXX 2nd arg??? */
+	if (!socket_input_live(sock, generation)) return 0;
+    }
 
     if (flags & CONN_AUTOLOGIN) xsock->flags |= SOCKLOGIN;
     if (world->flags & WORLD_ECHO) xsock->flags |= SOCKECHO;
     if ((flags & CONN_SSL) || (world->flags & WORLD_SSL)) {
 #if HAVE_SSL
+	xsock->flags |= SOCKSSL;
 	init_ssl();
 	if (ssl_mydata_index < 0)
 	    ssl_mydata_index = SSL_get_ex_new_index(0, "ssl_mydata index",
@@ -1580,7 +1596,7 @@ static int opensock(World *world, int flags)
 	    return 0;
 	}
 #else
-        CONFAIL(xsock, "ssl", "not supported");
+        return retire_confail(xsock, generation, "ssl", "not supported");
 #endif
     }
 
@@ -1620,11 +1636,9 @@ static int opensock(World *world, int flags)
 	hints.ai_socktype = SOCK_STREAM;
 	err = getaddrinfo(xsock->myhost, NULL, &hints, &xsock->myaddr);
 
-	if (err) {
-	    CONFAIL(xsock, xsock->myhost, gai_strerror(err));
-	    killsock(xsock);  /* can't nukesock(), this Sock may be recycled. */
-	    return 0;
-	}
+	if (err)
+	    return retire_confail(xsock, generation, xsock->myhost,
+		gai_strerror(err));
     }
 
     xsock->constate = SS_RESOLVING;
@@ -1656,19 +1670,17 @@ static int opensock(World *world, int flags)
         readers_set(xsock->fd);
         do_hook(H_PENDING, "%% Hostname lookup for %s in progress.", "%s",
             xsock->world->name);
+        if (!socket_input_live(xsock, generation)) return 0;
         return 2;
 #endif /* NONBLOCKING_GETHOST */
     } else {
         /* The name lookup failed */
         /* Note, some compilers can't handle (herr ? hsterror() : literal) */
         if (what)
-            CONFAIL(xsock, what, strerror(errno));
-        else if (gai_err)
-            CONFAILHP(xsock, gai_strerror(gai_err));
-        else
-            CONFAILHP(xsock, "name lookup failed");
-        killsock(xsock);  /* can't nukesock(), this may be a recycled Sock. */
-        return 0;
+            return retire_confail(xsock, generation, what, strerror(errno));
+        if (gai_err)
+            return retire_confailhp(xsock, generation, gai_strerror(gai_err));
+        return retire_confailhp(xsock, generation, "name lookup failed");
     }
 }
 
@@ -1701,11 +1713,12 @@ static const char *printai(struct addrinfo *ai, const char *fmt_hp)
     return buf;
 }
 
-static inline int ai_connect(int s, struct addrinfo *ai)
+static inline int ai_connect(Sock *sock, unsigned long generation)
 {
     do_hook(H_PENDING, "%% Trying to connect to %s: %s.", "%s %s",
-	xsock->world->name, printai(ai, NULL));
-    return connect(s, ai->ai_addr, ai->ai_addrlen);
+	sock->world->name, printai(sock->addr, NULL));
+    if (!socket_input_live(sock, generation)) return -1;
+    return connect(sock->fd, sock->addr->ai_addr, sock->addr->ai_addrlen);
 }
 
 static void setupnextconn(Sock *sock)
@@ -1726,52 +1739,104 @@ retry:
 	}
     }
     sock->addr = next;
+    sock->constate = SS_RESOLVED;
 }
 
 /* If there are more addresses to try, hook ICONFAIL and try the next;
- * otherwise, hook CONFAIL and give up. */
+ * otherwise, retire the socket, hook CONFAIL, and give up. */
 static int ICONFAIL(Sock *sock, const char *what, const char *why)
 {
+    unsigned long generation = sock->generation;
+    unsigned long retired_generation;
+    char whatbuf[1024], whybuf[1024];
+
+    snprintf(whatbuf, sizeof(whatbuf), "%s", what);
+    snprintf(whybuf, sizeof(whybuf), "%s", why);
     setupnextconn(sock);
 
     if (sock->addr) {
 	do_hook(H_ICONFAIL, ICONFAIL_fmt, "%s %s: %s",
-	    (sock)->world->name, (what), (why));
+	    sock->world->name, whatbuf, whybuf);
 	oflush();
+	if (!socket_input_live(sock, generation) ||
+	    sock->constate != SS_RESOLVED)
+	{
+	    return 0;
+	}
 	return openconn(sock);
     }
-    do_hook(H_CONFAIL, "%% Connection to %s failed: %s: %s", "%s %s: %s",
-	(sock)->world->name, (what), (why));
-    oflush();
+
+    retired_generation = generation + 1;
     killsock(sock);
+    if (socket_input_current(sock, retired_generation)) {
+	do_hook(H_CONFAIL, "%% Connection to %s failed: %s: %s",
+	    "%s %s: %s", sock->world->name, whatbuf, whybuf);
+	oflush();
+    }
+    return 0;
+}
+static int retire_confail(Sock *sock, unsigned long generation,
+    const char *what, const char *why)
+{
+    unsigned long retired_generation = generation + 1;
+    char *world = STRDUP(sock->world->name);
+    char *saved_what = STRDUP(what);
+    char *saved_why = STRDUP(why);
+
+    killsock(sock);
+    if (socket_input_current(sock, retired_generation)) {
+	do_hook(H_CONFAIL, CONFAIL_fmt, "%s %s %s",
+	    world, saved_what, saved_why);
+	oflush();
+    }
+    FREE(saved_why);
+    FREE(saved_what);
+    FREE(world);
     return 0;
 }
 
+static int retire_confailhp(Sock *sock, unsigned long generation,
+    const char *why)
+{
+    unsigned long retired_generation = generation + 1;
+    char *world = STRDUP(sock->world->name);
+    char *host = STRDUP(sock->world->host);
+    char *port = STRDUP(sock->world->port);
+    char *saved_why = STRDUP(why);
+
+    killsock(sock);
+    if (socket_input_current(sock, retired_generation)) {
+	do_hook(H_CONFAIL, "%% Unable to connect to %s: %s %s: %s",
+	    "%s %s %s: %s", world, host, port, saved_why);
+	oflush();
+    }
+    FREE(saved_why);
+    FREE(port);
+    FREE(host);
+    FREE(world);
+    return 0;
+}
+
+
 static int openconn(Sock *sock)
 {
-    int flags;
+    int connect_result, flags;
+    unsigned long generation;
 
     xsock = sock;
+    generation = sock->generation;
 #ifdef NONBLOCKING_GETHOST
     if (xsock->constate == SS_RESOLVING) {
 	nbgai_hdr_t info = { 0, 0 };
 	struct addrinfo *ai;
         clear_fd_sets(xsock->fd);
         if (read(xsock->fd, &info, sizeof(info)) < 0 || info.err != 0) {
-            if (!info.err)
-                CONFAIL(xsock, "read", strerror(errno));
-            else
-		CONFAILHP(xsock, gai_strerror(info.err));
-            close(xsock->fd);
-            xsock->fd = -1;
-# ifdef PLATFORM_UNIX
-	    if (xsock->pid >= 0)
-		if (waitpid(xsock->pid, NULL, 0) < 0)
-		    tfprintf(tferr, "waitpid %ld: %s", xsock->pid, strerror(errno));
-	    xsock->pid = -1;
-# endif /* PLATFORM_UNIX */
-            killsock(xsock);
-            return 0;
+	    int saved_errno = errno;
+
+	    if (!info.err)
+		return retire_confail(sock, generation, "read",
+		    strerror(saved_errno));
+	    return retire_confailhp(sock, generation, gai_strerror(info.err));
         }
 	if (info.size <= 0) { /* shouldn't happen */
 	    xsock->addrs = NULL;
@@ -1806,35 +1871,47 @@ static int openconn(Sock *sock)
     retry:
 #endif
 
-    if (!xsock->addr) {
-	CONFAILHP(xsock, "no usable addresses");
-	killsock(xsock);
-	return 0;
-    }
+    if (!xsock->addr)
+	return retire_confailhp(sock, generation, "no usable addresses");
 
     xsock->fd = socket(xsock->addr->ai_family, xsock->addr->ai_socktype,
 	xsock->addr->ai_protocol);
     if (xsock->fd < 0) {
-	if (errno == EPROTONOSUPPORT || errno == EAFNOSUPPORT)
-	    return ICONFAIL(xsock, "socket", strerror(errno));
-        CONFAIL(xsock, "socket", strerror(errno));
-        killsock(xsock);
-        return 0;
+	int saved_errno = errno;
+
+	if (saved_errno == EPROTONOSUPPORT || saved_errno == EAFNOSUPPORT)
+	    return ICONFAIL(xsock, "socket", strerror(saved_errno));
+	return retire_confail(sock, generation, "socket",
+	    strerror(saved_errno));
     }
 
     if (xsock->myaddr && bind(xsock->fd, xsock->myaddr->ai_addr,
 	xsock->myaddr->ai_addrlen) < 0)
     {
-        CONFAIL(xsock, printai(xsock->myaddr, NULL), strerror(errno));
-        killsock(xsock);
-        return 0;
+	int saved_errno = errno;
+	char what[1024];
+
+	snprintf(what, sizeof(what), "%s", printai(xsock->myaddr, NULL));
+	return retire_confail(sock, generation, what, strerror(saved_errno));
     }
 
 #if HAVE_SSL
-    if (xsock->ssl && SSL_set_fd(xsock->ssl, xsock->fd) <= 0) {
-        CONFAIL(xsock, "SSL", ERR_error_string(ERR_get_error(), NULL));
-        killsock(xsock);
-        return 0;
+    if (xsock->ssl) {
+	SSL *ssl = xsock->ssl;
+	unsigned long code;
+	char reason[256];
+
+	ERR_clear_error();
+	if (SSL_set_fd(ssl, xsock->fd) <= 0) {
+	    code = ERR_get_error();
+	    if (code)
+		ERR_error_string_n(code, reason, sizeof(reason));
+	    else
+		snprintf(reason, sizeof(reason), "SSL_set_fd failed");
+	    xsock->ssl = NULL;
+	    SSL_free(ssl);
+	    return retire_confail(sock, generation, "SSL", reason);
+	}
     }
 #endif
 
@@ -1863,7 +1940,9 @@ static int openconn(Sock *sock)
     }
 
     xsock->constate = SS_CONNECTING;
-    if (ai_connect(xsock->fd, xsock->addr) == 0) {
+    connect_result = ai_connect(sock, generation);
+    if (!socket_input_live(sock, generation)) return 0;
+    if (connect_result == 0) {
         /* The connection completed successfully. */
         xsock->constate = SS_CONNECTED;
         return establish(xsock);
@@ -2193,7 +2272,10 @@ static int nonblocking_gethost(const char *name, const char *port,
 /* Establish a sock for which connect() has completed. */
 static int establish(Sock *sock)
 {
+    unsigned long generation;
+
     xsock = sock;
+    generation = sock->generation;
 #if TF_NONBLOCK
     if (xsock->constate == SS_CONNECTING) {
         int err = 0, flags;
@@ -2246,11 +2328,15 @@ static int establish(Sock *sock)
             char ch;
             if (read(xsock->fd, &ch, 0) < 0) {
 		return ICONFAIL(xsock, "nonblocking connect/read", strerror(errno));
-            } else if ((ai_connect(xsock->fd, xsock->addr) < 0) &&
-                errno != EISCONN)
-            {
-                read(xsock->fd, &ch, 1);   /* must fail */
-		return ICONFAIL(xsock, "nonblocking connect 2/read", strerror(errno));
+            } else {
+		int result = ai_connect(sock, generation);
+
+		if (!socket_input_live(sock, generation)) return 0;
+		if (result < 0 && errno != EISCONN) {
+		    read(xsock->fd, &ch, 1);   /* must fail */
+		    return ICONFAIL(xsock, "nonblocking connect 2/read",
+			strerror(errno));
+		}
             }
         }
 #endif
@@ -2281,8 +2367,8 @@ static int establish(Sock *sock)
     if (xsock->ssl) {
 	SSL *ssl = sock->ssl;
 	SSL *replacement = NULL;
+	SSL_CTX *ctx;
 	ssl_error_info_t info;
-	unsigned long generation = sock->generation;
 	unsigned long retired_generation;
 	int err, has_next, result = 0, sslret;
 
@@ -2293,39 +2379,56 @@ static int establish(Sock *sock)
 	    return 0;
 	if (sslret <= 0) {
 	    capture_ssl_error(sock, ssl, sslret, err, &info);
+	    ctx = SSL_get_SSL_CTX(ssl);
 	    setupnextconn(sock);
 	    has_next = !!sock->addr;
-	    if (has_next) {
-		SSL_CTX *ctx = SSL_get_SSL_CTX(ssl);
-
-		ERR_clear_error();
-		replacement = ssl_new_for_sock(sock, ctx);
-		if (!replacement)
-		    has_next = 0;
-	    }
-	    sock->ssl = replacement;
-	    SSL_free(ssl);
+	    sock->ssl = NULL;
 	    if (!report_ssl_verify_messages(sock, generation))
 		goto ssl_connect_done;
 	    flushxsock();
-	    if (!socket_input_live(sock, generation))
+	    if (!socket_input_live(sock, generation) ||
+		sock->constate != SS_RESOLVED)
+	    {
 		goto ssl_connect_done;
+	    }
 	    if (!has_next) {
 		retired_generation = generation + 1;
 		killsock(sock);
 		if (socket_input_current(sock, retired_generation))
 		    report_ssl_error(sock, retired_generation, &info, H_CONFAIL);
-	    } else if (report_ssl_error(sock, generation, &info, H_ICONFAIL)) {
+		goto ssl_connect_done;
+	    }
+
+	    ERR_clear_error();
+	    replacement = ssl_new_for_sock(sock, ctx);
+	    if (!replacement) {
+		capture_ssl_error_messages(&info);
+		retired_generation = generation + 1;
+		killsock(sock);
+		if (socket_input_current(sock, retired_generation))
+		    report_ssl_error(sock, retired_generation, &info, H_CONFAIL);
+		goto ssl_connect_done;
+	    }
+	    if (report_ssl_error(sock, generation, &info, H_ICONFAIL) &&
+		socket_input_live(sock, generation) &&
+		sock->constate == SS_RESOLVED)
+	    {
+		sock->ssl = replacement;
+		replacement = NULL;
+		SSL_free(ssl);
+		ssl = NULL;
 		result = openconn(sock);
 	    }
 ssl_connect_done:
+	    if (replacement) SSL_free(replacement);
+	    if (ssl) SSL_free(ssl);
 	    free_ssl_error(&info);
 	    return result;
 	}
 	if (!report_ssl_verify_messages(sock, generation))
 	    return 0;
 	ssl_check_cert_verify(sock);
-	if (!socket_input_live(sock, generation)) return 0;
+	if (!socket_establishment_current(sock, generation)) return 0;
     }
 #endif
 
@@ -2333,9 +2436,12 @@ ssl_connect_done:
 
     if (xsock == fsock)   /* possible for a recycled zombie */
         update_status_field(NULL, STAT_WORLD);
+    if (!socket_establishment_current(sock, generation)) return 0;
 
-    if (xsock->flags & SOCKTELNET)
+    if (xsock->flags & SOCKTELNET) {
         preferred_telnet_options();
+	if (!socket_establishment_current(sock, generation)) return 0;
+    }
 
     if (sock->flags & SOCKPROXY) {
         FREE(sock->host);
@@ -2343,9 +2449,11 @@ ssl_connect_done:
         sock->host = STRDUP(sock->world->host);
         sock->port = STRDUP(sock->world->port);
         do_hook(H_PROXY, "", "%s", sock->world->name);
+	if (!socket_establishment_current(sock, generation)) return 0;
     }
 
     wload(sock->world);
+    if (!socket_establishment_current(sock, generation)) return 0;
 
     if (!(sock->flags & SOCKPROXY)) {
 #if HAVE_SSL
@@ -2355,16 +2463,19 @@ ssl_connect_done:
 	else
 #endif
 	    do_hook(H_CONNECT, "%% Connected to %s.", "%s", sock->world->name);
+	if (!socket_establishment_current(sock, generation)) return 0;
 
         if (login && sock->flags & SOCKLOGIN) {
-            if (world_character(sock->world) && world_pass(sock->world))
+            if (world_character(sock->world) && world_pass(sock->world)) {
                 do_hook(H_LOGIN, NULL, "%s %s %s", sock->world->name,
                     world_character(sock->world), world_pass(sock->world));
+		if (!socket_establishment_current(sock, generation)) return 0;
+	    }
             sock->flags &= ~SOCKLOGIN;
         }
     }
 
-    return 1;
+    return socket_establishment_current(sock, generation);
 }
 
 #if HAVE_SSL
@@ -2400,6 +2511,7 @@ static void killsock(Sock *sock)
 #else /* ... so we must unconditionally enter ZOMBIE state. */
     sock->constate = SS_ZOMBIE;
 #endif
+    sock->prompt_timeout = tvzero;
     sock->fsastate = '\0';
     sock->attrs = 0;
     VEC_ZERO(&sock->tn_them);
@@ -2557,18 +2669,30 @@ static void queue_socket_line(Sock *sock, const conString *line, int length,
 
 static void dc(Sock *s)
 {
-    String *buffer = Stringnew(NULL, -1, 0);
-    Sock *oldxsock = xsock;
+    Sock *oldxsock;
+    unsigned long generation;
+    String *buffer;
+
+    if (!s || s->constate >= SS_ZOMBIE) return;
+    oldxsock = xsock;
     xsock = s;
+    generation = s->generation;
+    buffer = Stringnew(NULL, -1, 0);
+    buffer->links++;
 #if WIDECHAR
     inbound_decode_str(s->buffer, s->incomingposttelnet, s->incomingfsm, 1);
-    handle_socket_input_queue_lines(xsock);
+    handle_socket_input_queue_lines(s);
 #endif
     flushxsock();
+    if (!socket_input_live(s, generation)) goto done;
     Sprintf(buffer, "%% Connection to %s closed.", s->world->name);
     world_output(s->world, CS(buffer));
+    if (!socket_input_live(s, generation)) goto done;
     if (xsock != fsock) oputline(CS(buffer));
-    zombiesock(xsock);
+    zombiesock(s);
+
+done:
+    Stringfree(buffer);
     xsock = oldxsock;
 }
 
@@ -2955,8 +3079,10 @@ static int transmit(const char *str, unsigned int numtowrite)
 		return 0;
 	    if (numwritten <= 0) {
 		capture_ssl_error(sock, ssl, numwritten, err, &info);
-		sock->ssl = NULL;
-		SSL_free(ssl);
+		if (info.ssl_error != SSL_ERROR_ZERO_RETURN) {
+		    sock->ssl = NULL;
+		    SSL_free(ssl);
+		}
 		retired_generation = generation + 1;
 		zombiesock(sock); /* before hook, so sock state is correct */
 		if (report_ssl_verify_messages(sock, retired_generation)) {
@@ -2970,6 +3096,8 @@ static int transmit(const char *str, unsigned int numtowrite)
 	    }
 	    if (!report_ssl_verify_messages(sock, generation))
 		return 0;
+	} else if (sock->flags & SOCKSSL) {
+	    return 0;
 	} else
 #endif /* HAVE_SSL */
 	{
@@ -3009,16 +3137,26 @@ static int transmit(const char *str, unsigned int numtowrite)
  */
 int send_line(const char *src, unsigned int len, int eol_flag)
 {
-    int needed;
+    typedef struct {
+	int bufferlen;
+	char *buffer1;
+	char *buffer2;
+#if WIDECHAR
+	UChar *utf16buf;
+#endif
+    } send_buffer_t;
+    static send_buffer_t *send_buffers = NULL;
+    static unsigned int send_buffer_count = 0;
+    static unsigned int send_depth = 0;
+    Sock *sock;
+    unsigned long generation;
+    unsigned int old_buffer_count, slot_index;
+    char *buffer1, *buffer2;
+    int needed, result = 0;
     int i = 0, j = 0;
-    static char *buffer1 = NULL;
-    static int bufferlen = 0;
-    static char *buffer2 = NULL;
 
 #if WIDECHAR
-    /* utf16buf could take less space if it was a union with buffer2 */
-    /* For now, I just want it to work. :) */
-    static UChar *utf16buf = NULL;
+    UChar *utf16buf;
     const UChar *utf16_source;
     char *target;
     UErrorCode err;
@@ -3031,56 +3169,78 @@ int send_line(const char *src, unsigned int len, int eol_flag)
         eprintf("Not connected.");
         return 0;
     }
+    sock = xsock;
+    generation = sock->generation;
 
-    if (xsock && xsock->prompt) {
+    slot_index = send_depth++;
+    if (send_buffer_count <= slot_index) {
+	old_buffer_count = send_buffer_count;
+	send_buffer_count = slot_index + 1;
+	send_buffers = XREALLOC(send_buffers,
+	    send_buffer_count * sizeof(*send_buffers));
+	memset(send_buffers + old_buffer_count, 0,
+	    (send_buffer_count - old_buffer_count) * sizeof(*send_buffers));
+    }
+
+    needed = (len + 3) * 8;
+    if (send_buffers[slot_index].bufferlen < needed) {
+        send_buffers[slot_index].bufferlen = needed;
+        send_buffers[slot_index].buffer1 =
+	    XREALLOC(send_buffers[slot_index].buffer1, needed);
+        send_buffers[slot_index].buffer2 =
+	    XREALLOC(send_buffers[slot_index].buffer2, needed);
+#if WIDECHAR
+        /* 'needed' calculated as 8-bit wide, not 16-bit */
+        send_buffers[slot_index].utf16buf =
+	    XREALLOC(send_buffers[slot_index].utf16buf, needed / 2);
+#endif
+    }
+    buffer1 = send_buffers[slot_index].buffer1;
+    buffer2 = send_buffers[slot_index].buffer2;
+#if WIDECHAR
+    utf16buf = send_buffers[slot_index].utf16buf;
+#endif
+    memcpy(buffer1, src, len);
+    buffer1[len] = '\0';
+
+    if (sock->prompt) {
         /* Not the same as unprompt(): we keep attrs, and delete buffer. */
-	if (!(xsock->flags & SOCKPROMPT)) {
-	    /* Prompt was implicit, so there's still a copy in xsock->buffer */
-	    Stringtrunc(xsock->buffer, 0);
+	if (!(sock->flags & SOCKPROMPT)) {
+	    /* Prompt was implicit, so there's still a copy in sock->buffer */
+	    Stringtrunc(sock->buffer, 0);
 	} else {
-	    /* Prompt was explicit, so anything in xsock->buffer is an
+	    /* Prompt was explicit, so anything in sock->buffer is an
 	     * unrelated partial line that we must keep. */
 	}
-        conStringfree(xsock->prompt);
-        xsock->prompt = NULL;
-        xsock->prepromptattrs = 0;
-        if (xsock == fsock) update_prompt(xsock->prompt, 1);
+        conStringfree(sock->prompt);
+        sock->prompt = NULL;
+        sock->prepromptattrs = 0;
+        if (sock == fsock) update_prompt(sock->prompt, 1);
     }
 
     if (secho) {
 	String *str = Stringnew(NULL, 0, 0);
-	Sprintf(str, "%S%.*s%A", sprefix, len, src, getattrvar(VAR_secho_attr));
-	world_output(xsock->world, CS(str));
+	Sprintf(str, "%S%.*s%A", sprefix, len, buffer1,
+	    getattrvar(VAR_secho_attr));
+	world_output(sock->world, CS(str));
+	if (!socket_input_live(sock, generation)) goto done;
     }
 
     /* Steps:
      * 1) Copy src to buffer1, add newline endings
      * 2) Convert string to UTF-16 -> buffer2
-     * 3) Convert string to xsock->charset -> buffer1
+     * 3) Convert string to sock->charset -> buffer1
      * 4) Double all Telnet IAC -> buffer2
      * 5) Transmit buffer2.
      */
-
-    needed = (len + 3) * 8;
-    if (bufferlen < needed) {
-        bufferlen = needed;
-        buffer1 = XREALLOC(buffer1, bufferlen);
-        buffer2 = XREALLOC(buffer2, bufferlen);
-#if WIDECHAR
-        /* 'needed' calculated as 8-bit wide, not 16-bit */
-        utf16buf = XREALLOC(utf16buf, bufferlen / 2);
-#endif
-    }
-
-    memcpy(buffer1, src, len);
 
     if (eol_flag) {
         /* In telnet NVT mode, append CR LF; in telnet BINARY mode,
          * append LF, CR, or CR LF, according to variable.
          */
-        if (!TELOPT(xsock, us, TN_BINARY) || binary_eol != EOL_LF)
+        if (!TELOPT(sock, us, TN_BINARY) || binary_eol != EOL_LF)
             buffer1[len++] = '\r';
-        if (!TELOPT(xsock, us, TN_BINARY) || binary_eol != EOL_CR)
+        if (!TELOPT(sock, us, TN_BINARY) || binary_eol != EOL_CR)
             buffer1[len++] = '\n';
     }
 
@@ -3092,17 +3252,21 @@ int send_line(const char *src, unsigned int len, int eol_flag)
     utf16_source = utf16buf;
     /* First attempt at fixing. Probably better to make this one stick
      * around longer but enh. */
-    UConverter *utf8_conv = ucnv_open("UTF8", &err);
-    ucnv_setToUCallBack(utf8_conv, UCNV_TO_U_CALLBACK_ESCAPE,
-                        UCNV_ESCAPE_XML_HEX, NULL, NULL, &err);
-    j = ucnv_toUChars(utf8_conv, utf16buf, bufferlen / 2, buffer1, len, &err);
-    ucnv_close(utf8_conv);
+    {
+	UConverter *utf8_conv = ucnv_open("UTF8", &err);
+	ucnv_setToUCallBack(utf8_conv, UCNV_TO_U_CALLBACK_ESCAPE,
+	    UCNV_ESCAPE_XML_HEX, NULL, NULL, &err);
+	j = ucnv_toUChars(utf8_conv, utf16buf,
+	    send_buffers[slot_index].bufferlen / 2, buffer1, len, &err);
+	ucnv_close(utf8_conv);
+    }
     /* dest, dest_len, written_units, src, src_len, errors */
     /* u_strFromUTF8(utf16buf, bufferlen / 2, &j, buffer1, len, &err); */
     /* 'incomingfsm' has an outgoing state machine, as well. Used here. */
-    ucnv_resetFromUnicode(xsock->incomingfsm);
-    ucnv_fromUnicode(xsock->incomingfsm,  /* Converter */
-            &target, buffer1 + bufferlen, /* target, limit_ptr */
+    ucnv_resetFromUnicode(sock->incomingfsm);
+    ucnv_fromUnicode(sock->incomingfsm,  /* Converter */
+            &target, buffer1 + send_buffers[slot_index].bufferlen,
+	    /* target, limit_ptr */
             &utf16_source, utf16buf + j,  /* source, limit_ptr */
             NULL, ubool_true, &err);      /* offsets, flush, errors */
     len = target - buffer1; /* 'target' is moved to end during conversion */
@@ -3110,7 +3274,7 @@ int send_line(const char *src, unsigned int len, int eol_flag)
     if (U_FAILURE(err))
     {
         eprintf("Broken characters found. Line not sent.");
-        return 0;
+        goto done;
         /* core("outbound_decode U_FAILURE", __FILE__, __LINE__, 0); */
     }
 #endif
@@ -3118,17 +3282,24 @@ int send_line(const char *src, unsigned int len, int eol_flag)
     /* Buf1 -> Buf2  [Telnet escape]   */
     i = 0; j = 0;
     while (j < len) {
-        if (xsock->flags & SOCKTELNET && buffer1[j] == TN_IAC)
+        if (sock->flags & SOCKTELNET && buffer1[j] == TN_IAC)
             buffer2[i++] = TN_IAC;    /* double IAC */
         buffer2[i] = unmapchar(buffer1[j]);
         i++; j++;
     }
 
-    if (xsock->flags & SOCKECHO)
+    if (sock->flags & SOCKECHO) {
         handle_socket_input(buffer2, i, "UTF-8");
-    if (xsock->constate == SS_CONNECTED)
-        return transmit(buffer2, i);
-    return 1;
+	if (!socket_input_live(sock, generation)) goto done;
+    }
+    if (sock->constate == SS_CONNECTED)
+        result = transmit(buffer2, i);
+    else
+	result = 1;
+
+done:
+    send_depth--;
+    return result;
 }
 
 static void handle_socket_lines(void)
@@ -3341,6 +3512,7 @@ abandon:
 static void handle_implicit_prompt(void)
 {
     String *new;
+    if (!xsock || xsock->constate >= SS_ZOMBIE) return;
 
     xsock->prompt_timeout = tvzero;
     xsock->prepromptattrs = xsock->attrs; /* save attrs for unprompt() */
@@ -3355,11 +3527,13 @@ static void handle_implicit_prompt(void)
 /* undo the effects of a false prompt */
 static void unprompt(Sock *sock, int update)
 {
-    if (!sock || !sock->prompt || !(sock->flags & SOCKPROMPT)) return;
-    sock->attrs = sock->prepromptattrs;  /* restore original attrs */
+    if (!sock || !sock->prompt) return;
+    if (!(sock->flags & SOCKPROMPT))
+	sock->attrs = sock->prepromptattrs;  /* restore original attrs */
     conStringfree(sock->prompt);
     sock->prompt = NULL;
     sock->prepromptattrs = 0;
+    sock->flags &= ~SOCKPROMPT;
     if (update) update_prompt(sock->prompt, 1);
 }
 
@@ -3381,6 +3555,13 @@ static int socket_input_live(Sock *sock, unsigned long generation)
 {
     return socket_input_current(sock, generation) &&
 	sock->constate < SS_ZOMBIE;
+}
+
+static int socket_establishment_current(Sock *sock,
+    unsigned long generation)
+{
+    return socket_input_live(sock, generation) &&
+	(sock->constate == SS_CONNECTED || sock->constate == SS_OPEN);
 }
 
 static void test_prompt(void)
@@ -3681,9 +3862,15 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
     } else {
         /* Using simlen because we assume we'll have UTF-8 anyway */
 	incomingposttelnet = Stringnew(NULL, simlen, 0);
+	incomingposttelnet->links++;
+	incomingERR = U_ZERO_ERROR;
 	incomingFSM = ucnv_open(encoding, &incomingERR);
-	if (incomingERR == U_MEMORY_ALLOCATION_ERROR || incomingERR == U_FILE_ACCESS_ERROR)
-            core("TN_CHARSET: Could not create UConverter.", __FILE__, __LINE__, 0);
+	if (incomingERR == U_MEMORY_ALLOCATION_ERROR ||
+	    incomingERR == U_FILE_ACCESS_ERROR)
+	{
+            core("TN_CHARSET: Could not create UConverter.",
+		__FILE__, __LINE__, 0);
+	}
     }
 #endif
 
@@ -3711,10 +3898,21 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		    return received;
 		if (count <= 0) {
 		    capture_ssl_error(sock, ssl, count, ssl_errno, &info);
+		    if (info.ssl_error == SSL_ERROR_ZERO_RETURN) {
+			/* Preserve the SSL so killsock() sends close_notify. */
+			free_ssl_error(&info);
+			if (!report_ssl_verify_messages(sock, generation))
+			    return received;
+			errno = 0;
+			goto eof;
+		    }
 		    if (count == 0 && info.ssl_error == SSL_ERROR_SYSCALL &&
 			!info.messages)
 		    {
-			/* Treat a count of 0 with no errors as a normal EOF */
+			/* Preserve legacy EOF handling without shutting down an
+			 * SSL object after a fatal result. */
+			sock->ssl = NULL;
+			SSL_free(ssl);
 			free_ssl_error(&info);
 			if (!report_ssl_verify_messages(sock, generation))
 			    return received;
@@ -4180,6 +4378,12 @@ non_telnet:
 
     test_prompt();
 
+#if WIDECHAR
+    if (encoding) {
+	Stringfree(incomingposttelnet);
+	ucnv_close(incomingFSM);
+    }
+#endif
     return received;
 }
 
@@ -4188,10 +4392,13 @@ STATIC_BUFFER(nextline); /* Static for speed */
 static void handle_socket_input_queue_lines(Sock *sock)
 {
     String *debug = sock->buffer;
-    char *place;
-    char *bufferend = sock->buffer->data + sock->buffer->len;
+    char *place, *bufferend;
     char rawchar, localchar;
-    char lastchar = '\0';
+    char lastchar;
+
+restart:
+    lastchar = '\0';
+    bufferend = sock->buffer->data + sock->buffer->len;
     for (place = sock->buffer->data; place != bufferend; ++place) {
         /* We always accept 8-bit data, even though RFCs 854 and 1123
          * say server shouldn't transmit it unless in BINARY mode.  What
@@ -4205,8 +4412,7 @@ static void handle_socket_input_queue_lines(Sock *sock)
             /* Shift to one past the end. */
             Stringshift(sock->buffer, place - sock->buffer->data + 1);
             Stringtrunc(nextline, 0);
-            place = sock->buffer->data - 1;
-            bufferend = sock->buffer->data + sock->buffer->len;
+            goto restart;
 
         } else if (emulation == EMUL_DEBUG) {
             if (localchar != rawchar)
@@ -4228,8 +4434,7 @@ static void handle_socket_input_queue_lines(Sock *sock)
             queue_socket_line(sock, CS(nextline), nextline->len, F_SERVPROMPT);
             Stringshift(sock->buffer, place - sock->buffer->data + 1);
             Stringtrunc(nextline, 0);
-            place = sock->buffer->data - 1;
-            bufferend = sock->buffer->data + sock->buffer->len;
+            goto restart;
             /* other occurances of '\b' are handled by decode_ansi(), so
             * ansi codes aren't clobbered before they're interpreted */
 
