@@ -657,7 +657,8 @@ static int report_ssl_error(Sock *sock, unsigned long generation,
 typedef enum {
     SSL_VERIFY_MSG_DEPTH,
     SSL_VERIFY_MSG_ERROR,
-    SSL_VERIFY_MSG_CHAIN
+    SSL_VERIFY_MSG_CHAIN,
+    SSL_VERIFY_MSG_ISSUER
 } ssl_verify_message_type_t;
 
 typedef struct ssl_verify_message {
@@ -725,6 +726,9 @@ static int report_ssl_verify_messages(Sock *sock, unsigned long generation)
 		do_hook(H_PENDING, "%% SSL: chain: depth:%d cn:%s",
 		    "%d %s", message->depth, message->subject);
 		break;
+	    case SSL_VERIFY_MSG_ISSUER:
+		eprintf("issuer= %s", message->subject);
+		break;
 	    }
 	    current = socket_input_current(sock, generation);
 	}
@@ -789,7 +793,8 @@ static int ssl_verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
      */
     if (!preverify_ok && (err == X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT)) {
 	X509_NAME_oneline(X509_get_issuer_name(err_cert), buf, 256);
-	eprintf("issuer= %s", buf);
+	save_ssl_verify_message(options, SSL_VERIFY_MSG_ISSUER, 0, depth,
+	    NULL, buf);
     }
 
     return options->always_continue ? 1 : preverify_ok;
@@ -2518,6 +2523,11 @@ static void killsock(Sock *sock)
     VEC_ZERO(&sock->tn_them_tog);
     VEC_ZERO(&sock->tn_us);
     VEC_ZERO(&sock->tn_us_tog);
+#if WIDECHAR
+    Stringfree(sock->incomingposttelnet);
+    ucnv_close(sock->incomingfsm);
+    sock->incomingfsm = NULL;
+#endif
     Stringfree(sock->buffer);
     Stringfree(sock->subbuffer);
 
@@ -3163,7 +3173,7 @@ int send_line(const char *src, unsigned int len, int eol_flag)
     UBool ubool_true = TRUE;
 #endif
 
-    if (!xsock ||
+    if (!xsock || xsock->constate >= SS_ZOMBIE ||
 	(xsock->constate != SS_CONNECTED && !(xsock->flags & SOCKECHO)))
     {
         eprintf("Not connected.");
@@ -3190,9 +3200,10 @@ int send_line(const char *src, unsigned int len, int eol_flag)
         send_buffers[slot_index].buffer2 =
 	    XREALLOC(send_buffers[slot_index].buffer2, needed);
 #if WIDECHAR
-        /* 'needed' calculated as 8-bit wide, not 16-bit */
-        send_buffers[slot_index].utf16buf =
-	    XREALLOC(send_buffers[slot_index].utf16buf, needed / 2);
+        /* bufferlen / 2 is a UChar count, but XREALLOC takes bytes. */
+        send_buffers[slot_index].utf16buf = XREALLOC(
+	    send_buffers[slot_index].utf16buf,
+	    needed / 2 * sizeof(*send_buffers[slot_index].utf16buf));
 #endif
     }
     buffer1 = send_buffers[slot_index].buffer1;
@@ -3829,7 +3840,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
     char mccpbuffer[BUFFSIZE];
 #endif
     fd_set readfds;
-    int count, n, received = 0;
+    int count, n, received = 0, result = 0, simulated = !!simbuffer;
     struct timeval timeout;
 #if WIDECHAR
     String *incomingposttelnet;
@@ -3865,11 +3876,12 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 	incomingposttelnet->links++;
 	incomingERR = U_ZERO_ERROR;
 	incomingFSM = ucnv_open(encoding, &incomingERR);
-	if (incomingERR == U_MEMORY_ALLOCATION_ERROR ||
-	    incomingERR == U_FILE_ACCESS_ERROR)
-	{
+	if (U_FAILURE(incomingERR) || !incomingFSM) {
+	    Stringfree(incomingposttelnet);
+	    if (incomingFSM) ucnv_close(incomingFSM);
             core("TN_CHARSET: Could not create UConverter.",
 		__FILE__, __LINE__, 0);
+	    return 0;	/* not reached */
 	}
     }
 #endif
@@ -3878,6 +3890,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 	if (simbuffer) {
 	    incoming = simbuffer;
 	    count = simlen;
+	    simbuffer = NULL;
 	} else {
 #if HAVE_MCCP
 	    if (xsock->zstream && xsock->zstream->avail_in) {
@@ -3895,14 +3908,14 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		count = SSL_read(ssl, inbuffer, sizeof(inbuffer));
 		ssl_errno = errno;
 		if (!socket_input_live(sock, generation) || sock->ssl != ssl)
-		    return received;
+		    goto cleanup_received;
 		if (count <= 0) {
 		    capture_ssl_error(sock, ssl, count, ssl_errno, &info);
 		    if (info.ssl_error == SSL_ERROR_ZERO_RETURN) {
 			/* Preserve the SSL so killsock() sends close_notify. */
 			free_ssl_error(&info);
 			if (!report_ssl_verify_messages(sock, generation))
-			    return received;
+			    goto cleanup_received;
 			errno = 0;
 			goto eof;
 		    }
@@ -3915,7 +3928,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 			SSL_free(ssl);
 			free_ssl_error(&info);
 			if (!report_ssl_verify_messages(sock, generation))
-			    return received;
+			    goto cleanup_received;
 			errno = ssl_errno;
 			goto eof;
 		    }
@@ -3931,10 +3944,10 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 				H_DISCONNECT);
 		    }
 		    free_ssl_error(&info);
-		    return received;
+		    goto cleanup_received;
 		}
 		if (!report_ssl_verify_messages(sock, generation))
-		    return received;
+		    goto cleanup_received;
 	    } else
 #endif
 	    {
@@ -3947,7 +3960,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		    int err = errno;
 		    constate_t state = sock->constate;
 		    if (count < 0 && errno == EINTR)
-			return 0;
+			goto cleanup;
 		    /* Socket is blocking; EAGAIN and EWOULDBLOCK impossible. */
 #if WIDECHAR
 		    inbound_decode_str(sock->buffer, incomingposttelnet,
@@ -3961,7 +3974,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		    }
 		    flushxsock();
 		    if (!socket_input_live(sock, generation))
-			return received;
+			goto cleanup_received;
 		    zombiesock(sock);
 		    /* On some systems, a socket that failed nonblocking connect
 		     * selects readable instead of writable.  If SS_CONNECTING,
@@ -3974,7 +3987,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 			"%% Connection to %s closed by foreign host.",
 			(count < 0) ? "%s %s %s" : "%s",
 			sock->world->name, "recv", strerror(err));
-		    return received;
+		    goto cleanup_received;
 		}
 	    }
 #if HAVE_MCCP
@@ -3991,21 +4004,32 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		case Z_OK:
 		    count = (char*)xsock->zstream->next_out - mccpbuffer;
 		    break;
-		case Z_STREAM_END:
+		case Z_STREAM_END: {
+		    Bytef *trailing = xsock->zstream->next_in;
+		    uInt trailing_len = xsock->zstream->avail_in;
+
+		    /* The recursive call handles inflated bytes, not the
+		     * still-uncompressed tail owned by this invocation. */
+		    xsock->zstream->avail_in = 0;
 		    /* handle stuff inflated before stream end */
 		    /* NOTE: This could be partway into parsing a character!? */
 		    count = (char*)xsock->zstream->next_out - mccpbuffer;
 		    received += handle_socket_input(mccpbuffer, count, NULL);
-		    if (!socket_input_live(sock, generation)) return received;
+		    if (!socket_input_live(sock, generation))
+			goto cleanup_received;
+#if WIDECHAR
+		    if (!encoding) incomingFSM = sock->incomingfsm;
+#endif
 		    /* prepare to handle noncompressed stuff after stream end */
-		    incoming = (char*)xsock->zstream->next_in;
-		    count = xsock->zstream->avail_in;
+		    incoming = (char*)trailing;
+		    count = trailing_len;
 		    /* clean up zstream */
 		    inflateEnd(xsock->zstream);
 		    FREE(xsock->zstream);
 		    xsock->zstream = NULL;
 		    xsock->flags &= ~SOCKCOMPRESS;
 		    break;
+		}
 		default: {
 		    String *message = Stringnew(xsock->zstream->msg ?
 			xsock->zstream->msg : "unknown", -1, 0);
@@ -4016,7 +4040,7 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 			DISCON(xsock->world->name, "inflate", message->data);
 		    }
 		    Stringfree(message);
-		    return received;
+		    goto cleanup_received;
 		}
 		}
 	    } else
@@ -4043,7 +4067,8 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                 case TN_GA: case TN_EOR:
                     /* This is definitely a prompt. */
                     telnet_recv(rawchar, 0);
-                    if (!socket_input_live(sock, generation)) return received;
+                    if (!socket_input_live(sock, generation))
+			goto cleanup_received;
 #if WIDECHAR
 		    inbound_decode_str(xsock->buffer, incomingposttelnet,
                         incomingFSM, 0);
@@ -4094,7 +4119,8 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                     {
                         /* unsupported or invalid telnet command */
                         telnet_recv(rawchar, 0);
-                        if (!socket_input_live(sock, generation)) return received;
+                        if (!socket_input_live(sock, generation))
+			    goto cleanup_received;
                         xsock->fsastate = '\0';
                         break;
                     }
@@ -4111,7 +4137,8 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                     /* We now know server groks TELNET */
                     xsock->flags |= SOCKTELNET;
                     preferred_telnet_options();
-                    if (!socket_input_live(sock, generation)) return received;
+                    if (!socket_input_live(sock, generation))
+			goto cleanup_received;
                 }
                 continue;  /* avoid non-telnet processing */
 
@@ -4133,7 +4160,8 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 #endif
 		    handle_socket_input_queue_lines(xsock);
 		    flushxsock();
-		    if (!socket_input_live(sock, generation)) return received;
+		    if (!socket_input_live(sock, generation))
+			goto cleanup_received;
 
 		if (xsock->subbuffer->len > RECEIVELIMIT) {
 		    /* It shouldn't take this long; server is broken.  Abort. */
@@ -4144,6 +4172,11 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 			Sappendf(xsock->subbuffer, "%c%c", TN_IAC, TN_SE);
                         xsock->fsastate = '\0';
                         telnet_subnegotiation();
+			if (!socket_input_live(sock, generation))
+			    goto cleanup_received;
+#if WIDECHAR
+			if (!encoding) incomingFSM = sock->incomingfsm;
+#endif
                     } else {
                         Stringadd(xsock->subbuffer, rawchar);
                         xsock->substate = '\0';
@@ -4159,17 +4192,23 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
 		    {
 			xsock->fsastate = '\0';
 			telnet_subnegotiation();
+			if (!socket_input_live(sock, generation))
+			    goto cleanup_received;
+#if WIDECHAR
+			if (!encoding) incomingFSM = sock->incomingfsm;
+#endif
 		    }
 #endif
                 }
-		if (!socket_input_live(sock, generation)) return received;
+		if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
 #if HAVE_MCCP
 		if (xsock->flags & SOCKCOMPRESS && !xsock->zstream) {
 		    /* compression was just enabled. */
 		    xsock->zstream = new_zstream();
 		    if (!xsock->zstream) {
 			zombiesock(xsock);
-			return received;
+			goto cleanup_received;
 		    } else {
 			xsock->zstream->next_in = (Bytef*)++place;
 			xsock->zstream->avail_in = count - (place - incoming);
@@ -4182,10 +4221,12 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
             } else if (xsock->fsastate == TN_WILL) {
                 xsock->fsastate = '\0';
                 telnet_recv(TN_WILL, rawchar);
-                if (!socket_input_live(sock, generation)) return received;
+                if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
                 if (TELOPT(xsock, them, rawchar)) { /* already there, ignore */
 		    no_reply("option was already agreed on");
-		    if (!socket_input_live(sock, generation)) return received;
+		    if (!socket_input_live(sock, generation))
+			goto cleanup_received;
                     CLR_TELOPT(xsock, them_tog, rawchar);
                 } else if (
 #if 0  /* many servers think DO SGA means character-at-a-time mode */
@@ -4219,7 +4260,8 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                         CLR_TELOPT(xsock, them_tog, rawchar);  /* done */
                     } else {
                         DO(rawchar);  /* acknowledge their request */
-                        if (!socket_input_live(sock, generation)) return received;
+                        if (!socket_input_live(sock, generation))
+			    goto cleanup_received;
                         #if ENABLE_GMCP
                             if (rawchar == TN_GMCP && gmcp) {
                                 do_hook(H_GMCP_LOGIN, NULL, "%s", xsock->world->name);
@@ -4229,16 +4271,19 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                 } else {
                     DONT(rawchar);    /* refuse their request */
                 }
-                if (!socket_input_live(sock, generation)) return received;
+                if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
                 continue;  /* avoid non-telnet processing */
 
             } else if (xsock->fsastate == TN_WONT) {
                 xsock->fsastate = '\0';
                 telnet_recv(TN_WONT, rawchar);
-                if (!socket_input_live(sock, generation)) return received;
+                if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
                 if (!TELOPT(xsock, them, rawchar)) { /* already there, ignore */
 		    no_reply("option was already agreed on");
-		    if (!socket_input_live(sock, generation)) return received;
+		    if (!socket_input_live(sock, generation))
+			goto cleanup_received;
                     CLR_TELOPT(xsock, them_tog, rawchar);
                 } else {
                     CLR_TELOPT(xsock, them, rawchar);  /* set state */
@@ -4248,16 +4293,19 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                         DONT(rawchar);  /* acknowledge their request */
                     }
                 }
-                if (!socket_input_live(sock, generation)) return received;
+                if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
                 continue;  /* avoid non-telnet processing */
 
             } else if (xsock->fsastate == TN_DO) {
                 xsock->fsastate = '\0';
                 telnet_recv(TN_DO, rawchar);
-                if (!socket_input_live(sock, generation)) return received;
+                if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
                 if (TELOPT(xsock, us, rawchar)) { /* already there, ignore */
 		    no_reply("option was already agreed on");
-		    if (!socket_input_live(sock, generation)) return received;
+		    if (!socket_input_live(sock, generation))
+			goto cleanup_received;
                     CLR_TELOPT(xsock, them_tog, rawchar);
                 } else if (
                     rawchar == TN_NAWS ||
@@ -4272,22 +4320,26 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                         CLR_TELOPT(xsock, us_tog, rawchar);  /* done */
                     } else {
                         WILL(rawchar);  /* acknowledge their request */
-                        if (!socket_input_live(sock, generation)) return received;
+                        if (!socket_input_live(sock, generation))
+			    goto cleanup_received;
                     }
                     if (rawchar == TN_NAWS) do_naws(xsock);
                 } else {
                     WONT(rawchar);      /* refuse their request */
                 }
-                if (!socket_input_live(sock, generation)) return received;
+                if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
                 continue;  /* avoid non-telnet processing */
 
             } else if (xsock->fsastate == TN_DONT) {
                 xsock->fsastate = '\0';
                 telnet_recv(TN_DONT, rawchar);
-                if (!socket_input_live(sock, generation)) return received;
+                if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
                 if (!TELOPT(xsock, us, rawchar)) { /* already there, ignore */
 		    no_reply("option was already agreed on");
-		    if (!socket_input_live(sock, generation)) return received;
+		    if (!socket_input_live(sock, generation))
+			goto cleanup_received;
                     CLR_TELOPT(xsock, us_tog, rawchar);
                 } else {
                     CLR_TELOPT(xsock, us, rawchar);  /* set state */
@@ -4297,7 +4349,8 @@ static int handle_socket_input(const char *simbuffer, int simlen, const char *en
                         WONT(rawchar);  /* acknowledge their request */
                     }
                 }
-                if (!socket_input_live(sock, generation)) return received;
+                if (!socket_input_live(sock, generation))
+		    goto cleanup_received;
                 continue;  /* avoid non-telnet processing */
 
             } else if (rawchar == TN_IAC &&
@@ -4363,7 +4416,7 @@ non_telnet:
 	}
 #endif
 
-	if (simbuffer || received > SPAM) break; /* after uninflated check */
+	if (simulated || received > SPAM) break; /* after uninflated check */
 
         FD_ZERO(&readfds);
         FD_SET(xsock->fd, &readfds);
@@ -4378,13 +4431,16 @@ non_telnet:
 
     test_prompt();
 
+cleanup_received:
+    result = received;
+cleanup:
 #if WIDECHAR
     if (encoding) {
 	Stringfree(incomingposttelnet);
 	ucnv_close(incomingFSM);
     }
 #endif
-    return received;
+    return result;
 }
 
 /* This function CAN leave data in sock->buffer */
