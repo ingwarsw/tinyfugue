@@ -58,6 +58,20 @@ To enable compile with:
 Because version was not changed ower last 14 years I have decided to go with normal versioning to allow easy distinguish different new versions.
 I started with version 5.1.0 and will use try to follow [Semantic Versioning](https://semver.org/)
 
+## Quote readiness regressions
+
+After building, run:
+
+```
+python3 tests/quote_readiness.py --tf src/tf -v
+```
+
+This real-process regression uses Python's standard library, a private HOME and
+a localhost-only synthetic connection. It checks that TF remains responsive
+when persistent shell-quote output and a Telnet prompt arrive together, without
+loading a user's startup files or contacting a MUD. Linux CI runs it after
+each build.
+
 ## Copyright
 
 Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2002, 2003, 2004, 2005, 2006-2007 Ken Keys (kenkeys@users.sourceforge.net)
