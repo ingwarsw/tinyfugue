@@ -1082,6 +1082,8 @@ static void clear_fd_sets(int fd)
 void readers_clear(int fd)
 {
     FD_CLR(fd, &readers);
+    /* A consumed or closed quote fd must not retain select readiness. */
+    FD_CLR(fd, &active);
 }
 
 void readers_set(int fd)
