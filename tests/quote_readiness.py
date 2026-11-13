@@ -52,7 +52,8 @@ class QuoteReadiness(unittest.TestCase):
             self.output += chunk
 
     def text(self):
-        return ANSI.sub(b"", self.output).decode(errors="replace").replace("\r", "")
+        text = ANSI.sub(b"", self.output).decode(errors="replace").replace("\r", "")
+        return "\n".join(line.strip() for line in text.splitlines())
 
     def marker(self, value):
         self.wait_for(lambda: value in self.text().splitlines(), value)
