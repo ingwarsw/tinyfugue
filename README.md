@@ -66,10 +66,10 @@ After building, run:
 python3 tests/quote_readiness.py --tf src/tf -v
 ```
 
-These real-process tests use Python's standard library, a private HOME and
-localhost-only synthetic connections. They check that persistent shell quotes
-and one-shot quote replacement remain responsive across Telnet prompts, without
-loading a user's startup files or contacting a MUD. Linux CI runs them after
+This real-process regression uses Python's standard library, a private HOME and
+a localhost-only synthetic connection. It checks that TF remains responsive
+when persistent shell-quote output and a Telnet prompt arrive together, without
+loading a user's startup files or contacting a MUD. Linux CI runs it after
 each build.
 
 ## Copyright
