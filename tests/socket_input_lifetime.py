@@ -155,6 +155,73 @@ def assert_no_stale_output(output, text):
         raise AssertionError(f"stale input {text!r} was processed:\n{output}")
 
 
+def prompt_clears_foreground(binary):
+    with ScriptedServer([b"PROMPT\xff\xf9"]) as server:
+        proc = run_tf(binary, f'''/set connect=blocking
+/set telopt=on
+/test addworld("prompt", "", "127.0.0.1", "{server.port}")
+/def -1 -hPROMPT retire = /test echo("SAW_PROMPT")%; /repeat -0 1 /quit -y%; /fg -n
+/connect -b prompt
+''')
+    assert_line(proc.stdout, "SAW_PROMPT")
+
+
+def queued_disconnect(binary):
+    with ScriptedServer([b""]) as server:
+        proc = run_tf(binary, f'''/set connect=blocking
+/test addworld("queued", "", "127.0.0.1", "{server.port}")
+/def -1 -wqueued -mglob -t"QUEUED_OLD" retire = /test echo("SAW_QUEUED_OLD")%; /repeat -0 1 /quit -y%; /dc queued
+/def -wqueued -mglob -t"QUEUED_STALE" stale = /test echo("SAW_QUEUED_STALE")
+/connect -b queued
+/test fake_recv(strcat("QUEUED_OLD", char(10), "QUEUED_STALE", char(10)), "queued", "r")
+''')
+    assert_line(proc.stdout, "SAW_QUEUED_OLD")
+    assert_no_stale_output(proc.stdout, "SAW_QUEUED_STALE")
+
+
+def queued_before_close(binary):
+    with ScriptedServer([b""]) as world_a, ScriptedServer([b""]) as world_b:
+        proc = run_tf(binary, f'''/set connect=blocking
+/test addworld("A", "", "127.0.0.1", "{world_a.port}")
+/test addworld("B", "", "127.0.0.1", "{world_b.port}")
+/def -1 -wA -mglob -t"OUTER" outer = /test echo("SAW_OUTER")%; /test fake_recv("B_VALID", "B")%; /dc B%; /repeat -1 1 /quit -y
+/def -1 -wB -mglob -t"B_VALID" seen = /test echo("SAW_B_VALID")%; /quit -y
+/connect -b B
+/connect -f A
+/test fake_recv("OUTER", "A")
+''')
+    assert_line(proc.stdout, "SAW_OUTER")
+    assert_line(proc.stdout, "SAW_B_VALID")
+
+
+def queued_reconnect(binary):
+    with ScriptedServer([b"", b"QUEUED_NEW\n"]) as queued, \
+            ScriptedServer([b""]) as foreground:
+        proc = run_tf(binary, f'''/set connect=blocking
+/test addworld("queued", "", "127.0.0.1", "{queued.port}")
+/test addworld("foreground", "", "127.0.0.1", "{foreground.port}")
+/def -1 -wqueued -mglob -t"QUEUED_OLD" retire = /test echo("SAW_QUEUED_OLD")%; /dc queued%; /connect -b queued
+/def -wqueued -mglob -t"QUEUED_STALE" stale = /test echo("SAW_QUEUED_STALE")
+/def -1 -wqueued -mglob -t"QUEUED_NEW" replacement = /test echo("SAW_QUEUED_NEW")%; /quit -y
+/connect -b queued
+/connect -f foreground
+/test fake_recv("QUEUED_OLD", "queued")
+/test fake_recv("QUEUED_STALE", "queued")
+/dc queued
+/test send("AFTER_DC")
+''')
+    assert_line(proc.stdout, "SAW_QUEUED_OLD")
+    assert_line(proc.stdout, "SAW_QUEUED_NEW")
+    assert_no_stale_output(proc.stdout, "SAW_QUEUED_STALE")
+    if foreground.connections != [b"AFTER_DC\r\n"]:
+        raise AssertionError(
+            f"post-/dc send reached wrong socket: {foreground.connections!r}, "
+            f"{queued.connections!r}"
+        )
+    if "Internal error" in proc.stdout + proc.stderr:
+        raise AssertionError(f"queue accounting failed:\n{proc.stdout}{proc.stderr}")
+
+
 def telnet_callback_disconnect(binary):
     with ScriptedServer([(b"READY", b"\xff\xf1TELNET_CALLBACK_STALE")]) as server:
         proc = run_tf(binary, f'''/set connect=blocking
@@ -275,6 +342,10 @@ def main():
         parser.error(f"binary not found: {binary}")
 
     for name, case in (
+        ("prompt clears foreground", prompt_clears_foreground),
+        ("queued disconnect retirement", queued_disconnect),
+        ("queued line before close", queued_before_close),
+        ("queued same-socket reincarnation", queued_reconnect),
         ("TELNET callback retirement", telnet_callback_disconnect),
         ("disconnect during TELNET chunk", telnet_disconnect),
         ("same-socket TELNET reincarnation", telnet_reconnect),
