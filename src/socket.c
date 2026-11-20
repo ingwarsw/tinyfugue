@@ -3063,10 +3063,10 @@ static void handle_socket_lines(void)
     } while ((line = dequeue(&sock->queue)));
 
 done:
-    if (sock->generation != generation &&
+    if (sock->generation == generation + 1 &&
 	sock->constate >= SS_ZOMBIE && sock->queue.list.head)
     {
-	/* A callback retired this parser generation; queued lines are stale. */
+	/* Reconnect drains old lines, so these still belong to this parser. */
 	socks_with_lines--;
 	while ((line = dequeue(&sock->queue)))
 	    conStringfree(line);
@@ -3153,9 +3153,10 @@ static void handle_prompt(String *str, int offset, int confirmed)
 {
     Sock *sock = xsock;
     unsigned long generation = sock->generation;
+    int started_zombie = sock->constate >= SS_ZOMBIE;
 
     runall(1, sock->world);	/* run prompted processes */
-    if (!socket_input_live(sock, generation)) {
+    if (!socket_line_live(sock, generation, started_zombie)) {
 	Stringfree(str);
 	return;
     }

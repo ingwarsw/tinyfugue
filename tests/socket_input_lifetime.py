@@ -96,7 +96,43 @@ class ScriptedServer:
             self.listener.close()
 
 
-def run_tf(binary, script):
+def _run_tf_visual(args, env):
+    master, slave = os.openpty()
+    output = []
+    proc = subprocess.Popen(
+        args, stdin=slave, stdout=slave, stderr=slave, env=env
+    )
+    os.close(slave)
+
+    def read_output():
+        while True:
+            try:
+                data = os.read(master, 4096)
+            except OSError:
+                break
+            if not data:
+                break
+            output.append(data)
+
+    reader = threading.Thread(target=read_output, daemon=True)
+    reader.start()
+    timeout_error = None
+    try:
+        proc.wait(timeout=TIMEOUT)
+    except subprocess.TimeoutExpired as exc:
+        timeout_error = exc
+        proc.kill()
+        proc.wait()
+    reader.join(2)
+    os.close(master)
+    reader.join(2)
+    stdout = b"".join(output).decode("utf-8", errors="replace")
+    if timeout_error:
+        raise AssertionError(f"tf timed out\noutput:\n{stdout}") from timeout_error
+    return subprocess.CompletedProcess(args, proc.returncode, stdout, "")
+
+
+def run_tf(binary, script, visual=False):
     with tempfile.TemporaryDirectory(prefix="tf-socket-input-") as temp:
         root = Path(temp)
         libdir = root / "lib"
@@ -115,22 +151,27 @@ def run_tf(binary, script):
         env["LSAN_OPTIONS"] = (
             options + (":" if options else "") + f"suppressions={suppressions}"
         )
-        try:
-            proc = subprocess.run(
-                [str(binary), f"-L{libdir}", f"-f{config}", "-n", "-v"],
-                stdin=subprocess.DEVNULL,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-                timeout=TIMEOUT,
-                encoding="utf-8",
-                errors="replace",
-                env=env,
-            )
-        except subprocess.TimeoutExpired as exc:
-            raise AssertionError(
-                f"tf timed out\nstdout:\n{exc.stdout}\nstderr:\n{exc.stderr}"
-            ) from exc
+        args = [str(binary), f"-L{libdir}", f"-f{config}", "-n"]
+        if visual:
+            proc = _run_tf_visual(args, env)
+        else:
+            args.append("-v")
+            try:
+                proc = subprocess.run(
+                    args,
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                    timeout=TIMEOUT,
+                    encoding="utf-8",
+                    errors="replace",
+                    env=env,
+                )
+            except subprocess.TimeoutExpired as exc:
+                raise AssertionError(
+                    f"tf timed out\nstdout:\n{exc.stdout}\nstderr:\n{exc.stderr}"
+                ) from exc
     diagnostics = proc.stdout + "\n" + proc.stderr
     if proc.returncode or "ERROR: AddressSanitizer:" in diagnostics or \
             "runtime error:" in diagnostics or "ERROR: LeakSanitizer:" in diagnostics:
@@ -194,6 +235,21 @@ def queued_before_close(binary):
     assert_line(proc.stdout, "SAW_B_VALID")
 
 
+
+def queued_prompt_before_close(binary):
+    with ScriptedServer([b""]) as world_a, ScriptedServer([b""]) as world_b:
+        proc = run_tf(binary, f'''/set connect=blocking
+/test addworld("A", "", "127.0.0.1", "{world_a.port}")
+/test addworld("B", "", "127.0.0.1", "{world_b.port}")
+/def -i quit_later = /fg B%; /repeat -1 1 /quit -y
+/def -1 -wA -mglob -t"OUTER" outer = /fg B%; /test prompt("B_PROMPT")%; /dc B%; /repeat -0 1 /quit_later
+/connect -b B
+/connect -f A
+/test fake_recv("OUTER", "A")
+''', visual=True)
+    if proc.stdout.count("B_PROMPT") != 1:
+        raise AssertionError(f"queued prompt was not displayed:\n{proc.stdout}")
+
 def queued_reconnect(binary):
     with ScriptedServer([b"", b"QUEUED_NEW\n"]) as queued, \
             ScriptedServer([b""]) as foreground:
@@ -220,6 +276,19 @@ def queued_reconnect(binary):
         )
     if "Internal error" in proc.stdout + proc.stderr:
         raise AssertionError(f"queue accounting failed:\n{proc.stdout}{proc.stderr}")
+
+
+def queued_reincarnation_before_close(binary):
+    with ScriptedServer([b"", b""]) as server:
+        proc = run_tf(binary, f'''/set connect=blocking
+/test addworld("A", "", "127.0.0.1", "{server.port}")
+/def -1 -wA -mglob -t"OLD" retire = /test echo("SAW_OLD")%; /dc A%; /connect -b A%; /test fake_recv("NEW", "A")%; /dc A%; /repeat -1 1 /quit -y
+/def -1 -wA -mglob -t"NEW" seen = /test echo("SAW_NEW")%; /quit -y
+/connect -b A
+/test fake_recv("OLD", "A")
+''')
+    assert_line(proc.stdout, "SAW_OLD")
+    assert_line(proc.stdout, "SAW_NEW")
 
 
 def telnet_callback_disconnect(binary):
@@ -345,7 +414,9 @@ def main():
         ("prompt clears foreground", prompt_clears_foreground),
         ("queued disconnect retirement", queued_disconnect),
         ("queued line before close", queued_before_close),
+        ("queued prompt before close", queued_prompt_before_close),
         ("queued same-socket reincarnation", queued_reconnect),
+        ("queued reincarnation before close", queued_reincarnation_before_close),
         ("TELNET callback retirement", telnet_callback_disconnect),
         ("disconnect during TELNET chunk", telnet_disconnect),
         ("same-socket TELNET reincarnation", telnet_reconnect),
