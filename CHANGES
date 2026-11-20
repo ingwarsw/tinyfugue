@@ -1,6 +1,11 @@
 Only the most recent version will have detailed changes described.
 Some fixes are followed by the version in which the problem first appeared.
 
+Unreleased
+----------
+Fixed socket input parsing after a callback disconnects or reconnects the
+    socket being parsed.
+
 5.0
 ---
 If you have not yet read all changes since 4.0 stable 1, please do now.
